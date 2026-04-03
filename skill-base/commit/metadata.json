@@ -1,6 +1,6 @@
 {
   "name": "commit",
-  "version": "3.0.0",
+  "version": "1.0.0",
   "category": "git",
   "description": "Plan commit boundaries, review staged content, and craft concise commit messages",
   "author": "Toolkit Maintainer",

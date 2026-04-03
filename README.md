@@ -106,7 +106,7 @@ description: "Use this skill when the user wants help reviewing changes and crea
 ```json
 {
   "name": "commit",
-  "version": "3.0.0",
+  "version": "1.0.0",
   "category": "git",
   "description": "Plan commit boundaries, review staged content, and craft concise commit messages",
   "author": "Toolkit Maintainer",
