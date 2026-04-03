@@ -1,35 +1,24 @@
 #!/usr/bin/env bash
 # Codex Skills Manager — CLI tool for installing/managing shared Codex skills
-# Requires: bash 4.0+, diff
+# Requires: bash 4.0+
 # Optional: jq (recommended for reliable JSON parsing)
 
 set -uo pipefail
 
+if (( BASH_VERSINFO[0] < 4 )); then
+    cat <<'EOF'
+Error: skill-manager.sh requires Bash 4 or newer.
+
+macOS ships /bin/bash 3.2 by default, which is not supported by this script.
+Install a newer Bash and rerun the manager with that binary after confirming:
+  bash --version
+EOF
+    exit 1
+fi
+
 # ─── Resolve skill-base directory (where this script lives) ───
 SKILL_BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SKILLS_SOURCE_DIR="${SKILL_BASE_DIR}/skill-base"
-
-get_file_hash() {
-    local file="$1"
-    if command -v md5sum >/dev/null 2>&1; then
-        md5sum "$file" | cut -d' ' -f1
-    elif command -v md5 >/dev/null 2>&1; then
-        md5 -q "$file"
-    elif command -v shasum >/dev/null 2>&1; then
-        shasum "$file" | cut -d' ' -f1
-    else
-        echo ""
-    fi
-}
-
-# ─── Auto-update skill-base from remote ───
-_self_hash="$(get_file_hash "${BASH_SOURCE[0]}")"
-echo -e "Updating skill-base..."
-git -C "$SKILL_BASE_DIR" pull --quiet 2>/dev/null || echo -e "Warning: Failed to update skill-base (offline or not a git repo), using local version."
-if [[ -n "$_self_hash" && "$(get_file_hash "${BASH_SOURCE[0]}")" != "$_self_hash" ]]; then
-    echo -e "Script updated, restarting..."
-    exec "$0" "$@"
-fi
 
 # ─── Resolve target project skills directory ───
 PROJECT_DIR="$(pwd)"
@@ -60,6 +49,13 @@ fi
 
 # ─── Helpers ───
 
+AVAILABLE_SKILLS=()
+INVALID_SOURCE_SKILLS=()
+INVALID_SOURCE_MESSAGES=()
+INSTALLED_SKILLS=()
+INVALID_INSTALLED_SKILLS=()
+INVALID_INSTALLED_MESSAGES=()
+
 print_header() {
     echo ""
     echo -e "${CYAN}╔═══════════════════════════════════════════════╗${NC}"
@@ -79,27 +75,153 @@ print_header() {
     echo ""
 }
 
-get_available_skills() {
-    local skills=()
+trim_value() {
+    local value="$1"
+    value="${value#"${value%%[![:space:]]*}"}"
+    value="${value%"${value##*[![:space:]]}"}"
+    printf '%s' "$value"
+}
+
+get_frontmatter_name() {
+    local file="$1"
+    [[ -f "$file" ]] || return 0
+
+    awk '
+NR == 1 && $0 == "---" { in_fm = 1; next }
+in_fm && $0 == "---" { exit }
+in_fm && $1 == "name:" {
+    sub(/^name:[[:space:]]*/, "", $0)
+    gsub(/^["'"'"']|["'"'"']$/, "", $0)
+    print
+    exit
+}
+' "$file"
+}
+
+validate_skill_dir() {
+    local skill_dir="$1"
+    local expected_name
+    expected_name="$(basename "$skill_dir")"
+
+    local errors=()
+    local skill_md="${skill_dir}/SKILL.md"
+    local metadata="${skill_dir}/metadata.json"
+
+    [[ -d "$skill_dir" ]] || errors+=("missing skill directory")
+    [[ -f "$skill_md" ]] || errors+=("missing SKILL.md")
+    [[ -f "$metadata" ]] || errors+=("missing metadata.json")
+
+    local metadata_name=""
+    local metadata_version=""
+    local metadata_category=""
+    local metadata_description=""
+    local frontmatter_name=""
+
+    if [[ -f "$metadata" ]]; then
+        metadata_name="$(trim_value "$(parse_json "name" "$metadata")")"
+        metadata_version="$(trim_value "$(parse_json "version" "$metadata")")"
+        metadata_category="$(trim_value "$(parse_json "category" "$metadata")")"
+        metadata_description="$(trim_value "$(parse_json "description" "$metadata")")"
+
+        [[ -n "$metadata_name" ]] || errors+=("metadata missing name")
+        [[ -n "$metadata_version" ]] || errors+=("metadata missing version")
+        [[ -n "$metadata_category" ]] || errors+=("metadata missing category")
+        [[ -n "$metadata_description" ]] || errors+=("metadata missing description")
+    fi
+
+    if [[ -f "$skill_md" ]]; then
+        frontmatter_name="$(trim_value "$(get_frontmatter_name "$skill_md")")"
+        [[ -n "$frontmatter_name" ]] || errors+=("SKILL.md frontmatter missing name")
+    fi
+
+    if [[ -n "$metadata_name" && "$metadata_name" != "$expected_name" ]]; then
+        errors+=("metadata name '${metadata_name}' does not match directory '${expected_name}'")
+    fi
+
+    if [[ -n "$frontmatter_name" && "$frontmatter_name" != "$expected_name" ]]; then
+        errors+=("SKILL.md frontmatter name '${frontmatter_name}' does not match directory '${expected_name}'")
+    fi
+
+    if [[ -n "$metadata_name" && -n "$frontmatter_name" && "$metadata_name" != "$frontmatter_name" ]]; then
+        errors+=("metadata name '${metadata_name}' does not match SKILL.md frontmatter name '${frontmatter_name}'")
+    fi
+
+    if (( ${#errors[@]} > 0 )); then
+        local joined=""
+        local error
+        for error in "${errors[@]}"; do
+            if [[ -n "$joined" ]]; then
+                joined+="; "
+            fi
+            joined+="$error"
+        done
+        printf '%s\n' "$joined"
+        return 1
+    fi
+}
+
+scan_available_skills() {
+    AVAILABLE_SKILLS=()
+    INVALID_SOURCE_SKILLS=()
+    INVALID_SOURCE_MESSAGES=()
+
+    local dir
     for dir in "${SKILLS_SOURCE_DIR}"/*/; do
         [[ -d "$dir" ]] || continue
         local name
+        local error
         name="$(basename "$dir")"
-        [[ -f "${dir}/metadata.json" && -f "${dir}/SKILL.md" ]] && skills+=("$name")
+        if error="$(validate_skill_dir "$dir" 2>/dev/null)"; then
+            AVAILABLE_SKILLS+=("$name")
+        else
+            INVALID_SOURCE_SKILLS+=("$name")
+            INVALID_SOURCE_MESSAGES+=("${name}: ${error}")
+        fi
     done
-    echo "${skills[@]}"
 }
 
-get_installed_skills() {
-    local skills=()
-    [[ -d "$SKILLS_TARGET_DIR" ]] || { echo ""; return; }
+scan_installed_skills() {
+    INSTALLED_SKILLS=()
+    INVALID_INSTALLED_SKILLS=()
+    INVALID_INSTALLED_MESSAGES=()
+
+    [[ -d "$SKILLS_TARGET_DIR" ]] || return
+
+    local dir
     for dir in "${SKILLS_TARGET_DIR}"/*/; do
         [[ -d "$dir" ]] || continue
         local name
+        local error
         name="$(basename "$dir")"
-        [[ -f "${dir}/SKILL.md" ]] && skills+=("$name")
+        if error="$(validate_skill_dir "$dir" 2>/dev/null)"; then
+            INSTALLED_SKILLS+=("$name")
+        else
+            INVALID_INSTALLED_SKILLS+=("$name")
+            INVALID_INSTALLED_MESSAGES+=("${name}: ${error}")
+        fi
     done
-    echo "${skills[@]}"
+}
+
+print_invalid_source_warnings() {
+    (( ${#INVALID_SOURCE_MESSAGES[@]} > 0 )) || return
+
+    echo ""
+    echo -e "${YELLOW}Skipped invalid skill packages in skill-base:${NC}"
+    local message
+    for message in "${INVALID_SOURCE_MESSAGES[@]}"; do
+        echo -e "  - ${message}"
+    done
+}
+
+print_invalid_installed_warnings() {
+    (( ${#INVALID_INSTALLED_MESSAGES[@]} > 0 )) || return
+
+    echo ""
+    echo -e "${YELLOW}Broken installed skill packages:${NC}"
+    local message
+    for message in "${INVALID_INSTALLED_MESSAGES[@]}"; do
+        echo -e "  - ${message}"
+    done
 }
 
 get_version() {
@@ -137,8 +259,11 @@ install_skill_dir() {
     local target_dir="${SKILLS_TARGET_DIR}/${skill}"
 
     rm -rf "$target_dir"
-    mkdir -p "$target_dir"
-    cp -R "${source_dir}/." "$target_dir/"
+    mkdir -p "$target_dir" || return 1
+    cp -R "${source_dir}/." "$target_dir/" || return 1
+
+    [[ -f "${target_dir}/SKILL.md" ]] || return 1
+    [[ -f "${target_dir}/metadata.json" ]] || return 1
 }
 
 # ─── Install / Update ───
@@ -147,22 +272,22 @@ do_install() {
     echo ""
     echo -e "${BOLD}Available skills:${NC}"
 
-    local available
-    read -ra available <<< "$(get_available_skills)"
+    scan_available_skills
+    print_invalid_source_warnings
 
-    if [[ ${#available[@]} -eq 0 ]]; then
-        echo -e "  ${YELLOW}No skills found in ${SKILLS_SOURCE_DIR}${NC}"
+    if [[ ${#AVAILABLE_SKILLS[@]} -eq 0 ]]; then
+        echo -e "  ${YELLOW}No valid skills found in ${SKILLS_SOURCE_DIR}${NC}"
         return
     fi
 
-    local installed
-    read -ra installed <<< "$(get_installed_skills)"
+    scan_installed_skills
 
     declare -A skill_map
     declare -A category_skills
     local categories=()
 
-    for skill in "${available[@]}"; do
+    local skill
+    for skill in "${AVAILABLE_SKILLS[@]}"; do
         local cat
         cat="$(get_category "${SKILLS_SOURCE_DIR}/${skill}")"
         category_skills[$cat]+="${skill} "
@@ -190,7 +315,7 @@ do_install() {
 
             local is_installed=false
             local installed_version=""
-            for inst in "${installed[@]}"; do
+            for inst in "${INSTALLED_SKILLS[@]}"; do
                 if [[ "$inst" == "$skill" ]]; then
                     is_installed=true
                     installed_version="$(get_version "${SKILLS_TARGET_DIR}/${skill}")"
@@ -224,7 +349,7 @@ do_install() {
 
     local selected_skills=()
     if [[ "$selection" == "a" ]]; then
-        selected_skills=("${available[@]}")
+        selected_skills=("${AVAILABLE_SKILLS[@]}")
     else
         IFS=',' read -ra nums <<< "$selection"
         for num in "${nums[@]}"; do
@@ -242,6 +367,7 @@ do_install() {
         return
     fi
 
+    local has_updates=false
     echo ""
     echo -e "${BOLD}Will install/update:${NC}"
     for skill in "${selected_skills[@]}"; do
@@ -251,39 +377,45 @@ do_install() {
             local cur_ver
             cur_ver="$(get_version "${SKILLS_TARGET_DIR}/${skill}")"
             echo -e "  • ${skill} ${DIM}v${cur_ver}${NC} → ${GREEN}v${src_ver}${NC}"
-
-            if [[ -f "${SKILLS_TARGET_DIR}/${skill}/SKILL.md" && -f "${SKILLS_SOURCE_DIR}/${skill}/SKILL.md" ]]; then
-                local diff_output
-                diff_output="$(diff --unified=1 "${SKILLS_TARGET_DIR}/${skill}/SKILL.md" "${SKILLS_SOURCE_DIR}/${skill}/SKILL.md" 2>/dev/null || true)"
-                if [[ -n "$diff_output" ]]; then
-                    echo -e "    ${DIM}Changes in SKILL.md:${NC}"
-                    echo "$diff_output" | head -20 | sed 's/^/    /'
-                    local total_lines
-                    total_lines="$(echo "$diff_output" | wc -l | tr -d ' ')"
-                    if [[ $total_lines -gt 20 ]]; then
-                        echo -e "    ${DIM}... ($(( total_lines - 20 )) more lines)${NC}"
-                    fi
-                fi
-            fi
+            has_updates=true
         else
             echo -e "  • ${skill} ${GREEN}v${src_ver}${NC} ${DIM}(new)${NC}"
         fi
     done
 
+    if $has_updates; then
+        echo ""
+        echo -e "${YELLOW}Warning:${NC} updates replace the entire skill package, not just SKILL.md."
+    fi
+
     echo ""
     read -rp "Proceed? [y/N] " confirm
     [[ "$confirm" != "y" && "$confirm" != "Y" ]] && { echo "Cancelled."; return; }
 
-    mkdir -p "$SKILLS_TARGET_DIR"
-    local count=0
+    mkdir -p "$SKILLS_TARGET_DIR" || {
+        echo -e "${RED}Failed to create install path: ${SKILLS_TARGET_DIR}${NC}"
+        return
+    }
+
+    local success_count=0
+    local failure_count=0
     for skill in "${selected_skills[@]}"; do
-        install_skill_dir "$skill"
-        ((count++))
-        echo -e "  ${GREEN}✓${NC} Installed ${BOLD}${skill}${NC}"
+        if install_skill_dir "$skill"; then
+            ((success_count++))
+            echo -e "  ${GREEN}✓${NC} Installed ${BOLD}${skill}${NC}"
+        else
+            ((failure_count++))
+            echo -e "  ${RED}✗${NC} Failed to install ${BOLD}${skill}${NC}"
+        fi
     done
 
     echo ""
-    echo -e "${GREEN}Done! ${count} skill(s) installed/updated.${NC}"
+    if (( success_count > 0 )); then
+        echo -e "${GREEN}Done! ${success_count} skill(s) installed/updated.${NC}"
+    fi
+    if (( failure_count > 0 )); then
+        echo -e "${RED}${failure_count} skill(s) failed to install/update.${NC}"
+    fi
     echo -e "${DIM}Installed to project-local .agents/skills.${NC}"
 }
 
@@ -294,23 +426,31 @@ do_remove() {
     echo -e "${BOLD}Installed skills:${NC}"
     echo ""
 
-    local installed
-    read -ra installed <<< "$(get_installed_skills)"
+    scan_installed_skills
 
-    if [[ ${#installed[@]} -eq 0 || ( ${#installed[@]} -eq 1 && -z "${installed[0]}" ) ]]; then
+    if (( ${#INSTALLED_SKILLS[@]} == 0 && ${#INVALID_INSTALLED_SKILLS[@]} == 0 )); then
         echo -e "  ${YELLOW}No skills installed in ${SKILLS_TARGET_DIR}${NC}"
         return
     fi
 
     local i=1
     declare -A skill_map
-    for skill in "${installed[@]}"; do
+    local skill
+    for skill in "${INSTALLED_SKILLS[@]}"; do
         local ver
         ver="$(get_version "${SKILLS_TARGET_DIR}/${skill}")"
         printf "  ${BOLD}[%d]${NC} %-14s ${DIM}v%s${NC}\n" "$i" "$skill" "$ver"
         skill_map[$i]="$skill"
         ((i++))
     done
+
+    for skill in "${INVALID_INSTALLED_SKILLS[@]}"; do
+        printf "  ${BOLD}[%d]${NC} %-14s ${YELLOW}[broken]${NC}\n" "$i" "$skill"
+        skill_map[$i]="$skill"
+        ((i++))
+    done
+
+    print_invalid_installed_warnings
 
     echo ""
     echo -e "Enter numbers to remove (comma separated, or ${BOLD}'q'${NC} to cancel):"
@@ -361,10 +501,9 @@ do_list() {
     echo ""
     echo -e "${BOLD}Installed skills:${NC}"
 
-    local installed
-    read -ra installed <<< "$(get_installed_skills)"
+    scan_installed_skills
 
-    if [[ ${#installed[@]} -eq 0 || ( ${#installed[@]} -eq 1 && -z "${installed[0]}" ) ]]; then
+    if (( ${#INSTALLED_SKILLS[@]} == 0 && ${#INVALID_INSTALLED_SKILLS[@]} == 0 )); then
         echo -e "  ${YELLOW}No skills installed in ${SKILLS_TARGET_DIR}${NC}"
         return
     fi
@@ -372,7 +511,8 @@ do_list() {
     declare -A category_skills
     local categories=()
 
-    for skill in "${installed[@]}"; do
+    local skill
+    for skill in "${INSTALLED_SKILLS[@]}"; do
         local cat
         cat="$(get_category "${SKILLS_TARGET_DIR}/${skill}")"
         category_skills[$cat]+="${skill} "
@@ -413,6 +553,8 @@ do_list() {
                 "$skill" "$ver" "$desc" "$status_label"
         done
     done
+
+    print_invalid_installed_warnings
     echo ""
 }
 

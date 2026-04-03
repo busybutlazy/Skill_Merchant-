@@ -23,7 +23,22 @@ git clone git@github.com:busybutlazy/codex-skill-toolkit.git ~/codex-skill-toolk
 
 如果你的正式 repo 名稱不同，把上面的 repo 名稱改成實際名稱即可。
 
-### 2. 在目標專案根目錄執行 manager
+### 2. 確認執行環境
+
+`skill-manager.sh` 目前依賴 Bash 4+。
+
+- `bash --version` 必須顯示 4.0 以上
+- macOS 內建 `/bin/bash` 是 3.2，不能直接拿來跑這支 script
+- 如果你在 macOS 上使用，先安裝新版 Bash，例如 `brew install bash`
+
+執行前先確認目前會用到的 `bash` 是新版：
+
+```bash
+command -v bash
+bash --version
+```
+
+### 3. 在目標專案根目錄執行 manager
 
 ```bash
 cd /path/to/target-project
@@ -32,7 +47,9 @@ bash ~/codex-skill-toolkit/skill-manager.sh
 
 `skill-manager.sh` 會把你選的公開 skills 安裝到目前專案的 `.agents/skills/`。
 
-### 3. 在這個 repo 內工作時
+manager 不會自動更新這個 toolkit repo；如果你要取得最新內容，請手動在 toolkit repo 內執行 `git pull`。
+
+### 4. 在這個 repo 內工作時
 
 這個 repo 自己的管理者 skills 放在 `.agents/skills/`，用途是維護 `skill-base/`，例如建立新 skill、更新既有 skill。
 
@@ -77,6 +94,7 @@ codex-skill-toolkit/
 - 移除目標專案中不再需要的公開 skills
 
 CLI 不會處理這個 repo 自己的 `.agents/skills/` 管理者 skills。
+目前 CLI 只支援 Codex 的 `.agents/skills/` 安裝目標；Claude 相容規劃放在後續 roadmap phase。
 
 ## Skill Format
 
