@@ -1,175 +1,285 @@
-# Codex Skill Toolkit
+# Skill Toolkit
 
-用來維護與分發 Codex skills 的工具專案。
+用來維護、驗證、render、安裝 canonical skills 的 toolkit repo。
 
-這個 repo 分成兩條用途明確的路徑：
+phase 3 起，這個 repo 採用單一 canonical source 模型：
 
-- `skill-base/`：可安裝到其他專案 `.agents/skills/` 的公開 skills
-- `.agents/skills/`：這個 repo 自己使用的管理者 skills
+- `canonical-skills/` 是唯一 source of truth
+- Codex 與 Claude 安裝內容都由 renderer 產出
+- `skill-base/` 已淘汰，不再是公開 skill 的維護入口
 
-`.codex/` 不是這個專案的主要 skills 目錄。對 Codex 而言：
+這個專案的主要使用者不需要是 Python 工程師。你只需要照著下面步驟做，就可以把 toolkit 裝起來並安裝 skill 到目標專案。
 
-- `AGENTS.md` 負責規則與協作約定
-- `.agents/skills/` 負責 task-specific skills
-- `.codex/config.toml` 才是 config / hooks / MCP 類設定位置
+## 安裝教學
 
-## Quick Start
-
-### 1. Clone 到本機
+### 1. Clone 這個 repo
 
 ```bash
 git clone git@github.com:busybutlazy/Skill_Merchant-.git ~/Skill_Merchant
+cd ~/Skill_Merchant
 ```
 
-如果你的正式 repo 名稱不同，把上面的 repo 名稱改成實際名稱即可。
+如果你的正式 repo 名稱不同，把上面的 repo URL 換成實際網址即可。
 
-### 2. 確認執行環境
+### 2. 確認電腦有 Python 3.11 以上
 
-`skill-manager.sh` 目前依賴 Bash 4+。
-
-- `bash --version` 必須顯示 4.0 以上
-- macOS 內建 `/bin/bash` 是 3.2，不能直接拿來跑這支 script
-- 如果你在 macOS 上使用，先安裝新版 Bash，例如 `brew install bash`
-
-執行前先確認目前會用到的 `bash` 是新版：
+先檢查：
 
 ```bash
-command -v bash
-bash --version
+python3 --version
 ```
 
-### 3. 在目標專案根目錄執行 manager
-
-```bash
-cd /path/to/target-project
-bash ~/Skill_Merchant/skill-manager.sh
-```
-
-`skill-manager.sh` 會把你選的公開 skills 安裝到目前專案的 `.agents/skills/`。
-
-manager 不會自動更新這個 toolkit repo；如果你要取得最新內容，請手動在 toolkit repo 內執行 `git pull`。
-
-### 4. 在這個 repo 內工作時
-
-這個 repo 自己的管理者 skills 放在 `.agents/skills/`，用途是維護 `skill-base/`，例如建立新 skill、更新既有 skill。
-
-## 專案結構
+你應該看到類似：
 
 ```text
-codex-skill-toolkit/
+Python 3.11.x
+```
+
+如果版本太舊，先安裝新版 Python，再回來繼續。
+
+### 3. 建議先建立虛擬環境
+
+這一步不是強制，但很建議。它可以避免把 toolkit 依賴裝到系統全域環境。
+
+建立虛擬環境：
+
+```bash
+python3 -m venv .venv
+```
+
+啟用虛擬環境：
+
+macOS / Linux:
+
+```bash
+source .venv/bin/activate
+```
+
+啟用後你通常會看到 shell 提示前面多出 `(.venv)`。
+
+### 4. 安裝 toolkit CLI
+
+在 repo 根目錄執行：
+
+```bash
+python3 -m pip install -e .
+```
+
+安裝完成後，你可以用任一種方式執行：
+
+```bash
+skill-toolkit --help
+python3 -m skill_toolkit --help
+```
+
+如果 `skill-toolkit --help` 找不到指令，通常代表：
+
+- 你沒有啟用虛擬環境
+- 或 PATH 還沒包含目前安裝位置
+
+這種情況直接用：
+
+```bash
+python3 -m skill_toolkit --help
+```
+
+也可以正常工作。
+
+### 5. 先驗證 toolkit repo 內的 canonical skills
+
+在 toolkit repo 根目錄執行：
+
+```bash
+python3 -m skill_toolkit --repo-root . validate
+```
+
+如果一切正常，會看到類似：
+
+```text
+VALID commit ...
+VALID create-pr ...
+VALID dto-organizer ...
+```
+
+## 安裝 skill 到目標專案
+
+以下範例假設：
+
+- toolkit repo 在 `~/Skill_Merchant`
+- 目標專案在 `/path/to/target-project`
+
+### 1. 安裝 Codex skill 到目標專案
+
+```bash
+cd ~/Skill_Merchant
+python3 -m skill_toolkit --repo-root . install commit --target codex --project /path/to/target-project
+```
+
+安裝後，目標專案會出現：
+
+```text
+/path/to/target-project/.agents/skills/commit/
+```
+
+### 2. 安裝 Claude skill 到目標專案
+
+```bash
+cd ~/Skill_Merchant
+python3 -m skill_toolkit --repo-root . install commit --target claude --project /path/to/target-project
+```
+
+安裝後，目標專案會出現：
+
+```text
+/path/to/target-project/.claude/agents/commit.md
+```
+
+### 3. 檢查目標專案目前已安裝的 skill
+
+Codex:
+
+```bash
+python3 -m skill_toolkit --repo-root . list --target codex --project /path/to/target-project
+```
+
+Claude:
+
+```bash
+python3 -m skill_toolkit --repo-root . list --target claude --project /path/to/target-project
+```
+
+### 4. 移除已安裝的 skill
+
+Codex:
+
+```bash
+python3 -m skill_toolkit --repo-root . remove commit --target codex --project /path/to/target-project
+```
+
+Claude:
+
+```bash
+python3 -m skill_toolkit --repo-root . remove commit --target claude --project /path/to/target-project
+```
+
+## 常用指令
+
+### 驗證 canonical skills
+
+```bash
+python3 -m skill_toolkit --repo-root . validate
+```
+
+### 單獨 render 某個 skill 到輸出資料夾
+
+Codex:
+
+```bash
+python3 -m skill_toolkit --repo-root . render commit --target codex --output /tmp/rendered
+```
+
+Claude:
+
+```bash
+python3 -m skill_toolkit --repo-root . render commit --target claude --output /tmp/rendered
+```
+
+### 跑 phase 3 測試
+
+```bash
+PYTHONPATH=src python3 -m unittest discover -s tests
+```
+
+## Project Layout
+
+```text
+skill-toolkit/
 ├── AGENTS.md
 ├── .agents/
 │   └── skills/
-│       ├── create-skill/
-│       │   └── SKILL.md
-│       └── update-skill/
-│           └── SKILL.md
-├── skill-base/
-│   ├── commit/
-│   │   ├── SKILL.md
-│   │   └── metadata.json
-│   └── <other-public-skills>/
-│       ├── SKILL.md
-│       ├── metadata.json
-│       ├── scripts/
-│       ├── references/
-│       ├── examples/
-│       └── assets/
 ├── canonical-skills/
 │   └── <skill>/
 │       ├── package.json
 │       ├── instruction.md
 │       ├── manifest.json
-│       └── targets/
+│       ├── targets/
+│       ├── examples/
+│       ├── references/
+│       ├── scripts/
+│       └── assets/
 ├── docs/
 │   └── phase2/
-│       ├── canonical-package-spec.md
-│       ├── adapter-contract.md
-│       └── drift-policy.md
 ├── proof/
 │   └── phase2/
-│       └── rendered/
-├── skill-manager.sh
-├── README.md
+├── src/
+│   └── skill_toolkit/
+├── tests/
+├── pyproject.toml
 ├── ROADMAP.md
 └── TODO/
-    ├── phase1.md
-    ├── phase2.md
-    └── phase3.md
 ```
 
-## 這個工具做什麼
+## Canonical Model
 
-`skill-manager.sh` 提供互動式 CLI，支援：
+每個公開 skill 都放在 `canonical-skills/<name>/`，至少包含：
 
-- 從 `skill-base/` 安裝公開 skills 到目標專案 `.agents/skills/`
-- 更新已安裝的公開 skills
-- 列出目標專案目前已安裝的公開 skills 與可用更新
-- 移除目標專案中不再需要的公開 skills
+- `package.json`
+- `instruction.md`
+- `manifest.json`
+- `targets/codex.frontmatter.json`
+- `targets/claude.frontmatter.json`
 
-CLI 不會處理這個 repo 自己的 `.agents/skills/` 管理者 skills。
-目前 CLI 只支援 Codex 的 `.agents/skills/` 安裝目標；phase 2 已補齊中立 canonical source 與 Claude adapter contract，正式 renderer / install pipeline 會在 phase 3 實作。
+可選內容：
 
-## Skill Format
+- `examples/`
+- `references/`
+- `scripts/`
+- `assets/`
 
-每個 Codex skill 至少包含：
+詳細契約請看：
 
-### `SKILL.md`
+- `docs/phase2/canonical-package-spec.md`
+- `docs/phase2/adapter-contract.md`
+- `docs/phase2/drift-policy.md`
 
-Codex 會先讀 frontmatter 的 `name` 與 `description` 來決定是否使用該 skill。
+## CLI Commands
 
-```yaml
----
-name: commit
-description: "Use this skill when the user wants help reviewing changes and creating one or more git commits."
----
-```
+- `validate`
+  - 驗證 canonical package 結構、frontmatter override、manifest、package hash
+- `render`
+  - 從 canonical source 產出 Codex 或 Claude target artifact
+- `install`
+  - 安裝 rendered package 到目標專案
+- `list`
+  - 列出已安裝 package 與狀態
+- `remove`
+  - 移除 managed package
 
-建議：
+`list` 目前會區分：
 
-- `name` 使用小寫加連字號
-- `description` 清楚描述該觸發與不該觸發的情境
-- 內容聚焦在流程、限制、輸出要求，不要塞大量背景資訊
+- `up_to_date`
+- `update_available`
+- `drift`
+- `broken`
+- `unmanaged`
 
-### `metadata.json`
+## Public Skills vs Maintainer Skills
 
-這份 metadata 主要給 `skill-manager.sh` 使用，用來顯示版本、分類與描述。
-
-```json
-{
-  "name": "commit",
-  "version": "1.0.0",
-  "category": "git",
-  "description": "Plan commit boundaries, review staged content, and craft concise commit messages",
-  "author": "Toolkit Maintainer",
-  "updated_at": "2026-04-03",
-  "tags": ["git", "commit", "workflow"]
-}
-```
-
-## 公開 Skills 與管理者 Skills 的差異
-
-- `skill-base/`
-  - 給其他專案安裝用
-  - 由 `skill-manager.sh` 管理
-  - 應保持通用、可分發、可重用
+- `canonical-skills/`
+  - 公開可分發 skills 的唯一來源
+  - 由 Python CLI 驗證與 render
 - `.agents/skills/`
-  - 給這個 repo 的維護者使用
-  - 不由 `skill-manager.sh` 安裝或列出
-  - 用來協助建立、更新、審查 `skill-base/` 內容
+  - 這個 repo 內部使用的 maintainer skills
+  - 不會被公開安裝流程直接當作 source
 
-## 新增公開 Skill
+## Validation and Tests
 
-1. 在 `skill-base/` 下建立新資料夾
-2. 加入 `SKILL.md` 與 `metadata.json`
-3. 視需要加入 `scripts/`、`references/`、`examples/`、`assets/`
-4. 在測試專案中執行 `skill-manager.sh` 驗證安裝與更新流程
-5. 提交變更
+執行 phase 3 測試：
 
-## 維護原則
+```bash
+PYTHONPATH=src python3 -m unittest discover -s tests
+```
 
-- `AGENTS.md` 放規矩，skills 放招式
-- 管理者技能不放進 `skill-base/`
-- 變更既有公開 skill 時，更新 `metadata.json.version`
-- 避免殘留任何與其他工具或舊結構耦合的目錄與文案
-- `canonical-skills/` 是 phase 2 起的唯一 source of truth；rendered artifact 不直接手改
+## Compatibility Note
+
+`skill-manager.sh` 已退役為相容提示入口，不再承擔主要邏輯。新的正式使用方式是 Python CLI。

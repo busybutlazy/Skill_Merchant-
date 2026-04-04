@@ -1,17 +1,17 @@
 ---
 name: update-skill
-description: "Use this skill when the user wants to modify an existing public skill in this repository's skill-base, revise its workflow, or update its metadata and version."
+description: "Use this skill when the user wants to modify an existing public skill in this repository's canonical-skills, revise its workflow, or update its package metadata and version."
 ---
 
 # Update Public Skill
 
-用來修改 `skill-base/` 中既有的公開 Codex skill。
+用來修改 `canonical-skills/` 中既有的公開 skill。
 
 ## Use This For
 
 - 更新 skill workflow
 - 調整 trigger description
-- 修正 metadata
+- 修正 canonical package metadata
 - 升級 skill 版本
 
 ## Do Not Use This For
@@ -26,8 +26,9 @@ description: "Use this skill when the user wants to modify an existing public sk
 
 先讀：
 
-- `skill-base/<skill-name>/SKILL.md`
-- `skill-base/<skill-name>/metadata.json`
+- `canonical-skills/<skill-name>/instruction.md`
+- `canonical-skills/<skill-name>/package.json`
+- 必要時查看 `targets/` 與 `manifest.json`
 
 搞清楚：
 
@@ -53,6 +54,7 @@ description: "Use this skill when the user wants to modify an existing public sk
 - `version`
 - `updated_at`
 - 必要時調整 `description`、`tags`
+- `manifest.json` 與 `package_sha256`
 
 版本規則：
 
@@ -66,13 +68,13 @@ description: "Use this skill when the user wants to modify an existing public sk
 
 - skill 仍屬於公開可分發內容
 - 名稱與資料夾一致
-- metadata 與 `SKILL.md` 沒有互相矛盾
+- package metadata 與 target override 沒有互相矛盾
 - 說明不依賴舊工具或已淘汰目錄
 
 ### 5. Check manager impact
 
-如果這次修改會影響安裝與更新流程，記得一起檢查：
+如果這次修改會影響 render / install 流程，記得一起檢查：
 
-- `skill-manager.sh`
+- Python CLI
 - `README.md`
-- 版本顯示與更新提示是否仍合理
+- target render output 與狀態顯示是否仍合理
