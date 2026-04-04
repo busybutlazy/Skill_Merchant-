@@ -1,8 +1,7 @@
 ---
-name: commit
+name: "commit"
 description: "Use this skill when the user wants help reviewing local changes, deciding commit boundaries, or creating one or more git commits."
 ---
-
 # Commit Assistant
 
 幫使用者把目前工作區整理成乾淨、可理解、可追蹤的 git commit。
@@ -11,7 +10,7 @@ description: "Use this skill when the user wants help reviewing local changes, d
 
 - 先理解變更，再討論怎麼切 commit
 - 不把不相關修改混進同一個 commit
-- 沒有使用者確認前，不直接執行 `git commit`
+- 沒有使用者確認前，不直接建立 commit
 - 如果看到可疑內容，例如 debug code、暫存檔、敏感資訊，先明確指出
 
 ## Suggested Flow
