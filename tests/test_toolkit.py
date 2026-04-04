@@ -9,7 +9,11 @@ import unittest
 from pathlib import Path
 
 from skill_toolkit.install import list_installed
-from skill_toolkit.repository import load_all_skills, load_skill, validate_skill_dir
+from skill_toolkit.repository import (
+    load_all_skills,
+    load_skill,
+    validate_skill_dir,
+)
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -60,7 +64,9 @@ class WorkflowTests(unittest.TestCase):
         self.assertIn("VALID dto-organizer", result.stdout)
 
     def test_codex_install_update_list_json_and_remove_workflow(self) -> None:
-        with tempfile.TemporaryDirectory(prefix="skill-toolkit-test-") as tmp_dir:
+        with tempfile.TemporaryDirectory(
+            prefix="skill-toolkit-test-"
+        ) as tmp_dir:
             temp_root = Path(tmp_dir)
             render_root = temp_root / "rendered"
             project_root = temp_root / "project"
@@ -75,7 +81,13 @@ class WorkflowTests(unittest.TestCase):
                 str(render_root),
             )
             self.assertEqual(rendered.returncode, 0, rendered.stderr)
-            rendered_skill = render_root / ".agents" / "skills" / "commit" / "SKILL.md"
+            rendered_skill = (
+                render_root
+                / ".agents"
+                / "skills"
+                / "commit"
+                / "SKILL.md"
+            )
             self.assertTrue(rendered_skill.is_file())
 
             installed = self.run_cli(
@@ -175,11 +187,18 @@ class WorkflowTests(unittest.TestCase):
             self.assertFalse(installed_dir.exists())
 
     def test_unmanaged_codex_install_is_detected_and_not_removed(self) -> None:
-        with tempfile.TemporaryDirectory(prefix="skill-toolkit-test-") as tmp_dir:
+        with tempfile.TemporaryDirectory(
+            prefix="skill-toolkit-test-"
+        ) as tmp_dir:
             project_root = Path(tmp_dir) / "project"
-            unmanaged_dir = project_root / ".agents" / "skills" / "manual-skill"
+            unmanaged_dir = (
+                project_root / ".agents" / "skills" / "manual-skill"
+            )
             unmanaged_dir.mkdir(parents=True)
-            (unmanaged_dir / "SKILL.md").write_text("manual\n", encoding="utf-8")
+            (unmanaged_dir / "SKILL.md").write_text(
+                "manual\n",
+                encoding="utf-8",
+            )
 
             statuses = list_installed(REPO_ROOT, project_root, "codex")
             self.assertEqual(statuses[0].name, "manual-skill")
@@ -198,7 +217,9 @@ class WorkflowTests(unittest.TestCase):
             self.assertIn("refusing to remove it", removed.stderr)
 
     def test_claude_install_broken_update_and_unmanaged_workflow(self) -> None:
-        with tempfile.TemporaryDirectory(prefix="skill-toolkit-test-") as tmp_dir:
+        with tempfile.TemporaryDirectory(
+            prefix="skill-toolkit-test-"
+        ) as tmp_dir:
             project_root = Path(tmp_dir) / "project"
             project_root.mkdir()
 
@@ -222,10 +243,15 @@ class WorkflowTests(unittest.TestCase):
             self.assertEqual(listed.returncode, 0, listed.stderr)
             self.assertIn("dto-organizer\tup_to_date\t", listed.stdout)
 
-            agent_path = project_root / ".claude" / "agents" / "dto-organizer.md"
+            agent_path = (
+                project_root / ".claude" / "agents" / "dto-organizer.md"
+            )
             content = agent_path.read_text(encoding="utf-8")
             lines = content.splitlines()
-            agent_path.write_text("\n".join(lines[3:]) + "\n", encoding="utf-8")
+            agent_path.write_text(
+                "\n".join(lines[3:]) + "\n",
+                encoding="utf-8",
+            )
 
             statuses = list_installed(REPO_ROOT, project_root, "claude")
             self.assertEqual(statuses[0].status, "broken")
@@ -244,7 +270,9 @@ class WorkflowTests(unittest.TestCase):
             statuses = list_installed(REPO_ROOT, project_root, "claude")
             self.assertEqual(statuses[0].status, "up_to_date")
 
-            manual_agent = project_root / ".claude" / "agents" / "manual-agent.md"
+            manual_agent = (
+                project_root / ".claude" / "agents" / "manual-agent.md"
+            )
             manual_agent.parent.mkdir(parents=True, exist_ok=True)
             manual_agent.write_text(
                 "---\nname: manual-agent\n---\nmanual\n",
@@ -262,7 +290,9 @@ class WorkflowTests(unittest.TestCase):
             self.assertEqual(listed_json.returncode, 0, listed_json.stderr)
             statuses_json = json.loads(listed_json.stdout)
             manual_status = next(
-                item for item in statuses_json if item["name"] == "manual-agent"
+                item
+                for item in statuses_json
+                if item["name"] == "manual-agent"
             )
             self.assertEqual(manual_status["status"], "unmanaged")
             self.assertFalse(manual_status["managed"])
