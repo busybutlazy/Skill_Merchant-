@@ -61,12 +61,10 @@ menu 會直接顯示：
 
 ## 使用前提
 
-- `skill-toolkit ...`
-  - 需要先執行 `python3 -m pip install -e .`
-- `python3 -m skill_toolkit ...`
-  - 預設也需要先安裝到目前 Python 環境
-  - 如果尚未安裝套件，直接執行通常會出現 `No module named skill_toolkit`
-  - 如果你只是要在 repo 內直接跑開發版本測試，可改用 `PYTHONPATH=src python3 -m skill_toolkit ...`
+- 一般使用者路線以 Docker 為主
+- 主要入口是 target project 內的 `skill-manager`
+- 需要先安裝並啟動 Docker Desktop 或等價 Docker daemon
+- 不再建議在 host 上直接安裝 toolkit CLI
 
 ## 安裝教學
 
@@ -79,226 +77,30 @@ cd ~/skill-forge
 
 如果你的正式 repo 名稱不同，把上面的 repo URL 換成實際網址即可。
 
-### 2. 確認電腦有 Python 3.11 以上
-
-先檢查：
+### 2. 確認 Docker 已啟動
 
 ```bash
-python3 --version
+docker version
 ```
 
-你應該看到類似：
+如果 daemon 沒有啟動，`skill-manager` 與容器化 CLI 都無法使用。
 
-```text
-Python 3.11.x
-```
+### 3. 啟動 skill manager
 
-如果版本太舊，先安裝新版 Python，再回來繼續。
-
-### 3. 建議先建立虛擬環境
-
-這一步不是強制，但很建議。它可以避免把 toolkit 依賴裝到系統全域環境。
-
-建立虛擬環境：
+在 target project 根目錄執行：
 
 ```bash
-python3 -m venv .venv
+skill-manager
 ```
 
-啟用虛擬環境：
+第一次執行時，wrapper 會自動 build / 更新 runtime image，之後直接進入互動式 menu。
 
-macOS / Linux:
+## 一般使用者常用操作
 
-```bash
-source .venv/bin/activate
-```
-
-啟用後你通常會看到 shell 提示前面多出 `(.venv)`。
-
-### 4. 安裝 toolkit CLI
-
-在 repo 根目錄執行：
-
-```bash
-python3 -m pip install -e .
-```
-
-安裝完成後，你可以用任一種方式執行：
-
-```bash
-skill-toolkit --help
-python3 -m skill_toolkit --help
-```
-
-如果 `skill-toolkit --help` 找不到指令，通常代表：
-
-- 你沒有啟用虛擬環境
-- 或 PATH 還沒包含目前安裝位置
-
-這種情況直接用：
-
-```bash
-python3 -m skill_toolkit --help
-```
-
-也可以正常工作。
-
-如果你還沒安裝 editable package，請改用：
-
-```bash
-PYTHONPATH=src python3 -m skill_toolkit --help
-```
-
-### 5. 先驗證 toolkit repo 內的 canonical skills
-
-在 toolkit repo 根目錄執行：
-
-```bash
-python3 -m skill_toolkit --repo-root . validate
-```
-
-如果一切正常，會看到類似：
-
-```text
-VALID commit ...
-VALID create-pr ...
-VALID dto-organizer ...
-```
-
-## 安裝 skill 到目標專案
-
-以下範例假設：
-
-- toolkit repo 在 `~/skill-forge`
-- 目標專案在 `/path/to/target-project`
-
-### 1. 安裝 Codex skill 到目標專案
-
-```bash
-cd ~/skill-forge
-python3 -m skill_toolkit --repo-root . install commit --target codex --project /path/to/target-project
-```
-
-安裝後，目標專案會出現：
-
-```text
-/path/to/target-project/.agents/skills/commit/
-```
-
-### 2. 安裝 Claude skill 到目標專案
-
-```bash
-cd ~/skill-forge
-python3 -m skill_toolkit --repo-root . install commit --target claude --project /path/to/target-project
-```
-
-安裝後，目標專案會出現：
-
-```text
-/path/to/target-project/.claude/agents/commit.md
-```
-
-### 3. 檢查目標專案目前已安裝的 skill
-
-Codex:
-
-```bash
-python3 -m skill_toolkit --repo-root . list --target codex --project /path/to/target-project
-```
-
-Claude:
-
-```bash
-python3 -m skill_toolkit --repo-root . list --target claude --project /path/to/target-project
-```
-
-如果你要給自動化流程或腳本使用，可改成：
-
-```bash
-python3 -m skill_toolkit --repo-root . list --target codex --project /path/to/target-project --json
-```
-
-或：
-
-```bash
-python3 -m skill_toolkit --repo-root . list --target claude --project /path/to/target-project --json
-```
-
-### 4. 更新已安裝的 skill
-
-一般更新：
-
-```bash
-python3 -m skill_toolkit --repo-root . update commit --target codex --project /path/to/target-project
-```
-
-若目標安裝已經 `drift`，要明確允許覆蓋本地變動：
-
-```bash
-python3 -m skill_toolkit --repo-root . update commit --target codex --project /path/to/target-project --force
-```
-
-`--force` 仍會顯示確認提示，避免把本地修改靜默覆蓋。
-
-如果你是重新安裝既有 skill，而該安裝已經 `drift`，`install` 也需要同樣加上 `--force`：
-
-```bash
-python3 -m skill_toolkit --repo-root . install commit --target codex --project /path/to/target-project --force
-```
-
-### 5. 移除已安裝的 skill
-
-Codex:
-
-```bash
-python3 -m skill_toolkit --repo-root . remove commit --target codex --project /path/to/target-project
-```
-
-Claude:
-
-```bash
-python3 -m skill_toolkit --repo-root . remove commit --target claude --project /path/to/target-project
-```
-
-## 常用指令
-
-### 驗證 canonical skills
-
-```bash
-python3 -m skill_toolkit --repo-root . validate
-```
-
-### 單獨 render 某個 skill 到輸出資料夾
-
-Codex:
-
-```bash
-python3 -m skill_toolkit --repo-root . render commit --target codex --output /tmp/rendered
-```
-
-Claude:
-
-```bash
-python3 -m skill_toolkit --repo-root . render commit --target claude --output /tmp/rendered
-```
-
-### 更新單一已安裝 skill
-
-```bash
-python3 -m skill_toolkit --repo-root . update commit --target codex --project /path/to/target-project
-```
-
-### 直接從 repo 內跑開發版 CLI
-
-```bash
-PYTHONPATH=src python3 -m skill_toolkit --repo-root . validate
-```
-
-### 跑 phase 3 測試
-
-```bash
-PYTHONPATH=src python3 -m unittest discover -s tests
-```
+- 安裝 / 更新 / 移除 skill：直接在 `skill-manager` menu 裡完成
+- 切換 target：在 menu 裡選 `Switch target`
+- 檢查已安裝狀態：在 menu 裡選 `Check installed skill status`
+- 進 expert terminal：執行 `skill-manager shell`
 
 ## 容器化開發環境
 
@@ -331,16 +133,10 @@ docker run --rm -it \
   skill-toolkit-dev
 ```
 
-進入容器後，先安裝目前 repo 的開發版套件：
-
-```bash
-python -m pip install -e .
-```
-
 ### 4. 在容器內驗證 canonical skills
 
 ```bash
-python -m skill_toolkit --repo-root . validate
+PYTHONPATH=src python -m skill_toolkit --repo-root . validate
 ```
 
 ### 5. 在容器內跑 phase 3.5 測試
@@ -353,9 +149,9 @@ PYTHONPATH=src python -m unittest discover -s tests
 
 ```bash
 mkdir -p /tmp/skill-toolkit-demo
-python -m skill_toolkit --repo-root . install commit --target codex --project /tmp/skill-toolkit-demo
-python -m skill_toolkit --repo-root . list --target codex --project /tmp/skill-toolkit-demo --json
-python -m skill_toolkit --repo-root . remove commit --target codex --project /tmp/skill-toolkit-demo
+PYTHONPATH=src python -m skill_toolkit --repo-root . install commit --target codex --project /tmp/skill-toolkit-demo
+PYTHONPATH=src python -m skill_toolkit --repo-root . list --target codex --project /tmp/skill-toolkit-demo --json
+PYTHONPATH=src python -m skill_toolkit --repo-root . remove commit --target codex --project /tmp/skill-toolkit-demo
 ```
 
 ### 7. 使用 `compose.yaml`
@@ -367,12 +163,6 @@ docker compose run --rm toolkit-dev
 ```
 
 若你要連續執行多個驗證命令，建議依序執行，不要平行開多個 `docker compose run`。同一個 compose project 在同時建立 network / container 資源時，可能出現暫時性的資源競爭。
-
-進入容器後同樣執行：
-
-```bash
-python -m pip install -e .
-```
 
 這份 `compose.yaml` 只提供維護者快速進入掛載了 repo 的開發 shell，不是 phase 5 的最終 runtime 介面。
 
@@ -415,11 +205,10 @@ make up
 
 ### 直接執行單次命令
 
-runtime image 仍然支援 direct CLI：
+如果你是維護者或進階使用者，也可以直接透過 runtime container 執行單次命令：
 
 ```bash
-docker build -t skill-toolkit:latest .
-docker run --rm skill-toolkit:latest validate
+docker compose run --build --rm toolkit validate
 ```
 
 ## Project Layout
@@ -552,7 +341,9 @@ skill-toolkit/
 執行 phase 3 測試：
 
 ```bash
-PYTHONPATH=src python3 -m unittest discover -s tests
+docker build -f Dockerfile.dev -t skill-toolkit-dev .
+docker run --rm -it -v "$PWD:/workspace" -w /workspace skill-toolkit-dev \
+  bash -lc 'PYTHONPATH=src python -m unittest discover -s tests'
 ```
 
 容器化開發驗證：
