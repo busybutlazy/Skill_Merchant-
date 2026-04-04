@@ -73,9 +73,9 @@
 
 本 repo 的 phase 2 交付物落在：
 
-- `docs/phase2/canonical-package-spec.md`
-- `docs/phase2/adapter-contract.md`
-- `docs/phase2/drift-policy.md`
+- `docs/reference/canonical-package-spec.md`
+- `docs/reference/adapter-contract.md`
+- `docs/reference/drift-policy.md`
 - `canonical-skills/commit/`
 - `proof/phase2/rendered/`
 
