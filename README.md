@@ -238,13 +238,92 @@ PYTHONPATH=src python3 -m skill_toolkit --repo-root . validate
 PYTHONPATH=src python3 -m unittest discover -s tests
 ```
 
+## 容器化開發環境
+
+phase 4 的目的是提供維護者可重現的開發與測試環境，避免依賴 host 上的 Python 狀態。這一段是 maintainer workflow，不是 phase 5 的最終對外發佈方式。
+
+### 1. 先啟動 Docker daemon
+
+先確認 Docker Desktop 或等價 daemon 已啟動：
+
+```bash
+docker version
+```
+
+如果 daemon 沒有啟動，`docker build` 與 `docker run` 都會失敗。
+
+### 2. 建立開發用 image
+
+在 repo 根目錄執行：
+
+```bash
+docker build -f Dockerfile.dev -t skill-toolkit-dev .
+```
+
+### 3. 直接用 `docker run` 進入 repo 開發環境
+
+```bash
+docker run --rm -it \
+  -v "$PWD:/workspace" \
+  -w /workspace \
+  skill-toolkit-dev
+```
+
+進入容器後，先安裝目前 repo 的開發版套件：
+
+```bash
+python -m pip install -e .
+```
+
+### 4. 在容器內驗證 canonical skills
+
+```bash
+python -m skill_toolkit --repo-root . validate
+```
+
+### 5. 在容器內跑 phase 3.5 測試
+
+```bash
+PYTHONPATH=src python -m unittest discover -s tests
+```
+
+### 6. 在容器內做 target smoke test
+
+```bash
+mkdir -p /tmp/skill-toolkit-demo
+python -m skill_toolkit --repo-root . install commit --target codex --project /tmp/skill-toolkit-demo
+python -m skill_toolkit --repo-root . list --target codex --project /tmp/skill-toolkit-demo --json
+python -m skill_toolkit --repo-root . remove commit --target codex --project /tmp/skill-toolkit-demo
+```
+
+### 7. 使用 `compose.yaml`
+
+如果你的環境支援 Docker Compose，可以改用：
+
+```bash
+docker compose run --rm toolkit-dev
+```
+
+若你要連續執行多個驗證命令，建議依序執行，不要平行開多個 `docker compose run`。同一個 compose project 在同時建立 network / container 資源時，可能出現暫時性的資源競爭。
+
+進入容器後同樣執行：
+
+```bash
+python -m pip install -e .
+```
+
+這份 `compose.yaml` 只提供維護者快速進入掛載了 repo 的開發 shell，不是 phase 5 的最終 runtime 介面。
+
 ## Project Layout
 
 ```text
 skill-toolkit/
 ├── AGENTS.md
+├── .dockerignore
 ├── .agents/
 │   └── skills/
+├── compose.yaml
+├── Dockerfile.dev
 ├── canonical-skills/
 │   └── <skill>/
 │       ├── package.json
@@ -353,6 +432,13 @@ skill-toolkit/
 
 ```bash
 PYTHONPATH=src python3 -m unittest discover -s tests
+```
+
+容器化驗證：
+
+```bash
+docker build -f Dockerfile.dev -t skill-toolkit-dev .
+docker run --rm -it -v "$PWD:/workspace" -w /workspace skill-toolkit-dev
 ```
 
 ## Compatibility Note

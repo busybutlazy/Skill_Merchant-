@@ -1,0 +1,12 @@
+services:
+  toolkit-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: skill-toolkit-dev
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+    stdin_open: true
+    tty: true
+    command: bash
