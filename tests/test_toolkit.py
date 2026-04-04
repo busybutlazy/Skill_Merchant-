@@ -27,14 +27,27 @@ class ValidationTests(unittest.TestCase):
 
 
 class WorkflowTests(unittest.TestCase):
-    def run_cli(self, *args: str, cwd: Path | None = None) -> subprocess.CompletedProcess[str]:
+    def run_cli(
+        self,
+        *args: str,
+        cwd: Path | None = None,
+        input_text: str | None = None,
+    ) -> subprocess.CompletedProcess[str]:
         env = os.environ.copy()
         env["PYTHONPATH"] = str(REPO_ROOT / "src")
         return subprocess.run(
-            [sys.executable, "-m", "skill_toolkit", "--repo-root", str(REPO_ROOT), *args],
+            [
+                sys.executable,
+                "-m",
+                "skill_toolkit",
+                "--repo-root",
+                str(REPO_ROOT),
+                *args,
+            ],
             cwd=str(cwd or REPO_ROOT),
             env=env,
             text=True,
+            input=input_text,
             capture_output=True,
             check=False,
         )
@@ -46,61 +59,224 @@ class WorkflowTests(unittest.TestCase):
         self.assertIn("VALID create-pr", result.stdout)
         self.assertIn("VALID dto-organizer", result.stdout)
 
-    def test_render_install_list_remove_codex(self) -> None:
+    def test_codex_install_update_list_json_and_remove_workflow(self) -> None:
         with tempfile.TemporaryDirectory(prefix="skill-toolkit-test-") as tmp_dir:
             temp_root = Path(tmp_dir)
             render_root = temp_root / "rendered"
             project_root = temp_root / "project"
             project_root.mkdir()
 
-            rendered = self.run_cli("render", "commit", "--target", "codex", "--output", str(render_root))
+            rendered = self.run_cli(
+                "render",
+                "commit",
+                "--target",
+                "codex",
+                "--output",
+                str(render_root),
+            )
             self.assertEqual(rendered.returncode, 0, rendered.stderr)
             rendered_skill = render_root / ".agents" / "skills" / "commit" / "SKILL.md"
             self.assertTrue(rendered_skill.is_file())
 
-            installed = self.run_cli("install", "commit", "--target", "codex", "--project", str(project_root))
+            installed = self.run_cli(
+                "install",
+                "commit",
+                "--target",
+                "codex",
+                "--project",
+                str(project_root),
+            )
             self.assertEqual(installed.returncode, 0, installed.stderr)
-            metadata_path = project_root / ".agents" / "skills" / "commit" / "metadata.json"
+            installed_dir = project_root / ".agents" / "skills" / "commit"
+            metadata_path = installed_dir / "metadata.json"
+            skill_path = installed_dir / "SKILL.md"
             self.assertTrue(metadata_path.is_file())
 
-            listed = self.run_cli("list", "--target", "codex", "--project", str(project_root))
-            self.assertEqual(listed.returncode, 0, listed.stderr)
-            self.assertIn("\tup_to_date\t", listed.stdout)
+            listed_json = self.run_cli(
+                "list",
+                "--target",
+                "codex",
+                "--project",
+                str(project_root),
+                "--json",
+            )
+            self.assertEqual(listed_json.returncode, 0, listed_json.stderr)
+            statuses = json.loads(listed_json.stdout)
+            self.assertEqual(statuses[0]["status"], "up_to_date")
+            self.assertTrue(statuses[0]["managed"])
 
             metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
-            metadata["source_package_sha256"] = "drifted"
-            metadata_path.write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            metadata["version"] = "0.0.1"
+            metadata_path.write_text(
+                json.dumps(metadata, ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8",
+            )
+            statuses = list_installed(REPO_ROOT, project_root, "codex")
+            self.assertEqual(statuses[0].status, "update_available")
+
+            updated = self.run_cli(
+                "update",
+                "commit",
+                "--target",
+                "codex",
+                "--project",
+                str(project_root),
+            )
+            self.assertEqual(updated.returncode, 0, updated.stderr)
+            statuses = list_installed(REPO_ROOT, project_root, "codex")
+            self.assertEqual(statuses[0].status, "up_to_date")
+
+            skill_path.write_text(
+                skill_path.read_text(encoding="utf-8") + "\nmanual drift\n",
+                encoding="utf-8",
+            )
             statuses = list_installed(REPO_ROOT, project_root, "codex")
             self.assertEqual(statuses[0].status, "drift")
 
-            removed = self.run_cli("remove", "commit", "--target", "codex", "--project", str(project_root))
-            self.assertEqual(removed.returncode, 0, removed.stderr)
-            self.assertFalse((project_root / ".agents" / "skills" / "commit").exists())
+            rejected = self.run_cli(
+                "update",
+                "commit",
+                "--target",
+                "codex",
+                "--project",
+                str(project_root),
+            )
+            self.assertEqual(rejected.returncode, 1)
+            self.assertIn("rerun update with --force", rejected.stderr)
 
-    def test_render_install_list_remove_claude(self) -> None:
+            forced = self.run_cli(
+                "update",
+                "commit",
+                "--target",
+                "codex",
+                "--project",
+                str(project_root),
+                "--force",
+                input_text="yes\n",
+            )
+            self.assertEqual(forced.returncode, 0, forced.stderr)
+            statuses = list_installed(REPO_ROOT, project_root, "codex")
+            self.assertEqual(statuses[0].status, "up_to_date")
+
+            skill_path.unlink()
+            statuses = list_installed(REPO_ROOT, project_root, "codex")
+            self.assertEqual(statuses[0].status, "broken")
+            self.assertTrue(statuses[0].managed)
+
+            removed = self.run_cli(
+                "remove",
+                "commit",
+                "--target",
+                "codex",
+                "--project",
+                str(project_root),
+            )
+            self.assertEqual(removed.returncode, 0, removed.stderr)
+            self.assertFalse(installed_dir.exists())
+
+    def test_unmanaged_codex_install_is_detected_and_not_removed(self) -> None:
         with tempfile.TemporaryDirectory(prefix="skill-toolkit-test-") as tmp_dir:
-            temp_root = Path(tmp_dir)
-            render_root = temp_root / "rendered"
-            project_root = temp_root / "project"
+            project_root = Path(tmp_dir) / "project"
+            unmanaged_dir = project_root / ".agents" / "skills" / "manual-skill"
+            unmanaged_dir.mkdir(parents=True)
+            (unmanaged_dir / "SKILL.md").write_text("manual\n", encoding="utf-8")
+
+            statuses = list_installed(REPO_ROOT, project_root, "codex")
+            self.assertEqual(statuses[0].name, "manual-skill")
+            self.assertEqual(statuses[0].status, "unmanaged")
+            self.assertFalse(statuses[0].managed)
+
+            removed = self.run_cli(
+                "remove",
+                "manual-skill",
+                "--target",
+                "codex",
+                "--project",
+                str(project_root),
+            )
+            self.assertEqual(removed.returncode, 1)
+            self.assertIn("refusing to remove it", removed.stderr)
+
+    def test_claude_install_broken_update_and_unmanaged_workflow(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skill-toolkit-test-") as tmp_dir:
+            project_root = Path(tmp_dir) / "project"
             project_root.mkdir()
 
-            rendered = self.run_cli("render", "dto-organizer", "--target", "claude", "--output", str(render_root))
-            self.assertEqual(rendered.returncode, 0, rendered.stderr)
-            rendered_file = render_root / ".claude" / "agents" / "dto-organizer.md"
-            rendered_assets = render_root / ".claude" / "agents" / "dto-organizer.assets" / "examples" / "DTO_2026-04-02.md"
-            self.assertTrue(rendered_file.is_file())
-            self.assertTrue(rendered_assets.is_file())
-
-            installed = self.run_cli("install", "dto-organizer", "--target", "claude", "--project", str(project_root))
+            installed = self.run_cli(
+                "install",
+                "dto-organizer",
+                "--target",
+                "claude",
+                "--project",
+                str(project_root),
+            )
             self.assertEqual(installed.returncode, 0, installed.stderr)
 
-            listed = self.run_cli("list", "--target", "claude", "--project", str(project_root))
+            listed = self.run_cli(
+                "list",
+                "--target",
+                "claude",
+                "--project",
+                str(project_root),
+            )
             self.assertEqual(listed.returncode, 0, listed.stderr)
             self.assertIn("dto-organizer\tup_to_date\t", listed.stdout)
 
-            removed = self.run_cli("remove", "dto-organizer", "--target", "claude", "--project", str(project_root))
+            agent_path = project_root / ".claude" / "agents" / "dto-organizer.md"
+            content = agent_path.read_text(encoding="utf-8")
+            lines = content.splitlines()
+            agent_path.write_text("\n".join(lines[3:]) + "\n", encoding="utf-8")
+
+            statuses = list_installed(REPO_ROOT, project_root, "claude")
+            self.assertEqual(statuses[0].status, "broken")
+            self.assertTrue(statuses[0].managed)
+
+            repaired = self.run_cli(
+                "update",
+                "dto-organizer",
+                "--target",
+                "claude",
+                "--project",
+                str(project_root),
+                input_text="yes\n",
+            )
+            self.assertEqual(repaired.returncode, 0, repaired.stderr)
+            statuses = list_installed(REPO_ROOT, project_root, "claude")
+            self.assertEqual(statuses[0].status, "up_to_date")
+
+            manual_agent = project_root / ".claude" / "agents" / "manual-agent.md"
+            manual_agent.parent.mkdir(parents=True, exist_ok=True)
+            manual_agent.write_text(
+                "---\nname: manual-agent\n---\nmanual\n",
+                encoding="utf-8",
+            )
+
+            listed_json = self.run_cli(
+                "list",
+                "--target",
+                "claude",
+                "--project",
+                str(project_root),
+                "--json",
+            )
+            self.assertEqual(listed_json.returncode, 0, listed_json.stderr)
+            statuses_json = json.loads(listed_json.stdout)
+            manual_status = next(
+                item for item in statuses_json if item["name"] == "manual-agent"
+            )
+            self.assertEqual(manual_status["status"], "unmanaged")
+            self.assertFalse(manual_status["managed"])
+
+            removed = self.run_cli(
+                "remove",
+                "dto-organizer",
+                "--target",
+                "claude",
+                "--project",
+                str(project_root),
+            )
             self.assertEqual(removed.returncode, 0, removed.stderr)
-            self.assertFalse((project_root / ".claude" / "agents" / "dto-organizer.md").exists())
+            self.assertFalse(agent_path.exists())
 
 
 if __name__ == "__main__":

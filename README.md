@@ -10,6 +10,14 @@ phase 3 起，這個 repo 採用單一 canonical source 模型：
 
 這個專案的主要使用者不需要是 Python 工程師。你只需要照著下面步驟做，就可以把 toolkit 裝起來並安裝 skill 到目標專案。
 
+## 使用前提
+
+- `skill-toolkit ...`
+  - 需要先執行 `python3 -m pip install -e .`
+- `python3 -m skill_toolkit ...`
+  - 也需要先安裝到目前 Python 環境
+  - 如果你只是要在 repo 內直接跑開發版本測試，可改用 `PYTHONPATH=src python3 -m skill_toolkit ...`
+
 ## 安裝教學
 
 ### 1. Clone 這個 repo
@@ -148,7 +156,35 @@ Claude:
 python3 -m skill_toolkit --repo-root . list --target claude --project /path/to/target-project
 ```
 
-### 4. 移除已安裝的 skill
+如果你要給自動化流程或腳本使用，可改成：
+
+```bash
+python3 -m skill_toolkit --repo-root . list --target codex --project /path/to/target-project --json
+```
+
+或：
+
+```bash
+python3 -m skill_toolkit --repo-root . list --target claude --project /path/to/target-project --json
+```
+
+### 4. 更新已安裝的 skill
+
+一般更新：
+
+```bash
+python3 -m skill_toolkit --repo-root . update commit --target codex --project /path/to/target-project
+```
+
+若目標安裝已經 `drift`，要明確允許覆蓋本地變動：
+
+```bash
+python3 -m skill_toolkit --repo-root . update commit --target codex --project /path/to/target-project --force
+```
+
+`--force` 仍會顯示確認提示，避免把本地修改靜默覆蓋。
+
+### 5. 移除已安裝的 skill
 
 Codex:
 
@@ -182,6 +218,18 @@ Claude:
 
 ```bash
 python3 -m skill_toolkit --repo-root . render commit --target claude --output /tmp/rendered
+```
+
+### 更新單一已安裝 skill
+
+```bash
+python3 -m skill_toolkit --repo-root . update commit --target codex --project /path/to/target-project
+```
+
+### 直接從 repo 內跑開發版 CLI
+
+```bash
+PYTHONPATH=src python3 -m skill_toolkit --repo-root . validate
 ```
 
 ### 跑 phase 3 測試
@@ -250,10 +298,17 @@ skill-toolkit/
   - 從 canonical source 產出 Codex 或 Claude target artifact
 - `install`
   - 安裝 rendered package 到目標專案
+  - 若目標已有同名 managed package，會直接覆蓋
 - `list`
   - 列出已安裝 package 與狀態
+  - 可加 `--json` 輸出機器可解析格式
 - `remove`
   - 移除 managed package
+  - 也允許移除帶 toolkit marker 的 broken install
+- `update`
+  - 用 canonical source 重新覆蓋已安裝 managed package
+  - phase 3.5 先只支援單一 skill 更新
+  - `drift` 狀態需加 `--force`，且仍會要求確認
 
 `list` 目前會區分：
 
@@ -262,6 +317,26 @@ skill-toolkit/
 - `drift`
 - `broken`
 - `unmanaged`
+
+狀態定義：
+
+- `up_to_date`
+  - 安裝內容與 canonical render output 一致
+- `update_available`
+  - 已安裝版本與 canonical source 版本不同
+- `drift`
+  - 仍可辨識為 toolkit 管理物，但本地內容或 hash 已與 canonical source 不一致
+- `broken`
+  - 必要檔案缺失、格式錯誤，或無法完成基本解析
+- `unmanaged`
+  - 目標位置有內容，但不是目前 toolkit 可安全管理的安裝
+
+## 安裝與更新規則
+
+- `install` 對既有 managed package 直接覆蓋。
+- `update` 只處理已安裝且可辨識為 managed 的 package。
+- `update` 遇到 `drift` 時必須加 `--force`，並在覆蓋前要求確認。
+- `remove` 會拒絕刪除 `unmanaged` package。
 
 ## Public Skills vs Maintainer Skills
 
