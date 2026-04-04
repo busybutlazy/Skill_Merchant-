@@ -15,10 +15,10 @@ phase 3 起，這個 repo 採用單一 canonical source 模型：
 ### 1. 先準備 toolkit repo
 
 ```bash
-git clone git@github.com:busybutlazy/Skill_Merchant.git ~/Skill_Merchant
+git clone git@github.com:busybutlazy/skill-forge.git ~/skill-forge
 ```
 
-把 repo 放在固定位置後，將 [skill-manager](/Users/busybutlazy/Documents/github_projects/Skill_Merchant/skill-manager) 加到你的 `PATH`，或在目標專案中用絕對路徑執行它。
+把 repo 放在固定位置後，將 [skill-manager](/Users/busybutlazy/Documents/github_projects/skill-forge/skill-manager) 加到你的 `PATH`，或在目標專案中用絕對路徑執行它。
 
 ### 2. 到你的 target project 根目錄
 
@@ -65,8 +65,8 @@ skill-manager
 ### 1. Clone 這個 repo
 
 ```bash
-git clone git@github.com:busybutlazy/Skill_Merchant.git ~/Skill_Merchant
-cd ~/Skill_Merchant
+git clone git@github.com:busybutlazy/skill-forge.git ~/skill-forge
+cd ~/skill-forge
 ```
 
 如果你的正式 repo 名稱不同，把上面的 repo URL 換成實際網址即可。
@@ -155,13 +155,13 @@ VALID dto-organizer ...
 
 以下範例假設：
 
-- toolkit repo 在 `~/Skill_Merchant`
+- toolkit repo 在 `~/skill-forge`
 - 目標專案在 `/path/to/target-project`
 
 ### 1. 安裝 Codex skill 到目標專案
 
 ```bash
-cd ~/Skill_Merchant
+cd ~/skill-forge
 python3 -m skill_toolkit --repo-root . install commit --target codex --project /path/to/target-project
 ```
 
@@ -174,7 +174,7 @@ python3 -m skill_toolkit --repo-root . install commit --target codex --project /
 ### 2. 安裝 Claude skill 到目標專案
 
 ```bash
-cd ~/Skill_Merchant
+cd ~/skill-forge
 python3 -m skill_toolkit --repo-root . install commit --target claude --project /path/to/target-project
 ```
 
