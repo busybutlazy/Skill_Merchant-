@@ -1,23 +1,23 @@
 # AGENTS.md
 
-Repository instructions for maintaining this Codex skill toolkit.
+Repository instructions for maintaining this skill toolkit.
 
 ## Purpose
 
 This repo has two distinct skill layers:
 
-- `skill-base/` contains public skills that get installed into other projects.
+- `canonical-skills/` contains public skills and is the only editable public source.
 - `.agents/skills/` contains maintainer-only skills used to work on this repository itself.
 
 Do not mix these two layers.
 
 ## Rules
 
-- Public skills belong in `skill-base/`.
+- Public skills belong in `canonical-skills/`.
 - Maintainer workflows belong in `.agents/skills/`.
-- `skill-manager.sh` only manages `skill-base/` contents.
-- Use `metadata.json` as the source of truth for public skill versioning.
-- Keep `SKILL.md` concise and explicit about trigger conditions.
+- Rendered Codex / Claude artifacts are derived output, not source.
+- Use `package.json` and `manifest.json` in each canonical skill as the source of truth for public skill versioning and integrity.
+- Keep `instruction.md` concise and explicit about trigger conditions.
 - Avoid references to company-only processes, internal repositories, or other tool-specific legacy layouts.
 
 ## Codex Structure
@@ -28,6 +28,6 @@ Do not mix these two layers.
 
 ## Validation
 
-- After changing `skill-manager.sh`, run `bash -n skill-manager.sh`.
-- Smoke-test installs into a temporary project directory and verify the target is `<project>/.agents/skills/`.
-- When updating public skills, ensure `metadata.json.version` and `updated_at` are refreshed appropriately.
+- After changing Python CLI code, run the phase 3 test suite.
+- Smoke-test installs into a temporary project directory for both Codex and Claude targets.
+- When updating public skills, ensure `package.json.identity.version`, `updated_at`, `manifest.json`, and `package_sha256` stay in sync.

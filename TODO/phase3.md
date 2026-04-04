@@ -8,8 +8,9 @@
 
 - 本 phase 採用 Python CLI 作為 manager、validator、renderer 的主要實作語言。
 - 一般使用者仍然使用 CLI，不需要理解 Python 語法。
-- 可以保留 `skill-manager.sh` 作為薄包裝 entrypoint，但核心邏輯不再放在 shell 中。
+- 正式使用入口改為 Python CLI，`skill-manager.sh` 只保留相容提示用途。
 - `version` 保留做人類可讀版本，完整性檢查改由 package hash 或 manifest 負責。
+- 公開 skills 的唯一來源是 `canonical-skills/`，`skill-base/` 在本 phase 淘汰。
 
 ## Why Python in This Phase
 
