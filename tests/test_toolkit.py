@@ -41,9 +41,12 @@ class WorkflowTests(unittest.TestCase):
         *args: str,
         cwd: Path | None = None,
         input_text: str | None = None,
+        extra_env: dict[str, str] | None = None,
     ) -> subprocess.CompletedProcess[str]:
         env = os.environ.copy()
         env["PYTHONPATH"] = str(REPO_ROOT / "src")
+        if extra_env:
+            env.update(extra_env)
         return subprocess.run(
             [
                 sys.executable,
@@ -442,6 +445,30 @@ class WorkflowTests(unittest.TestCase):
             statuses = list_installed(REPO_ROOT, project_root, "codex")
             installed_names = [status.name for status in statuses]
             self.assertEqual(installed_names, ["commit", "create-pr", "dto-organizer"])
+
+    def test_menu_prefers_host_paths_in_header_when_present(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skill-toolkit-test-") as tmp_dir:
+            project_root = Path(tmp_dir) / "project"
+            output_root = Path(tmp_dir) / "output"
+            project_root.mkdir()
+            output_root.mkdir()
+
+            result = self.run_cli(
+                "menu",
+                "--project",
+                str(project_root),
+                "--output",
+                str(output_root),
+                input_text="1\n7\n",
+                extra_env={
+                    "SKILL_TOOLKIT_PROJECT_HOST_DIR": "/host/project",
+                    "SKILL_TOOLKIT_OUTPUT_HOST_DIR": "/host/output",
+                },
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            clean_output = self.strip_ansi(result.stdout)
+            self.assertIn("Project /host/project", clean_output)
+            self.assertIn("Output  /host/output", clean_output)
 
 
 if __name__ == "__main__":

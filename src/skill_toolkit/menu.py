@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import subprocess
 from pathlib import Path
 
@@ -42,6 +43,8 @@ class InteractiveMenu:
         self.output_dir = output_dir
         self.shell_rc = shell_rc
         self.target = "codex"
+        self.project_display_dir = Path(os.environ.get("SKILL_TOOLKIT_PROJECT_HOST_DIR", str(project_dir)))
+        self.output_display_dir = Path(os.environ.get("SKILL_TOOLKIT_OUTPUT_HOST_DIR", str(output_dir)))
 
     def run(self) -> int:
         self.target = self._choose_target(initial=True)
@@ -91,15 +94,16 @@ class InteractiveMenu:
             counts[item.status] = counts.get(item.status, 0) + 1
         parts = [self._render_status_badge(status, counts[status]) for status in sorted(counts)]
         summary = ", ".join(parts) if parts else "no installed skills"
+        width = 62
         print()
-        print(_color("╔══════════════════════════════════════════════════════════════╗", CYAN))
-        print(_color("║", CYAN) + _color("                Skill Toolkit Manager                 ", BOLD) + _color("║", CYAN))
-        print(_color("╠══════════════════════════════════════════════════════════════╣", CYAN))
-        print(_color("║", CYAN) + f" Target : {self.target:<52}" + _color("║", CYAN))
-        print(_color("║", CYAN) + f" Skills : {len(self._canonical_skills()):<52}" + _color("║", CYAN))
-        print(_color("╚══════════════════════════════════════════════════════════════╝", CYAN))
-        print(_color("Project", DIM) + f" {self.project_dir}")
-        print(_color("Output ", DIM) + f" {self.output_dir}")
+        print(_color("╔" + "═" * width + "╗", CYAN))
+        print(_color("║", CYAN) + _color("Skill Toolkit Manager".center(width), BOLD) + _color("║", CYAN))
+        print(_color("╠" + "═" * width + "╣", CYAN))
+        print(_color("║", CYAN) + f" Target : {self.target:<{width - 10}}" + _color("║", CYAN))
+        print(_color("║", CYAN) + f" Skills : {len(self._canonical_skills()):<{width - 10}}" + _color("║", CYAN))
+        print(_color("╚" + "═" * width + "╝", CYAN))
+        print(_color("Project", DIM) + f" {self.project_display_dir}")
+        print(_color("Output ", DIM) + f" {self.output_display_dir}")
         print(_color("Status ", DIM) + f" {summary}")
         print()
 
