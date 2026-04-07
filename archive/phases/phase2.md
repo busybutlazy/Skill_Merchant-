@@ -48,6 +48,7 @@
 
 2. Claude adapter
    - 產出可安裝到 `<project>/.claude/agents/<skill>.md` 的 project subagent。
+   - 修正註記（2026-04-07）：此處已過時。Claude Code 官方 Skills 正式路徑已確認為 `<project>/.claude/skills/<skill>/SKILL.md`，metadata 來自 `SKILL.md` 的 YAML frontmatter，不是 project subagent `.md` 檔。
    - 只保留 Claude 真正需要的包裝層，不複製 Codex 專屬假設。
 
 3. Shared renderer rules
@@ -82,6 +83,7 @@
 補充決議：
 
 - Claude target contract 以 project subagent 為準，目標路徑固定為 `.claude/agents/<name>.md`
+- 修正註記（2026-04-07）：這個 contract 已被官方 Claude Code Skills 規格取代。現行正確路徑是 `.claude/skills/<name>/SKILL.md`。
 - phase 2 proof artifact 只作為 contract 驗證，不作為正式 install source
 
 ## Acceptance Criteria

@@ -234,7 +234,7 @@ Recommended flow:
 5. Do not hand-edit rendered artifacts such as:
 
    * `.agents/skills/`
-   * `.claude/agents/`
+   * `.claude/skills/`
 
 Recommended responsibility split:
 
@@ -646,7 +646,7 @@ canonical-skills/regular-skills/<name>/
 5. 不要手動修改 rendered artifacts，例如：
 
    * `.agents/skills/`
-   * `.claude/agents/`
+   * `.claude/skills/`
 
 建議分工：
 

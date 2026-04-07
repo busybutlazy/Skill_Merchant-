@@ -3,8 +3,6 @@ name: "finalize-skill"
 description: "Canonical skill finalizer for this repository. Use when a maintainer needs to refresh metadata and validate a skill after source edits."
 tools: "Bash, Read, Grep, Glob, Edit"
 ---
-<!-- skill-toolkit: {"name": "finalize-skill", "rendered_from": "canonical-skills/manager-skills/finalize-skill", "source_package_sha256": "16cafa011c2222808b6f11b104ad95abb675f4d783d262616484bbb53951cca2", "version": "1.0.0"} -->
-
 # Finalize Skill
 
 用來把某個 canonical skill 收尾到可驗證狀態。
@@ -20,7 +18,7 @@ tools: "Bash, Read, Grep, Glob, Edit"
 
 - 建立新的 canonical skill
 - 修改 canonical instruction 內容
-- 同步 `.agents/skills/` 或 `.claude/agents/`
+- 同步 `.agents/skills/` 或 `.claude/skills/`
 - 取代 `install-manager-skill`
 
 ## Workflow
@@ -37,7 +35,7 @@ tools: "Bash, Read, Grep, Glob, Edit"
 
 直接呼叫 repo CLI：
 
-- `PYTHONPATH=src python -m skill_toolkit --repo-root . refresh-metadata <skill-name>`
+- `PYTHONPATH=src python -m skill_forge --repo-root . refresh-metadata <skill-name>`
 
 如果這次也要更新日期或版本，可以加上：
 
@@ -49,7 +47,7 @@ tools: "Bash, Read, Grep, Glob, Edit"
 
 接著執行：
 
-- `PYTHONPATH=src python -m skill_toolkit --repo-root . validate <skill-name>`
+- `PYTHONPATH=src python -m skill_forge --repo-root . validate <skill-name>`
 
 若 validate 失敗，要明確列出 validator issues，不要假裝完成。
 

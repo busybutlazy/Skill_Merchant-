@@ -3,8 +3,6 @@ name: "install-manager-skill"
 description: "Manager skill catalog installer for this repository. Use when a maintainer needs to select manager skills and shared regular skills and sync them into local agent targets."
 tools: "Bash, Read, Grep, Glob, Edit"
 ---
-<!-- skill-toolkit: {"name": "install-manager-skill", "rendered_from": "canonical-skills/manager-skills/install-manager-skill", "source_package_sha256": "ef194de32f8331be487e6c00681c1b62aec86fa8b380f7b9457b7b52e2affc83", "version": "1.0.0"} -->
-
 # Install Manager Skill
 
 用來把管理者工作流需要的 skills 同步到這個 repo 本地的 agent 目錄。
@@ -14,14 +12,14 @@ tools: "Bash, Read, Grep, Glob, Edit"
 - 列出目前可供管理者同步的 skills
 - 從 `manager-skills/` 中挑選 manager-only skills
 - 額外納入帶有 `shared` tag 的 regular skills
-- 讓管理者選擇要同步到 `.agents/skills/`、`.claude/agents/` 或兩者都同步
+- 讓管理者選擇要同步到 `.agents/skills/`、`.claude/skills/` 或兩者都同步
 - 呼叫 repo CLI 完成 install、refresh 或 update
 
 ## Do Not Use This For
 
 - 建立新的 canonical skill
 - 修改既有 canonical skill 的內容
-- 手動編輯 `.agents/skills/` 或 `.claude/agents/`
+- 手動編輯 `.agents/skills/` 或 `.claude/skills/`
 - 取代 `create-skill` 或 `update-skill`
 
 ## Workflow
@@ -45,7 +43,7 @@ tools: "Bash, Read, Grep, Glob, Edit"
 詢問要同步到哪裡：
 
 - Codex：`.agents/skills/`
-- Claude：`.claude/agents/`
+- Claude：`.claude/skills/`
 - All：兩者都同步
 
 ### 3. Choose what to sync
@@ -58,11 +56,11 @@ tools: "Bash, Read, Grep, Glob, Edit"
 
 如果使用者沒有指定清單，預設可同步整個 manager catalog。
 
-### 4. Execute through the toolkit CLI
+### 4. Execute through the skill-forge CLI
 
 不要自己重寫安裝邏輯，直接呼叫 repo CLI：
 
-- `PYTHONPATH=src python -m skill_toolkit --repo-root . sync-manager-catalog ...`
+- `PYTHONPATH=src python -m skill_forge --repo-root . sync-manager-catalog ...`
 
 必要時加入：
 

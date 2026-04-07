@@ -3,8 +3,6 @@ name: "update-skill"
 description: "Canonical skill maintenance specialist for this repository. Use when a maintainer needs to revise an existing public canonical skill package."
 tools: "Bash, Read, Grep, Glob, Edit"
 ---
-<!-- skill-toolkit: {"name": "update-skill", "rendered_from": "canonical-skills/manager-skills/update-skill", "source_package_sha256": "a510c844ead72488699990a86edfa231bc975d806d40afdd4b24ca363a4b5310", "version": "1.0.0"} -->
-
 # Update Public Skill
 
 用來修改 `canonical-skills/regular-skills/` 中既有的公開 skill。
@@ -90,7 +88,7 @@ shared `instruction.md` 不應混入 target-specific frontmatter、Claude tools�
 - `distribution.scope` 仍符合預期
 - `content.instruction_file` 仍為 `instruction.md`
 - Codex install path 仍為 `.agents/skills/{name}/`
-- Claude install path 仍為 `.claude/agents/{name}.md`
+- Claude install path 仍為 `.claude/skills/{name}/`
 
 更新完 canonical source 後，下一步應提醒使用者執行 `finalize-skill`。
 

@@ -7,9 +7,6 @@ from pathlib import Path
 from typing import Any
 
 
-FORGE_MARKER_PREFIX = "<!-- skill-forge: "
-LEGACY_TOOLKIT_MARKER_PREFIX = "<!-- skill-toolkit: "
-FORGE_MARKER_SUFFIX = " -->"
 FRONTMATTER_PATTERN = re.compile(r"\A---\n(.*?)\n---\n?", re.DOTALL)
 
 
@@ -56,24 +53,5 @@ def dump_frontmatter(data: dict[str, Any]) -> str:
         lines.append(f"{key}: {rendered}")
     lines.append("---")
     return "\n".join(lines) + "\n"
-
-
-def make_forge_marker(payload: dict[str, Any]) -> str:
-    encoded = json.dumps(payload, sort_keys=True, ensure_ascii=False)
-    return f"{FORGE_MARKER_PREFIX}{encoded}{FORGE_MARKER_SUFFIX}\n"
-
-
-def parse_forge_marker(content: str) -> dict[str, Any] | None:
-    for line in content.splitlines():
-        if line.endswith(FORGE_MARKER_SUFFIX):
-            if line.startswith(FORGE_MARKER_PREFIX):
-                body = line[len(FORGE_MARKER_PREFIX) : -len(FORGE_MARKER_SUFFIX)]
-                return json.loads(body)
-            if line.startswith(LEGACY_TOOLKIT_MARKER_PREFIX):
-                body = line[len(LEGACY_TOOLKIT_MARKER_PREFIX) : -len(FORGE_MARKER_SUFFIX)]
-                return json.loads(body)
-    return None
-
-
 def has_frontmatter(content: str) -> bool:
     return FRONTMATTER_PATTERN.match(content) is not None

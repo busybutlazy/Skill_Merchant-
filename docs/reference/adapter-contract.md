@@ -26,6 +26,7 @@ Required outputs:
 
 - `SKILL.md`
 - `metadata.json`
+- `metadata.json`
 
 Optional outputs:
 
@@ -48,33 +49,43 @@ Optional outputs:
 
 ### Claude Target
 
-According to the Anthropic Claude Code subagents format, the project-level custom agent directory is `.claude/agents/`, and each agent is a Markdown file with YAML frontmatter. The Claude target contract therefore uses project subagents rather than `.claude/skills/`.
+According to Anthropic's Claude Code Skills documentation, project Skills live in `.claude/skills/<skill>/`, and each Skill is a directory whose required entrypoint is `SKILL.md` with YAML frontmatter.
 
 Output location:
 
 ```text
-<project>/.claude/agents/<skill>.md
+<project>/.claude/skills/<skill>/
 ```
 
 Required outputs:
 
-- `<skill>.md`
+- `SKILL.md`
 
 Optional outputs:
 
-- `<skill>.assets/`
+- `examples/`
+- `references/`
+- `scripts/`
+- `assets/`
 
-`<skill>.md` contract:
+`SKILL.md` contract:
 
 - begins with YAML frontmatter
 - frontmatter comes from `targets/claude.frontmatter.json`
 - the shared body comes directly from `instruction.md`
 
-`<skill>.assets/` contract:
+`metadata.json` contract:
+
+- must keep at least `name`, `version`, `description`, `updated_at`, and `tags`
+- must include `source_package_sha256`
+- must include the canonical source path in `rendered_from`
+- is skill-forge management metadata; Claude Code itself only requires `SKILL.md`
+
+Additional bundled file contract:
 
 - render only when the canonical package contains `examples/`, `references/`, `scripts/`, or `assets/`
-- preserve the original relative paths
-- use paths relative to `<skill>.md` for Markdown asset references, for example `./commit.assets/examples/foo.md`
+- preserve the original relative paths inside the skill directory
+- use paths relative to `SKILL.md` for Markdown references, for example `./examples/foo.md`
 
 ### Renderer Guarantees
 
@@ -91,7 +102,7 @@ Using the `commit` skill as a validation example, the system should confirm:
 
 - one shared `instruction.md`
 - two target overrides
-- successful Codex package output and Claude subagent output
+- successful Codex package output and Claude Skill output
 - no need to maintain duplicate editable copies of the shared instruction
 
 ## 繁體中文
@@ -120,6 +131,7 @@ Using the `commit` skill as a validation example, the system should confirm:
 
 - `SKILL.md`
 - `metadata.json`
+- `metadata.json`
 
 可選輸出：
 
@@ -142,33 +154,43 @@ Using the `commit` skill as a validation example, the system should confirm:
 
 ### Claude Target
 
-根據 Anthropic Claude Code 的 subagents 格式，專案層級自訂 agent 目錄是 `.claude/agents/`，每個 agent 是一個帶 YAML frontmatter 的 Markdown 檔。因此 Claude target contract 採用 project subagent，而不是 `.claude/skills/`。
+根據 Anthropic 官方 Claude Code Skills 文件，專案層級 Skill 目錄是 `.claude/skills/<skill>/`，每個 Skill 都是資料夾，必要入口檔是帶 YAML frontmatter 的 `SKILL.md`。
 
 輸出位置：
 
 ```text
-<project>/.claude/agents/<skill>.md
+<project>/.claude/skills/<skill>/
 ```
 
 必要輸出：
 
-- `<skill>.md`
+- `SKILL.md`
 
 可選輸出：
 
-- `<skill>.assets/`
+- `examples/`
+- `references/`
+- `scripts/`
+- `assets/`
 
-`<skill>.md` 契約：
+`SKILL.md` 契約：
 
 - 以 YAML frontmatter 開頭
 - frontmatter 來自 `targets/claude.frontmatter.json`
 - 共享主體直接來自 `instruction.md`
 
-`<skill>.assets/` 契約：
+`metadata.json` 契約：
+
+- 至少保留 `name`、`version`、`description`、`updated_at`、`tags`
+- 必須加入 `source_package_sha256`
+- `rendered_from` 必須保留 canonical source 路徑
+- 這是 skill-forge 自己的管理 metadata；Claude Code 官方只要求 `SKILL.md`
+
+額外 bundled 檔案契約：
 
 - 只有在 canonical package 包含 `examples/`、`references/`、`scripts/` 或 `assets/` 時才輸出
-- 保留原始相對路徑
-- Markdown 內若引用附件，應使用相對於 `<skill>.md` 的路徑，例如 `./commit.assets/examples/foo.md`
+- 在 skill 目錄內保留原始相對路徑
+- Markdown 內若引用附件，應使用相對於 `SKILL.md` 的路徑，例如 `./examples/foo.md`
 
 ### Renderer Guarantees
 
@@ -185,5 +207,5 @@ renderer 必須保證：
 
 - 只有一份共享的 `instruction.md`
 - 存在兩份 target override
-- 能成功產出 Codex package 與 Claude subagent
+- 能成功產出 Codex package 與 Claude Skill
 - 不需要維護兩份可編輯的 shared instruction

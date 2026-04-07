@@ -20,6 +20,7 @@ phase 1 到 phase 6 已經完成了核心技術骨架：
 - 為什麼團隊不該讓工程師各自安裝來路不明的 skill
 - 為什麼 canonical model 可以降低 vendor lock-in
 - 這個 repo 和官方 skills / subagents / marketplace 的差異在哪裡
+- 修正註記（2026-04-07）：本 phase 文字同時提到 `subagents`，但目前 repo 的 Claude 整合已改以官方 Claude Code Skills 為準，安裝路徑為 `.claude/skills/<name>/SKILL.md`。
 - 對一般開發者來說，第一個成功體驗應該是什麼
 
 如果這些沒有講清楚，即使功能存在，也不容易被理解、採用或貢獻。
