@@ -9,14 +9,14 @@ from pathlib import Path
 from .models import CanonicalSkill, InstalledStatus
 from .render import render_skill
 from .repository import load_all_skills, load_manager_catalog_skill, load_manager_catalog_skills, load_skill
-from .utils import has_frontmatter, parse_forge_marker, read_text, sha256_file
+from .utils import has_frontmatter, read_text, sha256_file
 
 
 def target_root(project_dir: Path, target: str) -> Path:
     if target == "codex":
         return project_dir / ".agents" / "skills"
     if target == "claude":
-        return project_dir / ".claude" / "agents"
+        return project_dir / ".claude" / "skills"
     raise ValueError(f"unsupported target: {target}")
 
 
@@ -34,14 +34,6 @@ def _materialize_install(skill: CanonicalSkill, project_dir: Path, target: str) 
                 final_path.unlink()
         final_path.parent.mkdir(parents=True, exist_ok=True)
         shutil.move(str(rendered_path), str(final_path))
-
-        if target == "claude":
-            assets_dir = temp_root / ".claude" / "agents" / f"{skill.name}.assets"
-            final_assets = final_path.with_name(f"{skill.name}.assets")
-            if final_assets.exists():
-                shutil.rmtree(final_assets)
-            if assets_dir.exists():
-                shutil.move(str(assets_dir), str(final_assets))
 
     return final_path
 
@@ -64,15 +56,12 @@ def _snapshot_directory(root: Path) -> dict[str, str]:
 
 
 def _snapshot_claude_bundle(entry: Path) -> dict[str, str]:
-    bundle: dict[str, str] = {}
-    if entry.is_file():
-        bundle[entry.name] = sha256_file(entry)
-    assets_dir = entry.with_name(f"{entry.stem}.assets")
-    if assets_dir.is_dir():
-        for path in sorted(item for item in assets_dir.rglob("*") if item.is_file()):
-            rel_path = path.relative_to(assets_dir)
-            bundle[str(Path(assets_dir.name) / rel_path)] = sha256_file(path)
-    return bundle
+    if not entry.is_dir():
+        return {}
+    return {
+        str(path.relative_to(entry)): sha256_file(path)
+        for path in sorted(item for item in entry.rglob("*") if item.is_file())
+    }
 
 
 def _classify_snapshot_diff(expected: dict[str, str], actual: dict[str, str]) -> tuple[str, str] | None:
@@ -103,6 +92,17 @@ def _expected_claude_snapshot(skill: CanonicalSkill) -> dict[str, str]:
         return _snapshot_claude_bundle(rendered)
 
 
+def _load_metadata(entry: Path, target: str) -> tuple[dict[str, object] | None, InstalledStatus | None]:
+    metadata_path = entry / "metadata.json"
+    if not metadata_path.is_file():
+        return None, InstalledStatus(name=entry.name, target=target, status="broken", location=entry, details="missing metadata.json")
+
+    try:
+        return json.loads(read_text(metadata_path)), None
+    except json.JSONDecodeError as exc:
+        return None, InstalledStatus(name=entry.name, target=target, status="broken", location=entry, details=f"invalid metadata.json: {exc}")
+
+
 def _codex_status(repo_root: Path, entry: Path, sources: dict[str, CanonicalSkill]) -> InstalledStatus:
     name = entry.name
     source = sources.get(name)
@@ -110,20 +110,15 @@ def _codex_status(repo_root: Path, entry: Path, sources: dict[str, CanonicalSkil
         return InstalledStatus(name=name, target="codex", status="unmanaged", location=entry, details="not found in canonical-skills")
 
     skill_md = entry / "SKILL.md"
-    metadata_path = entry / "metadata.json"
-    if not metadata_path.is_file():
-        return InstalledStatus(name=name, target="codex", status="broken", location=entry, details="missing metadata.json")
-
-    try:
-        metadata = json.loads(read_text(metadata_path))
-    except json.JSONDecodeError as exc:
-        return InstalledStatus(name=name, target="codex", status="broken", location=entry, details=f"invalid metadata.json: {exc}")
+    metadata, metadata_error = _load_metadata(entry, "codex")
+    if metadata_error is not None:
+        return metadata_error
 
     rendered_from = metadata.get("rendered_from")
     source_hash = metadata.get("source_package_sha256")
     version = metadata.get("version")
     if rendered_from != source.source_ref or not isinstance(source_hash, str):
-        return InstalledStatus(name=name, target="codex", status="unmanaged", location=entry, version=version, details="missing or foreign skill-forge markers")
+        return InstalledStatus(name=name, target="codex", status="unmanaged", location=entry, version=version, details="missing or foreign skill-forge metadata")
     if not skill_md.is_file():
         return InstalledStatus(name=name, target="codex", status="broken", location=entry, version=version, source_package_sha256=source_hash, details="missing SKILL.md", managed=True)
     if version != source.version:
@@ -140,33 +135,28 @@ def _codex_status(repo_root: Path, entry: Path, sources: dict[str, CanonicalSkil
 
 
 def _claude_status(repo_root: Path, entry: Path, sources: dict[str, CanonicalSkill]) -> InstalledStatus:
-    name = entry.stem
+    name = entry.name
     source = sources.get(name)
     if source is None:
         return InstalledStatus(name=name, target="claude", status="unmanaged", location=entry, details="not found in canonical-skills")
 
-    content = read_text(entry)
-    marker = None
-    managed = False
-    try:
-        marker = parse_forge_marker(content)
-    except json.JSONDecodeError as exc:
-        return InstalledStatus(name=name, target="claude", status="broken", location=entry, details=f"invalid skill-forge marker: {exc}")
+    skill_md = entry / "SKILL.md"
+    if not skill_md.is_file():
+        return InstalledStatus(name=name, target="claude", status="broken", location=entry, details="missing SKILL.md")
 
-    if marker and marker.get("rendered_from") == source.source_ref:
-        managed = True
+    content = read_text(skill_md)
+    metadata, metadata_error = _load_metadata(entry, "claude")
+    if metadata_error is not None:
+        return metadata_error
 
+    rendered_from = metadata.get("rendered_from")
+    source_hash = metadata.get("source_package_sha256")
+    version = metadata.get("version")
+    managed = rendered_from == source.source_ref and isinstance(source_hash, str)
     if not has_frontmatter(content):
-        return InstalledStatus(name=name, target="claude", status="broken", location=entry, details="missing YAML frontmatter", managed=managed)
-
-    if marker is None:
-        return InstalledStatus(name=name, target="claude", status="unmanaged", location=entry, details="missing skill-forge marker")
-
-    if marker.get("rendered_from") != source.source_ref:
-        return InstalledStatus(name=name, target="claude", status="unmanaged", location=entry, details="foreign rendered_from marker")
-
-    version = marker.get("version")
-    source_hash = marker.get("source_package_sha256")
+        return InstalledStatus(name=name, target="claude", status="broken", location=entry, version=str(version) if version is not None else None, source_package_sha256=str(source_hash) if source_hash is not None else None, details="missing YAML frontmatter", managed=managed)
+    if not managed:
+        return InstalledStatus(name=name, target="claude", status="unmanaged", location=entry, version=str(version) if version is not None else None, details="missing or foreign skill-forge metadata")
     if version != source.version:
         return InstalledStatus(name=name, target="claude", status="update_available", location=entry, version=str(version) if version is not None else None, source_package_sha256=str(source_hash) if source_hash is not None else None, managed=True)
     if source_hash != source.package_sha256:
@@ -197,7 +187,7 @@ def list_installed(
         for entry in sorted(path for path in root.iterdir() if path.is_dir()):
             statuses.append(_codex_status(repo_root, entry, sources))
     elif target == "claude":
-        for entry in sorted(path for path in root.iterdir() if path.is_file() and path.suffix == ".md"):
+        for entry in sorted(path for path in root.iterdir() if path.is_dir()):
             statuses.append(_claude_status(repo_root, entry, sources))
     else:
         raise ValueError(f"unsupported target: {target}")
@@ -304,10 +294,7 @@ def remove_skill(repo_root: Path, project_dir: Path, skill_name: str, target: st
         shutil.rmtree(status.location)
         return status.location
 
-    status.location.unlink()
-    assets_dir = status.location.with_name(f"{skill_name}.assets")
-    if assets_dir.exists():
-        shutil.rmtree(assets_dir)
+    shutil.rmtree(status.location)
     return status.location
 
 
@@ -348,14 +335,11 @@ def sync_manager_catalog(
             if target == "codex":
                 unmanaged_path = project_dir / ".agents" / "skills" / skill_name
             else:
-                unmanaged_path = project_dir / ".claude" / "agents" / f"{skill_name}.md"
+                unmanaged_path = project_dir / ".claude" / "skills" / skill_name
             if unmanaged_path.is_dir():
                 shutil.rmtree(unmanaged_path)
             elif unmanaged_path.exists():
                 unmanaged_path.unlink()
-            assets_dir = unmanaged_path.with_name(f"{skill_name}.assets")
-            if assets_dir.exists():
-                shutil.rmtree(assets_dir)
             path = install_skill(
                 repo_root,
                 project_dir,

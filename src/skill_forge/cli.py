@@ -223,14 +223,11 @@ def run_sync_maintainer(args: argparse.Namespace) -> int:
             if args.target == "codex":
                 unmanaged_path = project_dir / ".agents" / "skills" / skill_name
             else:
-                unmanaged_path = project_dir / ".claude" / "agents" / f"{skill_name}.md"
+                unmanaged_path = project_dir / ".claude" / "skills" / skill_name
             if unmanaged_path.is_dir():
                 shutil.rmtree(unmanaged_path)
             elif unmanaged_path.exists():
                 unmanaged_path.unlink()
-            assets_dir = unmanaged_path.with_name(f"{skill_name}.assets")
-            if assets_dir.exists():
-                shutil.rmtree(assets_dir)
             path = install_skill(
                 repo_root,
                 project_dir,

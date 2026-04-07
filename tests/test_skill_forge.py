@@ -100,7 +100,7 @@ class ValidationTests(unittest.TestCase):
                             },
                             "claude": {
                                 "frontmatter_file": "targets/claude.frontmatter.json",
-                                "install_path": ".claude/agents/{name}.md",
+                                "install_path": ".claude/skills/{name}/",
                             },
                         },
                         "integrity": {
@@ -484,8 +484,8 @@ class WorkflowTests(unittest.TestCase):
 
             codex_manager_metadata = project_root / ".agents" / "skills" / "create-skill" / "metadata.json"
             codex_shared_metadata = project_root / ".agents" / "skills" / "commit" / "metadata.json"
-            claude_manager_agent = project_root / ".claude" / "agents" / "create-skill.md"
-            claude_shared_agent = project_root / ".claude" / "agents" / "commit.md"
+            claude_manager_agent = project_root / ".claude" / "skills" / "create-skill" / "SKILL.md"
+            claude_shared_agent = project_root / ".claude" / "skills" / "commit" / "SKILL.md"
 
             self.assertTrue(codex_manager_metadata.is_file())
             self.assertTrue(codex_shared_metadata.is_file())
@@ -540,15 +540,16 @@ class WorkflowTests(unittest.TestCase):
             self.assertEqual(listed.returncode, 0, listed.stderr)
             self.assertIn("dto-organizer\tup_to_date\t", listed.stdout)
 
-            agent_path = (
-                project_root / ".claude" / "agents" / "dto-organizer.md"
-            )
+            skill_dir = project_root / ".claude" / "skills" / "dto-organizer"
+            agent_path = skill_dir / "SKILL.md"
+            metadata_path = skill_dir / "metadata.json"
+            self.assertTrue(metadata_path.is_file())
             content = agent_path.read_text(encoding="utf-8")
-            lines = content.splitlines()
-            agent_path.write_text(
-                "\n".join(lines[3:]) + "\n",
-                encoding="utf-8",
-            )
+            self.assertNotIn("<!-- skill-forge:", content)
+            metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+            self.assertEqual(metadata["name"], "dto-organizer")
+
+            agent_path.write_text(content.replace("---\n", "", 1), encoding="utf-8")
 
             statuses = list_installed(REPO_ROOT, project_root, "claude")
             self.assertEqual(statuses[0].status, "broken")
@@ -567,10 +568,9 @@ class WorkflowTests(unittest.TestCase):
             statuses = list_installed(REPO_ROOT, project_root, "claude")
             self.assertEqual(statuses[0].status, "up_to_date")
 
-            manual_agent = (
-                project_root / ".claude" / "agents" / "commit.md"
-            )
-            manual_agent.parent.mkdir(parents=True, exist_ok=True)
+            manual_skill_dir = project_root / ".claude" / "skills" / "commit"
+            manual_skill_dir.mkdir(parents=True, exist_ok=True)
+            manual_agent = manual_skill_dir / "SKILL.md"
             manual_agent.write_text(
                 "---\nname: commit\n---\nmanual\n",
                 encoding="utf-8",
@@ -591,7 +591,7 @@ class WorkflowTests(unittest.TestCase):
                 for item in statuses_json
                 if item["name"] == "commit"
             )
-            self.assertEqual(manual_status["status"], "unmanaged")
+            self.assertEqual(manual_status["status"], "broken")
             self.assertFalse(manual_status["managed"])
 
             rejected_install = self.run_cli(
@@ -614,7 +614,7 @@ class WorkflowTests(unittest.TestCase):
                 str(project_root),
             )
             self.assertEqual(removed.returncode, 0, removed.stderr)
-            self.assertFalse(agent_path.exists())
+            self.assertFalse(skill_dir.exists())
 
     def test_menu_installs_and_lists_codex_skill(self) -> None:
         with tempfile.TemporaryDirectory(prefix="skill-forge-test-") as tmp_dir:

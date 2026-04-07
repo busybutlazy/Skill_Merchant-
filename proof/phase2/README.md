@@ -3,7 +3,7 @@
 這份 proof 展示 `canonical-skills/commit/` 可以從同一份 shared source 產出：
 
 - Codex package: `proof/phase2/rendered/codex/.agents/skills/commit/`
-- Claude project subagent: `proof/phase2/rendered/claude/.claude/agents/commit.md`
+- Claude project Skill: `proof/phase2/rendered/claude/.claude/skills/commit/SKILL.md`
 
 注意：
 

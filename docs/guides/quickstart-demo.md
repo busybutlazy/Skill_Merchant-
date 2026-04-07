@@ -21,7 +21,7 @@ canonical-skills/regular-skills/commit/
         +------------------+
         |                  |
         v                  v
- .agents/skills/      .claude/agents/
+ .agents/skills/      .claude/skills/
    commit/              commit.md
         \                  /
          \                /
@@ -84,7 +84,7 @@ Rendered output installs into:
 Rendered output installs into:
 
 ```text
-<project>/.claude/agents/<name>.md
+<project>/.claude/skills/<name>/SKILL.md
 ```
 
 Claude skills may also include an adjacent assets directory when the canonical package includes managed assets.
@@ -154,7 +154,7 @@ canonical-skills/regular-skills/commit/
         +------------------+
         |                  |
         v                  v
- .agents/skills/      .claude/agents/
+ .agents/skills/      .claude/skills/
    commit/              commit.md
         \                  /
          \                /
@@ -217,7 +217,7 @@ render 後的 output 會安裝到：
 render 後的 output 會安裝到：
 
 ```text
-<project>/.claude/agents/<name>.md
+<project>/.claude/skills/<name>/SKILL.md
 ```
 
 如果 canonical package 包含 managed assets，Claude skill 旁邊也可能帶一個 assets 目錄。

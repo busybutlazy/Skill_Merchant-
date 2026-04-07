@@ -56,7 +56,7 @@ Only `package.json`, `instruction.md`, `manifest.json`, and at least one target 
     },
     "claude": {
       "frontmatter_file": "targets/claude.frontmatter.json",
-      "install_path": ".claude/agents/{name}.md"
+      "install_path": ".claude/skills/{name}/"
     }
   },
   "integrity": {
@@ -202,7 +202,7 @@ canonical-skills/regular-skills/<skill>/
     },
     "claude": {
       "frontmatter_file": "targets/claude.frontmatter.json",
-      "install_path": ".claude/agents/{name}.md"
+      "install_path": ".claude/skills/{name}/"
     }
   },
   "integrity": {
