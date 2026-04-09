@@ -34,17 +34,20 @@ If the source does not match either shape, stop and review it manually before at
 
 1. Download the external source into `tmp/foreign_skills/<source-name>/`.
 2. Use `import-plugin-skill` to inspect one skill source.
-3. Run the LLM risk review.
-4. If the verdict is risky, block promotion.
-5. If the verdict is safe, stage the converted draft in `tmp/import-candidates/<source-name>/<skill-name>/`.
-6. Promote into `canonical-skills/regular-skills/<skill-name>/` only after explicit approval.
-7. Run `finalize-skill <skill-name>`.
+3. Produce a structured LLM review with a risk table, evidence, severity, and mitigation guidance.
+4. If the verdict is `needs_human_review` or `block`, stop promotion and keep only review output plus remediation notes.
+5. If the verdict is `allow`, stage the converted draft in `tmp/import-candidates/<source-name>/<skill-name>/`.
+6. On explicit approval, ask whether the skill belongs in `canonical-skills/regular-skills/<skill-name>/` or `canonical-skills/manager-skills/<skill-name>/`.
+7. Promote into the chosen canonical layer, then run `refresh-metadata`, `validate`, and a Codex smoke test.
+8. Delete the matching `tmp/import-candidates/...` draft only after the full flow succeeds.
 
 ### Rules
 
 - never install foreign skills directly into `.agents/skills/` or `.claude/skills/`
 - never treat downloaded external content as canonical source before review
 - keep review findings with the staged draft
+- unresolved `medium` or `high` risk blocks promotion
+- blocked imports should return rewrite or restriction guidance, not only a rejection
 - if the source cannot be mapped cleanly to canonical structure, stop instead of forcing a lossy conversion
 
 ## 繁體中文
@@ -81,15 +84,18 @@ tmp/
 
 1. 把外部來源下載到 `tmp/foreign_skills/<source-name>/`
 2. 用 `import-plugin-skill` 檢查單一 skill 來源
-3. 執行 LLM 風險審查
-4. 若 verdict 顯示有風險，就阻擋 promotion
-5. 若 verdict 安全，就把轉換後的 draft 放到 `tmp/import-candidates/<source-name>/<skill-name>/`
-6. 只有在明確確認後，才提升到 `canonical-skills/regular-skills/<skill-name>/`
-7. 接著執行 `finalize-skill <skill-name>`
+3. 產出結構化的 LLM review，包含風險表、證據、嚴重度與 mitigation 建議
+4. 若 verdict 是 `needs_human_review` 或 `block`，就停止 promotion，只保留 review 輸出與 remediation notes
+5. 若 verdict 是 `allow`，就把轉換後的 draft 放到 `tmp/import-candidates/<source-name>/<skill-name>/`
+6. 在明確確認後，詢問正式納管到 `canonical-skills/regular-skills/<skill-name>/` 還是 `canonical-skills/manager-skills/<skill-name>/`
+7. 提升到選定的 canonical layer 後，直接執行 `refresh-metadata`、`validate` 與 Codex smoke test
+8. 只有在整個流程都成功後，才刪除對應的 `tmp/import-candidates/...` draft
 
 ### 規則
 
 - 不可把 foreign skill 直接安裝到 `.agents/skills/` 或 `.claude/skills/`
 - 在 review 前，不可把下載內容當成 canonical source
 - review findings 應與 staged draft 一起保留
+- 任何未解除的 `medium` 或 `high` 風險都不可 promote
+- 被阻擋的匯入應提供改寫或限制建議，不應只有拒絕結果
 - 若來源無法乾淨對應到 canonical 結構，應停止，而不是強行做有損轉換

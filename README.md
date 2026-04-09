@@ -274,9 +274,11 @@ Downloaded external skills should not be copied straight into `canonical-skills/
 Maintainers should use `import-plugin-skill` to:
 
 - inspect one local external skill source
-- run an LLM risk review before promotion
+- run an LLM risk review with a risk table and mitigation guidance before promotion
 - stage a draft outside canonical source
-- promote only reviewed content into `canonical-skills/regular-skills/`
+- choose explicitly whether approved content belongs in `regular-skills/` or `manager-skills/`
+- finish intake with finalize plus a Codex smoke test
+- clean the matching `tmp/import-candidates/` draft only after the full intake flow succeeds
 
 Recommended local workspace layout:
 
@@ -289,7 +291,7 @@ tmp/
 - `tmp/foreign_skills/`: downloaded external skill sources
 - `tmp/import-candidates/`: staged canonical drafts after review
 
-After promotion into canonical source, run `finalize-skill`.
+Promotion is not the end of the workflow. Successful imports should be promoted, finalized, smoke-tested, and then cleaned up.
 
 Detailed workflow:
 
@@ -741,9 +743,11 @@ canonical-skills/regular-skills/<name>/
 維護者應透過 `import-plugin-skill`：
 
 - 檢查單一本機外部 skill 來源
-- 在提升前先做 LLM 風險審查
+- 在提升前先做帶風險表與 mitigation 建議的 LLM 風險審查
 - 先把 draft 放在 canonical source 之外
-- 只有 review 通過後才提升到 `canonical-skills/regular-skills/`
+- 明確決定正式納管到 `regular-skills/` 或 `manager-skills/`
+- promote 後直接完成 finalize 與 Codex smoke test
+- 只有在整個 intake flow 成功後才清掉對應的 staging draft
 
 建議本機工作區結構：
 
@@ -756,7 +760,7 @@ tmp/
 - `tmp/foreign_skills/`：下載回來的外部 skill 來源
 - `tmp/import-candidates/`：review 後產生的 canonical draft
 
-提升進 canonical source 後，再執行 `finalize-skill`。
+promotion 不是流程終點。成功匯入後應完成 finalize、smoke test，再清理 staging draft。
 
 詳細流程請參考：
 

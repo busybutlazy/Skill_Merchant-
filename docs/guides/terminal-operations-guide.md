@@ -332,8 +332,10 @@ PYTHONPATH=src python -m skill_forge --repo-root .
 
 - 下載來源放在 `tmp/foreign_skills/`
 - 轉換後的 draft 放在 `tmp/import-candidates/`
-- promotion 前先做 LLM review
-- promotion 完成後再跑 `finalize-skill`
+- promotion 前先做帶風險表的 LLM review，並在高風險時提出限制或改寫建議
+- promote 時要明確選擇 `regular-skills/` 或 `manager-skills/`
+- promote 後直接完成 finalize 與 Codex smoke test
+- 只有整個 intake flow 成功後才刪除對應的 `tmp/import-candidates/` draft
 
 ### 維護者專用命令
 
