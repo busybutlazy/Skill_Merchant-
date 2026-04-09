@@ -75,6 +75,17 @@ class ValidationTests(unittest.TestCase):
         self.assertIn("若使用者回答 `no`", update_instruction)
         self.assertIn("只同步已經 finalize 完成的 canonical skills", install_instruction)
 
+    def test_import_plugin_skill_instruction_covers_review_promotion_and_cleanup(self) -> None:
+        import_instruction = (
+            REPO_ROOT / "canonical-skills" / "manager-skills" / "import-plugin-skill" / "instruction.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("risk table", import_instruction)
+        self.assertIn("Mitigation / required restriction", import_instruction)
+        self.assertIn("`canonical-skills/manager-skills/<skill-name>/`", import_instruction)
+        self.assertIn("至少做一個 Codex target smoke test", import_instruction)
+        self.assertIn("只有在這些步驟全部成功後，才刪除", import_instruction)
+
     def test_refresh_skill_metadata_rebuilds_manifest_and_package_hash(self) -> None:
         with tempfile.TemporaryDirectory(prefix="skill-forge-refresh-") as tmp_dir:
             temp_root = Path(tmp_dir)
