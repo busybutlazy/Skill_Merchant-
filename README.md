@@ -216,6 +216,7 @@ Detailed references:
   * `finalize-skill`
   * `import-plugin-skill`
   * `install-manager-skill`
+  * `skill-review-packet`
 
 ### `shared` tag
 
@@ -253,6 +254,7 @@ Recommended flow:
    * `finalize-skill`
    * `import-plugin-skill`
    * `install-manager-skill`
+   * `skill-review-packet`
 4. Fall back to terminal commands only when needed.
 5. Do not hand-edit rendered artifacts such as:
 
@@ -274,9 +276,12 @@ Downloaded external skills should not be copied straight into `canonical-skills/
 Maintainers should use `import-plugin-skill` to:
 
 - inspect one local external skill source
-- run an LLM risk review before promotion
-- stage a draft outside canonical source
-- promote only reviewed content into `canonical-skills/regular-skills/`
+- run `skillkeeper` before rewrite to decide whether the skill is worth canonicalizing
+- stage a draft outside canonical source through `imitator`, `reviewer`, and final `skillkeeper` admission
+- generate a `skill-review-packet` before asking for final human approval
+- choose explicitly whether approved content belongs in `regular-skills/` or `manager-skills/`
+- finish intake with finalize plus a Codex smoke test
+- clean the matching `tmp/import-candidates/` draft only after the full intake flow succeeds
 
 Recommended local workspace layout:
 
@@ -289,7 +294,7 @@ tmp/
 - `tmp/foreign_skills/`: downloaded external skill sources
 - `tmp/import-candidates/`: staged canonical drafts after review
 
-After promotion into canonical source, run `finalize-skill`.
+Promotion is not the end of the workflow. Successful imports should be promoted, finalized, smoke-tested, and then cleaned up.
 
 Detailed workflow:
 
@@ -683,6 +688,7 @@ canonical-skills/regular-skills/<name>/
   * `finalize-skill`
   * `import-plugin-skill`
   * `install-manager-skill`
+  * `skill-review-packet`
 
 ### `shared` tag
 
@@ -720,6 +726,7 @@ canonical-skills/regular-skills/<name>/
    * `finalize-skill`
    * `import-plugin-skill`
    * `install-manager-skill`
+   * `skill-review-packet`
 4. 只有在必要時才退回 terminal 命令。
 5. 不要手動修改 rendered artifacts，例如：
 
@@ -741,9 +748,12 @@ canonical-skills/regular-skills/<name>/
 維護者應透過 `import-plugin-skill`：
 
 - 檢查單一本機外部 skill 來源
-- 在提升前先做 LLM 風險審查
-- 先把 draft 放在 canonical source 之外
-- 只有 review 通過後才提升到 `canonical-skills/regular-skills/`
+- 先由 `skillkeeper` 判斷這個 skill 是否值得 canonicalize
+- 透過 `imitator`、`reviewer` 與 final `skillkeeper` admission 產出 staged draft
+- 在詢問最終人工同意前，先產出 `skill-review-packet`
+- 明確決定正式納管到 `regular-skills/` 或 `manager-skills/`
+- promote 後直接完成 finalize 與 Codex smoke test
+- 只有在整個 intake flow 成功後才清掉對應的 staging draft
 
 建議本機工作區結構：
 
@@ -756,7 +766,7 @@ tmp/
 - `tmp/foreign_skills/`：下載回來的外部 skill 來源
 - `tmp/import-candidates/`：review 後產生的 canonical draft
 
-提升進 canonical source 後，再執行 `finalize-skill`。
+promotion 不是流程終點。成功匯入後應完成 finalize、smoke test，再清理 staging draft。
 
 詳細流程請參考：
 

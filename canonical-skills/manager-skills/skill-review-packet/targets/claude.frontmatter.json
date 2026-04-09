@@ -1,0 +1,5 @@
+{
+  "name": "skill-review-packet",
+  "description": "Maintainer review packet specialist. Use when upstream skill review artifacts need to be packaged into a consistent human-facing review bundle.",
+  "tools": "Bash, Read, Grep, Glob"
+}

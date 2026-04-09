@@ -23,11 +23,14 @@ canonical-skills/regular-skills/<skill>/
 │   └── claude.frontmatter.json
 ├── examples/
 ├── references/
+│   └── agent-prompts/
 ├── scripts/
 └── assets/
 ```
 
 Only `package.json`, `instruction.md`, `manifest.json`, and at least one target override are required. The other directories are optional.
+
+If a skill needs fixed, maintainer-editable agent prompts, store them under `references/agent-prompts/`. These files are shared canonical reference material and are not target-specific.
 
 ### Required Fields
 
@@ -169,11 +172,14 @@ canonical-skills/regular-skills/<skill>/
 │   └── claude.frontmatter.json
 ├── examples/
 ├── references/
+│   └── agent-prompts/
 ├── scripts/
 └── assets/
 ```
 
 只有 `package.json`、`instruction.md`、`manifest.json` 與至少一個 target override 是必要檔案，其餘目錄皆為選用。
+
+如果某個 skill 需要固定且可由維護者編輯的 agent prompt，建議放在 `references/agent-prompts/`。這些檔案屬於共享 canonical reference material，不是 target-specific 設定。
 
 ### 必要欄位
 

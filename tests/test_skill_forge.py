@@ -75,6 +75,31 @@ class ValidationTests(unittest.TestCase):
         self.assertIn("若使用者回答 `no`", update_instruction)
         self.assertIn("只同步已經 finalize 完成的 canonical skills", install_instruction)
 
+    def test_import_plugin_skill_instruction_covers_review_promotion_and_cleanup(self) -> None:
+        import_instruction = (
+            REPO_ROOT / "canonical-skills" / "manager-skills" / "import-plugin-skill" / "instruction.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("Skill 類型判定", import_instruction)
+        self.assertIn("Trigger 邊界分析", import_instruction)
+        self.assertIn("Permission model 分析", import_instruction)
+        self.assertIn("Failure mode 分析", import_instruction)
+        self.assertIn("Canonicalization 建議", import_instruction)
+        self.assertIn("Maintenance cost", import_instruction)
+        self.assertIn("`review-report.md` 必須使用繁體中文撰寫", import_instruction)
+        self.assertIn("先把這些內容交給使用者審查", import_instruction)
+        self.assertIn("應依照 `update-skill` 的修改原則處理 staged draft", import_instruction)
+        self.assertIn("change-request.md", import_instruction)
+        self.assertIn("draft-review.md", import_instruction)
+        self.assertIn("reviewer 只做差異審查，不自行重寫整份 draft", import_instruction)
+        self.assertIn("reviewer verdict：`pass` 或 `revise`", import_instruction)
+        self.assertIn("`pass` 前，不可進入 promote 問題", import_instruction)
+        self.assertIn("使用者明確表示 draft 不再需要修改", import_instruction)
+        self.assertIn("最新 `draft-review.md` verdict 必須是 `pass`", import_instruction)
+        self.assertIn("`canonical-skills/manager-skills/<skill-name>/`", import_instruction)
+        self.assertIn("至少做一個 Codex target smoke test", import_instruction)
+        self.assertIn("只有在這些步驟全部成功後，才刪除", import_instruction)
+
     def test_refresh_skill_metadata_rebuilds_manifest_and_package_hash(self) -> None:
         with tempfile.TemporaryDirectory(prefix="skill-forge-refresh-") as tmp_dir:
             temp_root = Path(tmp_dir)
@@ -661,7 +686,10 @@ class WorkflowTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             statuses = list_installed(REPO_ROOT, project_root, "codex")
             installed_names = [status.name for status in statuses]
-            self.assertEqual(installed_names, ["commit", "create-pr", "dto-organizer"])
+            expected_names = [
+                skill.name for skill in load_all_skills(REPO_ROOT, target_filter={"codex"}, scopes={"public"})
+            ]
+            self.assertEqual(installed_names, expected_names)
 
     def test_menu_prefers_host_project_path_in_header_when_present(self) -> None:
         with tempfile.TemporaryDirectory(prefix="skill-forge-test-") as tmp_dir:

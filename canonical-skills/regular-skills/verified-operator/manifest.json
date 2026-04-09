@@ -1,0 +1,37 @@
+{
+  "files": [
+    {
+      "path": "instruction.md",
+      "sha256": "0252eef8d0f4d665aafb11a82a2424e2f9fdb5bb16e1425f6330212bb716255e"
+    },
+    {
+      "path": "targets/claude.frontmatter.json",
+      "sha256": "b44104ab6388c1f971bb031de1c9a6185b1fe15eb932c4be80a2cbf8b1b7e256"
+    },
+    {
+      "path": "targets/codex.frontmatter.json",
+      "sha256": "e530b0681a3b939614099f4e4455097048a36a4a386e53da00219cd67b5b3cc4"
+    },
+    {
+      "path": "examples/api-integration.md",
+      "sha256": "905ab61744ec2b0240e018577224692e773b950ca1dccc92ed959c3788d3f79c"
+    },
+    {
+      "path": "examples/deploy-static-site.md",
+      "sha256": "3aed488e83845f69d3e44ebbe7f3ead63a45e01c3724bc1da936470a49220196"
+    },
+    {
+      "path": "examples/device-control.md",
+      "sha256": "9ecf948034af76b65c9a88453e01009d8520b4ee947fabc5b7095379208ab870"
+    },
+    {
+      "path": "examples/multi-phase-orchestration.md",
+      "sha256": "51c98e43ab689fb777a80a1f238ff801d3e5248c7d92909cbe7da60da1bc4e33"
+    },
+    {
+      "path": "examples/multi-service-coordination.md",
+      "sha256": "c857e2e4388b0fb5d688851454bee07e3210d9f7a3f8473525503ff4345bfe2e"
+    }
+  ],
+  "package_sha256": "d041caea19ed9d6520cc503d2217b17495e832acf456b506ae3e469db4080a96"
+}

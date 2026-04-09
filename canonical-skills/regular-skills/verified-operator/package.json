@@ -1,23 +1,23 @@
 {
   "schema_version": 1,
   "identity": {
-    "name": "import-plugin-skill",
-    "version": "1.7.0",
-    "description": "Review one local plugin skill source through skillkeeper, imitator, reviewer, and a review packet before promotion",
+    "name": "verified-operator",
+    "version": "0.1.0",
+    "description": "Operate live systems with verification, evidence, recovery, and state tracking",
     "updated_at": "2026-04-10",
     "tags": [
-      "maintainer",
-      "import",
-      "plugin-review",
-      "canonical-skills",
-      "skill-folder"
+      "operations",
+      "verification",
+      "orchestration",
+      "automation",
+      "shared"
     ]
-  },
-  "distribution": {
-    "scope": "maintainer"
   },
   "content": {
     "instruction_file": "instruction.md"
+  },
+  "distribution": {
+    "scope": "public"
   },
   "targets": {
     "codex": {
@@ -31,6 +31,6 @@
   },
   "integrity": {
     "manifest_file": "manifest.json",
-    "package_sha256": "826af56f15390bd55fc5307fdbf63350a65794e84d89f46b034afb6d555bd063"
+    "package_sha256": "d041caea19ed9d6520cc503d2217b17495e832acf456b506ae3e469db4080a96"
   }
 }
