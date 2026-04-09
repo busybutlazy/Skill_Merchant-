@@ -1,0 +1,4 @@
+{
+  "name": "verified-operator",
+  "description": "Use this skill when the assistant must operate live systems, verify each action with receipts, and recover safely from drift."
+}

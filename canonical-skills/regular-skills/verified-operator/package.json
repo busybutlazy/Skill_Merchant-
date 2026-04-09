@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "identity": {
+    "name": "verified-operator",
+    "version": "0.1.0",
+    "description": "Operate live systems with verification, evidence, recovery, and state tracking",
+    "updated_at": "2026-04-10",
+    "tags": [
+      "operations",
+      "verification",
+      "orchestration",
+      "automation",
+      "shared"
+    ]
+  },
+  "content": {
+    "instruction_file": "instruction.md"
+  },
+  "distribution": {
+    "scope": "public"
+  },
+  "targets": {
+    "codex": {
+      "frontmatter_file": "targets/codex.frontmatter.json",
+      "install_path": ".agents/skills/{name}/"
+    },
+    "claude": {
+      "frontmatter_file": "targets/claude.frontmatter.json",
+      "install_path": ".claude/skills/{name}/"
+    }
+  },
+  "integrity": {
+    "manifest_file": "manifest.json",
+    "package_sha256": "d041caea19ed9d6520cc503d2217b17495e832acf456b506ae3e469db4080a96"
+  }
+}
