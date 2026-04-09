@@ -80,8 +80,13 @@ class ValidationTests(unittest.TestCase):
             REPO_ROOT / "canonical-skills" / "manager-skills" / "import-plugin-skill" / "instruction.md"
         ).read_text(encoding="utf-8")
 
-        self.assertIn("risk table", import_instruction)
-        self.assertIn("Mitigation / required restriction", import_instruction)
+        self.assertIn("Skill 類型判定", import_instruction)
+        self.assertIn("Trigger 邊界分析", import_instruction)
+        self.assertIn("Permission model 分析", import_instruction)
+        self.assertIn("Failure mode 分析", import_instruction)
+        self.assertIn("Canonicalization 建議", import_instruction)
+        self.assertIn("Maintenance cost", import_instruction)
+        self.assertIn("`review-report.md` 必須使用繁體中文撰寫", import_instruction)
         self.assertIn("`canonical-skills/manager-skills/<skill-name>/`", import_instruction)
         self.assertIn("至少做一個 Codex target smoke test", import_instruction)
         self.assertIn("只有在這些步驟全部成功後，才刪除", import_instruction)
