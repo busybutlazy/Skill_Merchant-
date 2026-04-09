@@ -36,7 +36,13 @@ canonical-skills/regular-skills/commit/
 1. Clone the skill-forge repo.
 
 ```bash
-git clone git@github.com:busybutlazy/skill-forge.git ~/skill-forge
+git clone https://github.com/busybutlazy/skill-forge.git ~/skill-forge
+```
+
+PowerShell:
+
+```powershell
+git clone https://github.com/busybutlazy/skill-forge.git "$HOME\skill-forge"
 ```
 
 2. Open your target project.
@@ -49,6 +55,12 @@ cd /path/to/target-project
 
 ```bash
 ~/skill-forge/skill-manager
+```
+
+PowerShell:
+
+```powershell
+& "$HOME\skill-forge\skill-manager.ps1"
 ```
 
 4. Choose a target.
@@ -117,6 +129,13 @@ cd /path/to/target-project
 ~/skill-forge/skill-manager
 ```
 
+PowerShell:
+
+```powershell
+Set-Location C:\path\to\target-project
+& "$HOME\skill-forge\skill-manager.ps1"
+```
+
 Then:
 
 - select target
@@ -169,7 +188,13 @@ canonical-skills/regular-skills/commit/
 1. 複製 skill-forge repo。
 
 ```bash
-git clone git@github.com:busybutlazy/skill-forge.git ~/skill-forge
+git clone https://github.com/busybutlazy/skill-forge.git ~/skill-forge
+```
+
+PowerShell:
+
+```powershell
+git clone https://github.com/busybutlazy/skill-forge.git "$HOME\skill-forge"
 ```
 
 2. 打開你的 target project。
@@ -182,6 +207,12 @@ cd /path/to/target-project
 
 ```bash
 ~/skill-forge/skill-manager
+```
+
+PowerShell:
+
+```powershell
+& "$HOME\skill-forge\skill-manager.ps1"
 ```
 
 4. 選擇 target。
@@ -248,6 +279,13 @@ PYTHONPATH=src python -m skill_forge --repo-root . render commit --target claude
 ```bash
 cd /path/to/target-project
 ~/skill-forge/skill-manager
+```
+
+PowerShell:
+
+```powershell
+Set-Location C:\path\to\target-project
+& "$HOME\skill-forge\skill-manager.ps1"
 ```
 
 接著：

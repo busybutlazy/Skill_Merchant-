@@ -22,6 +22,8 @@ The key difference is simple:
 
 `skill-manager` is the preferred consumer entrypoint.
 
+On Windows PowerShell, use `skill-manager.ps1`.
+
 Behavior:
 
 - with no arguments, it opens the interactive menu for the current project
@@ -37,6 +39,27 @@ Use `skill-manager` when you want:
 - remove managed installs
 - inspect current install state
 - avoid thinking about Docker flags or project paths
+
+PowerShell examples:
+
+```powershell
+& "$HOME\skill-forge\skill-manager.ps1"
+& "$HOME\skill-forge\skill-manager.ps1" shell
+& "$HOME\skill-forge\skill-manager.ps1" list --target codex --project /workspace/project --json
+```
+
+Windows path notes:
+
+- use `$HOME\skill-forge\skill-manager.ps1` instead of `~/skill-forge/skill-manager`
+- keep the host mount path in Windows form for Docker invocation; the launcher normalizes it for Compose
+- keep container paths such as `/workspace/project` in CLI arguments because those paths are resolved inside the Linux container
+
+If PowerShell blocks `.ps1` execution, allow the current session and retry:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+& "$HOME\skill-forge\skill-manager.ps1"
+```
 
 ### Interactive Menu
 
@@ -190,6 +213,8 @@ terminal 介面其實分成兩種用法：
 
 `skill-manager` 是一般使用者的主要入口。
 
+在 Windows PowerShell 上請使用 `skill-manager.ps1`。
+
 它的行為是：
 
 - 不帶參數時，為目前專案打開 interactive menu
@@ -205,6 +230,27 @@ terminal 介面其實分成兩種用法：
 - 移除 managed install
 - 檢查目前狀態
 - 不想自己處理 Docker 參數與 project path
+
+PowerShell 範例：
+
+```powershell
+& "$HOME\skill-forge\skill-manager.ps1"
+& "$HOME\skill-forge\skill-manager.ps1" shell
+& "$HOME\skill-forge\skill-manager.ps1" list --target codex --project /workspace/project --json
+```
+
+Windows 路徑注意事項：
+
+- 啟動器請用 `$HOME\skill-forge\skill-manager.ps1`，不要預設寫成 `~/skill-forge/skill-manager`
+- host 端掛載路徑維持 Windows 路徑語意，由啟動器轉成 Compose 較穩定的格式
+- CLI 參數中的 `/workspace/project` 這類容器內路徑仍然保留正斜線，因為它是在 Linux container 內解析
+
+如果 PowerShell 擋住 `.ps1` 執行，可以先放行目前這個 session 再重試：
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+& "$HOME\skill-forge\skill-manager.ps1"
+```
 
 ### Interactive Menu
 
