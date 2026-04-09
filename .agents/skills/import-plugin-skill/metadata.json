@@ -1,0 +1,14 @@
+{
+  "name": "import-plugin-skill",
+  "version": "1.0.0",
+  "description": "Review one local Codex plugin skill, stage a canonical draft, and promote safe imports into canonical-skills",
+  "updated_at": "2026-04-09",
+  "tags": [
+    "maintainer",
+    "import",
+    "plugin-review",
+    "canonical-skills"
+  ],
+  "source_package_sha256": "bf5bca29026efbf0803811efd5423cf3e913e6877e8658129b0e2b738bf505c6",
+  "rendered_from": "canonical-skills/manager-skills/import-plugin-skill"
+}
