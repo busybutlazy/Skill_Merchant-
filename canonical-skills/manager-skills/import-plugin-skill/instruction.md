@@ -276,6 +276,19 @@ staged draft 至少包含：
 - unresolved risks
 - 需要人工決定的點
 
+review packet 與相關 review artifacts 在 promote 後不應留在 public canonical skill 目錄中。若流程成功完成，應把 review trail 保留到 repo 內的固定 maintainer 路徑，例如：
+
+- `reviews/<skill-name>/skillkeeper-initial.md`
+- `reviews/<skill-name>/source-inventory.md`
+- `reviews/<skill-name>/reviewer-report.md`
+- `reviews/<skill-name>/skillkeeper-final.md`
+- `reviews/<skill-name>/skill-review-packet.md`
+
+若有 revision，也一併保留：
+
+- `reviews/<skill-name>/change-request.md`
+- `reviews/<skill-name>/draft-review.md`
+
 ### 9. Handle human feedback
 
 若使用者要修改 staged draft，先不要 promote。
@@ -322,9 +335,24 @@ promote 前仍要再次確認：
 步驟：
 
 - 把 staged draft 複製到使用者選定的 canonical layer
+- 把 review artifacts 複製到 `reviews/<skill-name>/`
 - 執行 `refresh-metadata`
 - 執行 `validate`
 - 至少做一個 Codex target smoke test
+- 只有在上述步驟都成功後，才刪除對應的 `tmp/import-candidates/<source-name>/<skill-name>/`
+
+review artifacts 預設至少包含：
+
+- `skillkeeper-initial.md`
+- `source-inventory.md`
+- `reviewer-report.md`
+- `skillkeeper-final.md`
+- `skill-review-packet.md`
+
+若存在，也要一併搬移：
+
+- `change-request.md`
+- `draft-review.md`
 
 smoke test 規則：
 
@@ -341,6 +369,7 @@ smoke test 規則：
 - `reviewer-report.md` 結論
 - `skillkeeper-final.md` 結論
 - `skill-review-packet.md` 是否已更新
+- review artifacts 是否已保存到 `reviews/<skill-name>/`
 - 若 draft 曾修改過，`change-request.md` 與 `draft-review.md` 的結論
 - 最終 package hash
 - validate 結果

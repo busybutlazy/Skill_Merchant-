@@ -10,6 +10,6 @@
     "canonical-skills",
     "skill-folder"
   ],
-  "source_package_sha256": "5b9f37369b3a4fbcf93264fa988e95664155ad501742bd98f13f34353a2945d2",
+  "source_package_sha256": "826af56f15390bd55fc5307fdbf63350a65794e84d89f46b034afb6d555bd063",
   "rendered_from": "canonical-skills/manager-skills/import-plugin-skill"
 }

@@ -14,10 +14,14 @@ Use this local workspace convention:
 tmp/
 ├── foreign_skills/
 └── import-candidates/
+
+reviews/
+└── <skill-name>/
 ```
 
 - `tmp/foreign_skills/`: downloaded external skill sources
 - `tmp/import-candidates/`: staged canonical drafts created after review
+- `reviews/<skill-name>/`: preserved maintainer review artifacts after a successful promote
 
 Do not place downloaded external sources directly under `canonical-skills/`.
 
@@ -39,14 +43,15 @@ If the source does not match either shape, stop and review it manually before at
 5. If the verdict is `allow`, stage the converted draft in `tmp/import-candidates/<source-name>/<skill-name>/`.
 6. Let the user review the report and staged draft first; if changes are needed, write `change-request.md`, revise the draft, and require a reviewer pass in `draft-review.md`.
 7. On explicit approval, and only after the reviewer verdict is `pass`, ask whether the skill belongs in `canonical-skills/regular-skills/<skill-name>/` or `canonical-skills/manager-skills/<skill-name>/`.
-8. Promote into the chosen canonical layer, then run `refresh-metadata`, `validate`, and a Codex smoke test.
+8. Promote into the chosen canonical layer, copy the review artifacts into `reviews/<skill-name>/`, then run `refresh-metadata`, `validate`, and a Codex smoke test.
 9. Delete the matching `tmp/import-candidates/...` draft only after the full flow succeeds.
 
 ### Rules
 
 - never install foreign skills directly into `.agents/skills/` or `.claude/skills/`
 - never treat downloaded external content as canonical source before review
-- keep review findings with the staged draft
+- keep review findings with the staged draft until promotion completes
+- after a successful promote, preserve the review trail under `reviews/<skill-name>/` instead of storing it inside the public canonical skill
 - treat `change-request.md` and `draft-review.md` as part of the staged review trail when a draft is revised
 - unresolved `medium` or `high` risk blocks promotion
 - unclear trigger boundaries, weak approval gates, or unmanageable maintenance cost can also block promotion
@@ -67,10 +72,14 @@ If the source does not match either shape, stop and review it manually before at
 tmp/
 ├── foreign_skills/
 └── import-candidates/
+
+reviews/
+└── <skill-name>/
 ```
 
 - `tmp/foreign_skills/`：下載回來的外部 skill 來源
 - `tmp/import-candidates/`：review 後產生的 canonical 草稿
+- `reviews/<skill-name>/`：promote 成功後保留的 maintainer review artifacts
 
 不要把下載回來的外部來源直接放進 `canonical-skills/`。
 
@@ -92,14 +101,15 @@ tmp/
 5. 若 verdict 是 `allow`，就把轉換後的 draft 放到 `tmp/import-candidates/<source-name>/<skill-name>/`
 6. 先讓使用者審查 `review-report.md` 與 staged draft；若要修改，先整理 `change-request.md`、修 draft，再由 reviewer 產出 `draft-review.md`
 7. 只有在使用者確認 draft 不再需要修改，且 reviewer verdict 為 `pass` 後，才詢問正式納管到 `canonical-skills/regular-skills/<skill-name>/` 還是 `canonical-skills/manager-skills/<skill-name>/`
-8. 提升到選定的 canonical layer 後，直接執行 `refresh-metadata`、`validate` 與 Codex smoke test
+8. 提升到選定的 canonical layer 後，把 review artifacts 複製到 `reviews/<skill-name>/`，再執行 `refresh-metadata`、`validate` 與 Codex smoke test
 9. 只有在整個流程都成功後，才刪除對應的 `tmp/import-candidates/...` draft
 
 ### 規則
 
 - 不可把 foreign skill 直接安裝到 `.agents/skills/` 或 `.claude/skills/`
 - 在 review 前，不可把下載內容當成 canonical source
-- review findings 應與 staged draft 一起保留
+- promotion 完成前，review findings 應與 staged draft 一起保留
+- promotion 成功後，review trail 應保存到 `reviews/<skill-name>/`，不要混進 public canonical skill
 - 若有修改 draft，`change-request.md` 與 `draft-review.md` 也應保留在 staging review trail
 - 任何未解除的 `medium` 或 `high` 風險都不可 promote
 - trigger 邊界不清、approval gate 過軟、或 maintenance cost 不可治理，也可以成為不 promote 的理由
