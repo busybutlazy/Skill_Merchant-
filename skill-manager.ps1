@@ -8,6 +8,13 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
+if ($null -eq $CliArgs) {
+    $CliArgs = @()
+}
+else {
+    $CliArgs = @($CliArgs)
+}
+
 function Show-Help {
     @'
 Usage:
