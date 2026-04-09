@@ -216,6 +216,7 @@ Detailed references:
   * `finalize-skill`
   * `import-plugin-skill`
   * `install-manager-skill`
+  * `skill-review-packet`
 
 ### `shared` tag
 
@@ -253,6 +254,7 @@ Recommended flow:
    * `finalize-skill`
    * `import-plugin-skill`
    * `install-manager-skill`
+   * `skill-review-packet`
 4. Fall back to terminal commands only when needed.
 5. Do not hand-edit rendered artifacts such as:
 
@@ -274,9 +276,9 @@ Downloaded external skills should not be copied straight into `canonical-skills/
 Maintainers should use `import-plugin-skill` to:
 
 - inspect one local external skill source
-- run a maintainer decision review before promotion, covering skill type, trigger boundary, permission model, failure modes, canonicalization, and maintenance cost
-- stage a draft outside canonical source
-- let the user review the report and staged draft, and if changes are needed, write `change-request.md`, revise the draft, and require a reviewer pass before promotion
+- run `skillkeeper` before rewrite to decide whether the skill is worth canonicalizing
+- stage a draft outside canonical source through `imitator`, `reviewer`, and final `skillkeeper` admission
+- generate a `skill-review-packet` before asking for final human approval
 - choose explicitly whether approved content belongs in `regular-skills/` or `manager-skills/`
 - finish intake with finalize plus a Codex smoke test
 - clean the matching `tmp/import-candidates/` draft only after the full intake flow succeeds
@@ -686,6 +688,7 @@ canonical-skills/regular-skills/<name>/
   * `finalize-skill`
   * `import-plugin-skill`
   * `install-manager-skill`
+  * `skill-review-packet`
 
 ### `shared` tag
 
@@ -723,6 +726,7 @@ canonical-skills/regular-skills/<name>/
    * `finalize-skill`
    * `import-plugin-skill`
    * `install-manager-skill`
+   * `skill-review-packet`
 4. 只有在必要時才退回 terminal 命令。
 5. 不要手動修改 rendered artifacts，例如：
 
@@ -744,9 +748,9 @@ canonical-skills/regular-skills/<name>/
 維護者應透過 `import-plugin-skill`：
 
 - 檢查單一本機外部 skill 來源
-- 在提升前先做 maintainer decision review，評估 skill 類型、trigger 邊界、權限模型、failure mode、canonicalization 與 maintenance cost
-- 先把 draft 放在 canonical source 之外
-- 先讓使用者審查 review report 與 staged draft；若要修改，先整理 `change-request.md`、修 draft，再交給 reviewer 產出 `draft-review.md`
+- 先由 `skillkeeper` 判斷這個 skill 是否值得 canonicalize
+- 透過 `imitator`、`reviewer` 與 final `skillkeeper` admission 產出 staged draft
+- 在詢問最終人工同意前，先產出 `skill-review-packet`
 - 明確決定正式納管到 `regular-skills/` 或 `manager-skills/`
 - promote 後直接完成 finalize 與 Codex smoke test
 - 只有在整個 intake flow 成功後才清掉對應的 staging draft

@@ -35,6 +35,12 @@ Optional outputs:
 - `scripts/`
 - `assets/`
 
+Prompt-file convention:
+
+- fixed agent prompts, when used, should be sourced from `references/agent-prompts/`
+- Codex and Claude share the same canonical prompt-file location
+- prompt files are bundled as reference material, not as target-specific wrapper content
+
 `SKILL.md` contract:
 
 - begins with YAML frontmatter
@@ -86,6 +92,7 @@ Additional bundled file contract:
 - render only when the canonical package contains `examples/`, `references/`, `scripts/`, or `assets/`
 - preserve the original relative paths inside the skill directory
 - use paths relative to `SKILL.md` for Markdown references, for example `./examples/foo.md`
+- if the canonical package contains `references/agent-prompts/`, preserve that relative path in both Codex and Claude outputs
 
 ### Renderer Guarantees
 
@@ -140,6 +147,12 @@ Using the `commit` skill as a validation example, the system should confirm:
 - `scripts/`
 - `assets/`
 
+Prompt 檔案慣例：
+
+- 若 skill 使用固定 agent prompt，建議放在 `references/agent-prompts/`
+- Codex 與 Claude 共用同一個 canonical prompt 檔案位置
+- prompt 檔案屬於 reference material，不是 target-specific wrapper 內容
+
 `SKILL.md` 契約：
 
 - 以 YAML frontmatter 開頭
@@ -191,6 +204,7 @@ Using the `commit` skill as a validation example, the system should confirm:
 - 只有在 canonical package 包含 `examples/`、`references/`、`scripts/` 或 `assets/` 時才輸出
 - 在 skill 目錄內保留原始相對路徑
 - Markdown 內若引用附件，應使用相對於 `SKILL.md` 的路徑，例如 `./examples/foo.md`
+- 若 canonical package 包含 `references/agent-prompts/`，Codex 與 Claude output 都應保留這個相對路徑
 
 ### Renderer Guarantees
 

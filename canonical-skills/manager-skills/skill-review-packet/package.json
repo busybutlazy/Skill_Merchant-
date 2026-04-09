@@ -1,16 +1,16 @@
 {
   "schema_version": 1,
   "identity": {
-    "name": "import-plugin-skill",
-    "version": "1.7.0",
-    "description": "Review one local plugin skill source through skillkeeper, imitator, reviewer, and a review packet before promotion",
+    "name": "skill-review-packet",
+    "version": "1.0.0",
+    "description": "Assemble skill review artifacts into a standardized packet for human maintainer review",
     "updated_at": "2026-04-10",
     "tags": [
       "maintainer",
-      "import",
-      "plugin-review",
-      "canonical-skills",
-      "skill-folder"
+      "review",
+      "reporting",
+      "packet",
+      "canonical-skills"
     ]
   },
   "distribution": {
@@ -31,6 +31,6 @@
   },
   "integrity": {
     "manifest_file": "manifest.json",
-    "package_sha256": "5b9f37369b3a4fbcf93264fa988e95664155ad501742bd98f13f34353a2945d2"
+    "package_sha256": "de3a455d4ce352608b5fb8fe20e22878511d498d4d15cb768348976fe7939140"
   }
 }

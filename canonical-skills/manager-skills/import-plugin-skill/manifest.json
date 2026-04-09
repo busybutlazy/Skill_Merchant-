@@ -2,16 +2,32 @@
   "files": [
     {
       "path": "instruction.md",
-      "sha256": "416fc258bcd8dd56a1ad0e61c3edcf22ebae0b8329798e54d71eae064fb3c69e"
+      "sha256": "7fb99abee065ec12d479b948caeb4f394b01638032cadba71e5a3f00586e845c"
     },
     {
       "path": "targets/claude.frontmatter.json",
-      "sha256": "7b7035316072b8e3509f1c4babf1935327700635af2798c36767c67bbe8bcb4d"
+      "sha256": "03bc84c3c6b6043e5477a8a7f1cdfda76e684288aca40a0b66009d2f6d1e054d"
     },
     {
       "path": "targets/codex.frontmatter.json",
-      "sha256": "6dc02de0d88f4aa84ee2e63351ef4fdbaa52859b21989e142bb924b3ef4b8080"
+      "sha256": "20c5e84777c02a14e810cc0b9c27c991fee721cd6103bea3b4ee9877ceea16c0"
+    },
+    {
+      "path": "references/agent-prompts/imitator.prompt.md",
+      "sha256": "d99461e964e815b2e3811d2b9dff031c366ec81c75d5f6ecfe83da31bfa09fdc"
+    },
+    {
+      "path": "references/agent-prompts/reviewer.prompt.md",
+      "sha256": "ffb674ef48326af8a2011dd6d17b7976032588386330e3ac4cb4e7cfb5132419"
+    },
+    {
+      "path": "references/agent-prompts/skillkeeper-final.prompt.md",
+      "sha256": "a80c85914c0d0ef449ed1c863f1a4f13f4018ac63dcc8262e08d3e0f0a33b820"
+    },
+    {
+      "path": "references/agent-prompts/skillkeeper-initial.prompt.md",
+      "sha256": "73677290e8dd186ffd99afbe111bb6748188b3508ce229e32645ab244f2962fb"
     }
   ],
-  "package_sha256": "5b0976438236d44fa2d51fb9e34a4d8248993e9ba5af4523fde9790351c976fc"
+  "package_sha256": "5b9f37369b3a4fbcf93264fa988e95664155ad501742bd98f13f34353a2945d2"
 }

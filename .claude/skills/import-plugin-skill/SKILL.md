@@ -1,3 +1,8 @@
+---
+name: "import-plugin-skill"
+description: "Canonical plugin skill import specialist. Use when a maintainer needs to screen one local plugin skill, stage a high-fidelity draft, run reviewer loops, and assemble a human review packet before promotion."
+tools: "Bash, Read, Grep, Glob"
+---
 # Import Plugin Skill
 
 用來把一個本機 plugin skill 來源先做維護決策審查，再經過 `skillkeeper`、`imitator`、`reviewer` 與 `skill-review-packet` 的流程，轉成可治理的 canonical draft。

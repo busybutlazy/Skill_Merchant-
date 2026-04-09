@@ -1,29 +1,77 @@
 ---
 name: "import-plugin-skill"
-description: "Use this skill when a maintainer wants to review one local plugin skill source, including a Codex plugin directory or a single SKILL.md folder, stage a canonical draft, and promote only safe imports into canonical-skills."
+description: "Use this skill when a maintainer wants to import one local plugin skill through skillkeeper, imitator, reviewer, and a human review packet."
 ---
 # Import Plugin Skill
 
-用來把一個本機 plugin skill 來源先做維護決策審查，再轉成這個 repo 可治理的 canonical draft，並在 draft 改寫階段加入 importer / reviewer 雙階段審查，避免改寫錯誤直接流入 promote。
+用來把一個本機 plugin skill 來源先做維護決策審查，再經過 `skillkeeper`、`imitator`、`reviewer` 與 `skill-review-packet` 的流程，轉成可治理的 canonical draft。
 
 ## Use This For
 
 - 讀取一個本機 Codex plugin 目錄，或一個本機單一 skill folder
 - 在 plugin 內選定單一 skill 作為匯入來源，或直接使用該單一 skill folder
-- 先做 maintainer-oriented LLM review，評估是否值得、是否適合被 canonical 化
-- 把安全的 skill 轉成 staged canonical draft
-- 在使用者要求修改 staged draft 時，先整理結構化 change request，再由 reviewer 做第二道差異審查
-- 在使用者明確同意後，將 draft 提升到 `canonical-skills/regular-skills/` 或 `canonical-skills/manager-skills/`
-- 在提升後直接完成 finalize 與 smoke test，並在成功後清理 staging draft
+- 先做前置準入審查，判斷這個 skill 是否值得 canonicalize
+- 在值得匯入時，以高保真方式產生 staged canonical draft
+- 用功能保真 reviewer 驗證 draft 是否把 skill 改壞
+- 在人工審核前，用標準化 review packet 整理整個 intake 結論
 
 ## Do Not Use This For
 
 - 直接從網路下載 plugin repo
 - 一次匯入整個 plugin 的所有 skills
 - 直接把外部 skill 安裝到 `.agents/` 或 `.claude/`
-- 略過 review 直接寫入 `canonical-skills/`
-- 在風險未解除時強行 promote
-- 讓 reviewer 接手重寫整份 staged draft
+- 略過 `skillkeeper` 直接進入改寫
+- 略過 `reviewer` 直接 promote draft
+- 把 `skill-review-packet` 當成新的准入判斷者
+
+## Roles
+
+### `skillkeeper`
+
+負責兩次決策：
+
+- 初次準入：判斷這個 skill 是否值得花 token canonicalize
+- 最終準入：在 reviewer 通過後，確認 final draft 仍值得納管
+
+固定 prompt 位置：
+
+- `./references/agent-prompts/skillkeeper-initial.prompt.md`
+- `./references/agent-prompts/skillkeeper-final.prompt.md`
+
+### `imitator`
+
+負責依據 `source-inventory.md` 高保真改寫 staged canonical draft。
+
+固定 prompt 位置：
+
+- `./references/agent-prompts/imitator.prompt.md`
+
+### `reviewer`
+
+負責拿原始 source、`source-inventory.md` 與 staged draft 做功能對照，找出功能流失、引用斷點與使用時機遺失。
+
+固定 prompt 位置：
+
+- `./references/agent-prompts/reviewer.prompt.md`
+
+### `skill-review-packet`
+
+負責把 `skillkeeper`、`reviewer`、`change-request.md` 等結果整理成給人工審核的標準化資料包；它不負責新增政策判斷。
+
+`skill-review-packet` 自己是可重用 skill，不是這裡的 agent prompt 檔之一。
+
+## Fixed Prompt Files
+
+agent prompt 不應直接內嵌在 `instruction.md`。
+
+這個 skill 固定使用以下可人工編輯的 prompt 檔：
+
+- `./references/agent-prompts/skillkeeper-initial.prompt.md`
+- `./references/agent-prompts/skillkeeper-final.prompt.md`
+- `./references/agent-prompts/imitator.prompt.md`
+- `./references/agent-prompts/reviewer.prompt.md`
+
+這些檔案屬於 canonical reference material，Codex 與 Claude 都應投影到各自的 skill 目錄中相同的相對位置。
 
 ## Workflow
 
@@ -44,10 +92,6 @@ description: "Use this skill when a maintainer wants to review one local plugin 
 
 若來源同時不符合這兩種結構，停止並明講目前不支援該格式。
 
-建議本機來源路徑：
-
-- `tmp/foreign_skills/<source-name>/`
-
 ### 2. Inspect the source structure
 
 至少讀：
@@ -55,121 +99,77 @@ description: "Use this skill when a maintainer wants to review one local plugin 
 - 若是 plugin directory：
   - `.codex-plugin/plugin.json`
   - 目標 skill 的 instruction 檔
-  - 該 skill 直接引用的 assets、references 或 scripts
+  - 該 skill 直接引用的 assets、references、templates 或 scripts
 - 若是 single skill folder：
   - `SKILL.md`
   - 相鄰的 `agents/*.yaml`、`examples/`、`references/`、`templates/`、`scripts/` 或 `assets/`
   - 該 skill 直接引用的檔案
 
+必須整理來源中的顯式線索，例如：
+
+- 核心 capabilities
+- trigger points
+- do-not-use boundaries
+- output contract
+- 何時要查看 `examples/`
+- 何時要套用 `templates/`
+- 何時要查 `references/`
+- 哪些 `scripts/` 或 `assets/` 是流程的一部分
+
 如果 plugin 內有多個 skills，不要自行整批匯入；必須要求使用者明確指定其中一個。
 
-如果是單一 skill folder，預設只匯入該資料夾代表的這一個 skill，不要往外層遞迴搜尋其他 skill。
+### 3. Run `skillkeeper` initial screening
 
-### 3. Run the maintainer review first
+在任何改寫之前，先做一次前置準入審查。這一步的目標是避免把 token 花在：
 
-在產生 canonical draft 前，先做結構化的維護決策審查。`review-report.md` 必須使用繁體中文撰寫，且至少回報：
+- 高風險且不適合納管的 skill
+- 維護成本過高的 skill
+- 對 repo 幫助不大、沒有必要 canonicalize 的 skill
+
+執行時應使用：
+
+- `./references/agent-prompts/skillkeeper-initial.prompt.md`
+
+`skillkeeper` 初次審查至少要輸出：
+
+- `skillkeeper-initial.md`
+- `source-inventory.md`
+
+`skillkeeper-initial.md` 必須使用繁體中文，至少包含：
 
 - 來源摘要
-- inspected files
-- extracted capabilities
-- Skill 類型判定
-- Trigger 邊界分析
-- Permission model 分析
-- Failure mode 分析
-- Canonicalization 建議
-- Maintenance cost
-- 風險表
-- final verdict：`allow`、`needs_human_review` 或 `block`
-- recommended restrictions or rewrites
+- source utility / 為什麼值得或不值得納管
+- 風險摘要
+- 維護成本
+- canonicalization constraints
+- must-preserve list
+- removable-only-if-justified list
+- verdict：`allow`、`needs_human_review` 或 `block`
 
-Skill 類型必須先從這些類別中選出主分類：
+`source-inventory.md` 必須至少包含：
 
-- `task skill`
-- `orchestration skill`
-- `policy / governance skill`
-- `domain adapter`
-- `meta-skill`
-
-必要時可再補一行 secondary characterization，例如：
-
-- `policy-governed operations meta-skill`
-
-因為不同類型的 skill，觸發邊界、權限模型與維護標準都不同，不能跳過這一步。
-
-`Trigger 邊界分析` 至少要明列：
-
-- 應觸發
-- 不應觸發
-- 需先升級審查
-
-`Permission model 分析` 至少要回答：
-
-- 它預設是 read-oriented mindset 還是 act-first mindset
-- 哪些操作主要落在 L1 / L2 / L3
-- 是否存在 implicit escalation
-- approval gate 是弱文字提示，還是流程上真的卡得住
-
-`Failure mode 分析` 至少要回答：
-
-- 最可能怎麼被誤用
-- 最糟會造成什麼後果
-- 哪些 wording 或 examples 容易導致 agent overreach
-- 哪些 examples 可能被誤讀成 blanket permission
-
-`Canonicalization 建議` 至少要回答：
-
-- 是否應拆成兩個 skill
-- 是否應抽出共用 policy section
-- examples 哪些保留、哪些應降級成 controlled examples、哪些應移除
-- name 是否應改得更精準
-- trigger text 應如何收窄
-
-`Maintenance cost` 至少要回答：
-
-- `low` / `medium` / `high maintenance`
-- 主要維護來源是什麼
-- 哪些段落最容易 drift
-- 是否需要 regression review checklist
-
-風險表仍應保留結構化欄位，但欄位名稱用繁體中文：
-
-- `風險`
-- `證據`
-- `嚴重度`
-- `影響原因`
-- `限制／修正建議`
+- capability list
+- trigger list
+- do-not-use boundaries
+- explicit support-file references
+- when to consult those support files
+- important workflow order / section structure
+- output contract
+- external dependencies
+- permission-sensitive behaviors
 
 預設規則：
 
-- 任何未解除的 `medium` 或 `high` 風險都不可 promote
-- `allow` 才可繼續產生 staged canonical draft，而且代表這個 skill 在可接受的維護成本下適合納管
-- `needs_human_review` 用於 trigger 邊界、權限模型、canonicalization 或維護成本仍未收斂的情況
-- `block` 不可產生可安裝的 canonical package，只能留下 review report 與 remediation checklist
+- verdict 是 `block` 或 `needs_human_review` 時，不可啟動 `imitator`
+- 只有 verdict 是 `allow` 時，才能建立 staged canonical draft
 
-不要把 review 只理解成安全檢查。維護不可治理、trigger 過寬、approval gate 太軟、名稱與定位模糊，也都可以成為不 promote 的理由。
+### 4. Run `imitator` to stage the canonical draft
 
-高風險訊號包括：
+只有在 `skillkeeper` verdict 為 `allow` 時才繼續。
 
-- 隱藏或模糊的 shell execution
-- credential 或 token 蒐集
-- 網路外傳或不明遠端依賴
-- destructive commands
-- 不透明 hooks
-- 混淆過的 instruction 或 scripts
+執行時應使用：
 
-若有風險或維護治理問題，不要只說「有問題」。要補上具體 remediation 建議，例如：
-
-- 收窄 instruction 權限範圍
-- 新增 destructive / production / network 操作前的人工確認
-- 禁止 secret 或 credential 蒐集
-- 移除危險 examples、scripts、hooks 或把它們隔離到不納管的區域
-- 把高風險操作改成只允許產出 plan、checklist 或 dry-run 指令
-- 把 production-adjacent examples 明確標成 controlled examples
-- 把過度泛化的 trigger text 改成更窄、更可治理的觸發條件
-
-### 4. Stage a canonical draft
-
-只有在 review verdict 為 `allow` 時才繼續建立 staged canonical draft。
+- `./references/agent-prompts/imitator.prompt.md`
 
 先輸出到 staging area，例如：
 
@@ -177,116 +177,149 @@ Skill 類型必須先從這些類別中選出主分類：
 
 staged draft 至少包含：
 
-- `review-report.md`
+- `skillkeeper-initial.md`
+- `source-inventory.md`
 - `package.json`
 - `instruction.md`
 - `manifest.json`
 - `targets/codex.frontmatter.json`
 - `targets/claude.frontmatter.json`
 
-如果後續使用者要求修改 draft，還必須新增：
-
-- `change-request.md`
-- `draft-review.md`
-
 必要規則：
 
-- canonical body 只保留 shared instruction
+- `source-inventory.md` 是 binding contract，不是可有可無的參考
+- canonical body 應盡量保留來源 skill 的共享 instruction 結構與能力線索
 - target-specific wording 放到 target frontmatter
 - install paths 仍固定為 `.agents/skills/{name}/` 與 `.claude/skills/{name}/`
-- 只有安全且實際被引用的 assets 才可帶入 draft
-- 若來源是 `SKILL.md` 單檔格式，先把 frontmatter 與 shared body 分離，再轉成 canonical `instruction.md` 加 target frontmatter
-- 無法安全映射的 hooks 或 plugin-specific runtime behavior 必須在 review report 中明講，不可偷偷轉換
+- 來源 instruction 只要顯式提到 `examples/`、`templates/`、`references/`、`scripts/` 或 `assets/`，就必須：
+  - 帶入該檔案或資料夾
+  - 或在 canonical instruction 中補上等價且明確的引用方式
+  - 或在後續審查中被明講為安全導向的刻意刪減
+- 若來源有明確的 template / example 使用時機，canonical draft 也必須保留「何時要去看這些檔案」的指引
+- 不可默默刪除功能、引用、workflow cues 或 output contract
 
-如果 verdict 是 `needs_human_review` 或 `block`，可在對應 staging 位置保留 `review-report.md` 與 remediation notes，但不要建立可安裝 package 檔案。
+### 5. Run `reviewer`
 
-### 5. Review the staged draft before promotion
+`reviewer` 不是只看 diff，而是必須拿：
 
-產出 `review-report.md` 與 staged draft 後，不要立刻問 promote。
+- 原始 source
+- `source-inventory.md`
+- 最新 staged canonical draft
 
-先把這些內容交給使用者審查：
+做功能對照。
 
-- `review-report.md`
-- staged `instruction.md`
-- target frontmatter
-- 被帶入的 examples / references / assets
+執行時應使用：
 
-接著明確詢問使用者：
+- `./references/agent-prompts/reviewer.prompt.md`
 
-- 是否接受這份 review 結論
-- 是否要先修改 staged draft
+`reviewer` 必須產出 `reviewer-report.md`，至少包含：
 
-如果使用者要修改，先不要 promote。應依照 `update-skill` 的修改原則處理 staged draft，至少可修改：
+- preserved behaviors
+- remapped behaviors
+- dropped behaviors
+- source-only behaviors
+- canonical-only behaviors
+- missing reference hooks
+- missing invocation cues
+- safety-regression warnings
+- verdict：`pass` 或 `revise`
+- required fixes for next round
 
-- trigger description
-- 不適用情境
-- 流程步驟
-- 限制與輸出要求
-- target-specific wording
-- canonical 名稱、description、examples 保留策略
+預設規則：
 
-但在 importer 動手修改前，先把使用者要求整理成結構化的 `change-request.md`。至少包含：
+- reviewer 主要檢查功能保真
+- 若看到明顯新增安全退化，必須標記，但不取代 `skillkeeper` 的最終判斷
+- 只要發現未明講且未被接受的功能差異，預設判 `revise`
+- 顯式引用的 `examples/`、`templates/`、`references/`、`scripts/`、`assets/` 若在 canonical 中遺失或失去使用時機說明，預設判 `revise`
+
+### 6. Control the `imitator -> reviewer` loop
+
+初次 candidate 階段允許 `imitator -> reviewer` 來回最多 3 次。
+
+規則：
+
+- reviewer 判 `revise` 時，必須回到 `imitator`
+- reviewer 判 `pass` 時，才可進入最終準入
+- 若同一階段連續 3 次仍未通過 reviewer，停止自動往返，改交人工審查
+
+### 7. Run `skillkeeper` final admission
+
+當 `reviewer` 通過後，`skillkeeper` 必須再次審查 final draft，而不是直接沿用第一次 verdict。
+
+執行時應使用：
+
+- `./references/agent-prompts/skillkeeper-final.prompt.md`
+
+這次要回答的是：
+
+- 經過改寫後，這個 skill 是否仍值得納管
+- 是否有未解除的高風險治理問題
+- reviewer 容許通過的功能差異是否可接受
+
+`skillkeeper` 最終審查要產出 `skillkeeper-final.md`，至少包含：
+
+- final utility judgment
+- remaining risks
+- accepted tradeoffs
+- unresolved concerns requiring human attention
+- verdict：`admit`、`needs_human_review` 或 `reject`
+
+### 8. Generate the human review packet
+
+在交給人工之前，必須呼叫 `skill-review-packet`，輸出：
+
+- `skill-review-packet.md`
+
+這份 packet 要整理：
+
+- source overview
+- `skillkeeper` 初次準入結果
+- `reviewer` 的功能保真結論
+- `skillkeeper` 最終準入結果
+- preserved / narrowed / dropped 區塊
+- unresolved risks
+- 需要人工決定的點
+
+### 9. Handle human feedback
+
+若使用者要修改 staged draft，先不要 promote。
+
+在 importer 動手修改前，先整理成 `change-request.md`。至少包含：
 
 - 修改目標
 - 不可改動的部分
 - 預期要收窄、保留或移除的方向
-- 哪些 examples 要改成 controlled examples
+- 哪些 capabilities / references / templates / examples 必須保留或等價映射
 - 哪些 wording 必須保留
 - 完成條件
 
-接著才由 importer 修改 staged draft。修改完成後要重新：
+接著進入新的 revision phase：
 
-- refresh staged draft metadata
-- validate staged draft
-- 產出 `draft-review.md`
+- `imitator`
+- `reviewer`
+- 最多 3 次 loop
+- `skillkeeper` final admission
+- `skill-review-packet`
 
-`draft-review.md` 必須由 reviewer 角色產出，且 reviewer 的任務不是重做整份 import，而是專門審查這次修改是否正確落地。至少要回報：
+必要時可額外產出 `draft-review.md`，作為這一輪修改的摘要。
 
-- 審查對象是哪一版 staged draft
-- 審查依據是哪一份 `change-request.md`
-- 已正確落地的修改
-- 尚未落地的修改
-- 誤改、過改或與使用者要求無關的改動
-- 是否引入新的權限放寬、trigger 擴張或 overreach wording
-- reviewer verdict：`pass` 或 `revise`
+### 10. Ask whether to promote, and where
 
-reviewer 規則：
+只有在以下條件同時成立時，才可詢問 promote：
 
-- reviewer 只做差異審查，不自行重寫整份 draft
-- `revise` 時，必須回到 importer 再修一次 staged draft
-- `pass` 前，不可進入 promote 問題
-
-把更新後的 draft、`change-request.md` 與 `draft-review.md` 一起交回給使用者審查。
-
-只有在這些條件同時成立時，才進入 promote 決策：
-
+- 最新 `skillkeeper-initial.md` verdict 為 `allow`
+- 最新 `reviewer-report.md` verdict 為 `pass`
+- 最新 `skillkeeper-final.md` verdict 為 `admit`
 - 使用者明確表示 draft 不再需要修改
-- `review-report.md` verdict 仍為 `allow`
-- 若 draft 曾修改過，最新 `draft-review.md` verdict 必須是 `pass`
 
-### 6. Ask whether to promote, and where
-
-若使用者要正式匯入，先再次確認：
+promote 前仍要再次確認：
 
 - 最終 canonical skill name
-- review verdict 仍為 `allow`
-- draft 內容已完成人工確認
-- 若 draft 曾修改過，reviewer verdict 已為 `pass`
 - 這次要納入哪一層：
   - `canonical-skills/regular-skills/<skill-name>/`
   - `canonical-skills/manager-skills/<skill-name>/`
 
-不要自行推斷目的地。每次 promote 前都要明確詢問 regular 還是 manager。
-
-若使用者未明確同意，保持 draft 留在 staging area，不可自動提升。
-
-如果來源內容與使用者選的 layer 不匹配，要明講，例如：
-
-- maintainer-only workflow 卻想放進 `regular-skills/`
-- 一般可分發 skill 卻想放進 `manager-skills/`
-- maintenance cost 很高、卻想當成低維護 public skill 直接納管
-
-### 7. Complete the intake flow
+### 11. Complete the intake flow
 
 在使用者明確同意後，應直接把 intake flow 做完，不要只停在 promote。
 
@@ -301,34 +334,18 @@ smoke test 規則：
 
 - 若採納到 `regular-skills/`，用臨時專案跑 `install <skill-name> --target codex`
 - 若採納到 `manager-skills/`，用臨時專案跑 `sync-manager-catalog <skill-name> --target codex`
-- 若 smoke test 失敗，要明確列出失敗步驟與錯誤，不可假裝完成
 
-### 8. Clean up staging only after full success
-
-只有在這些步驟全部成功後，才刪除：
-
-- `tmp/import-candidates/<source-name>/<skill-name>/`
-
-完整成功條件：
-
-- promote 成功
-- `refresh-metadata` 成功
-- `validate` 通過
-- smoke test 通過
-
-若其中任一步失敗，保留 staging draft 供排查與重跑。
-
-### 9. Report the final result
+### 12. Report the final result
 
 收尾時至少回報：
 
 - source name 與最終 canonical skill name
 - 採納 layer：`regular-skills` 或 `manager-skills`
-- review verdict 與主要維護決策摘要
+- `skillkeeper-initial.md` 結論
+- `reviewer-report.md` 結論
+- `skillkeeper-final.md` 結論
+- `skill-review-packet.md` 是否已更新
 - 若 draft 曾修改過，`change-request.md` 與 `draft-review.md` 的結論
 - 最終 package hash
 - validate 結果
 - smoke test 結果
-- staging draft 是否已清理
-
-如果只是要把 canonical 狀態同步到本 repo 的 agent 目錄，不用這個 skill，改用 `install-manager-skill`。

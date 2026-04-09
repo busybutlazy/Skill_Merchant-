@@ -1,0 +1,15 @@
+{
+  "name": "skill-review-packet",
+  "version": "1.0.0",
+  "description": "Assemble skill review artifacts into a standardized packet for human maintainer review",
+  "updated_at": "2026-04-10",
+  "tags": [
+    "maintainer",
+    "review",
+    "reporting",
+    "packet",
+    "canonical-skills"
+  ],
+  "source_package_sha256": "de3a455d4ce352608b5fb8fe20e22878511d498d4d15cb768348976fe7939140",
+  "rendered_from": "canonical-skills/manager-skills/skill-review-packet"
+}
