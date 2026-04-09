@@ -274,7 +274,7 @@ Downloaded external skills should not be copied straight into `canonical-skills/
 Maintainers should use `import-plugin-skill` to:
 
 - inspect one local external skill source
-- run an LLM risk review with a risk table and mitigation guidance before promotion
+- run a maintainer decision review before promotion, covering skill type, trigger boundary, permission model, failure modes, canonicalization, and maintenance cost
 - stage a draft outside canonical source
 - choose explicitly whether approved content belongs in `regular-skills/` or `manager-skills/`
 - finish intake with finalize plus a Codex smoke test
@@ -743,7 +743,7 @@ canonical-skills/regular-skills/<name>/
 維護者應透過 `import-plugin-skill`：
 
 - 檢查單一本機外部 skill 來源
-- 在提升前先做帶風險表與 mitigation 建議的 LLM 風險審查
+- 在提升前先做 maintainer decision review，評估 skill 類型、trigger 邊界、權限模型、failure mode、canonicalization 與 maintenance cost
 - 先把 draft 放在 canonical source 之外
 - 明確決定正式納管到 `regular-skills/` 或 `manager-skills/`
 - promote 後直接完成 finalize 與 Codex smoke test
