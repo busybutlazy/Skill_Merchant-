@@ -2,7 +2,7 @@
   "files": [
     {
       "path": "instruction.md",
-      "sha256": "aecf2c00a6c3a00d97849966f3f3b5499228c0d2b9168da7e550664716403d70"
+      "sha256": "4e96fc5f56d00924b03659d87dbaf67a44e6d9fbe713b0e33c22736d02919980"
     },
     {
       "path": "targets/claude.frontmatter.json",
@@ -14,7 +14,7 @@
     },
     {
       "path": "scripts/task-plan-core.py",
-      "sha256": "143f3b8a9bd8d5cabe20127078d8e98bb6a7cc0d164b46465f869ae9c56f6a13"
+      "sha256": "dec1b541e2e71f1c766977f0e9d8f860167f4eb404580e784096b988359f3d98"
     },
     {
       "path": "scripts/task-plan.ps1",
@@ -25,5 +25,5 @@
       "sha256": "b605a1b274ece84d69f428acf1be5ae31d6c0ef9f11d62ad3e6f3fe56a0db8f1"
     }
   ],
-  "package_sha256": "783c5781dd1927013f7400c3c4729bced8454519fbc2b0dfc47920a768e89421"
+  "package_sha256": "4b04a6e6b3d115553fdd36cc3a7665175ae4cca30e8ad6cc7816f5e3dfca0fdb"
 }
