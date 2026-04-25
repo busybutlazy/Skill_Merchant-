@@ -19,6 +19,7 @@ from .repository import (
     load_all_skills,
     load_manager_catalog_skills,
     load_skill,
+    resolve_skill_dir,
     validate_skill_dir,
 )
 
@@ -94,15 +95,13 @@ def build_parser() -> argparse.ArgumentParser:
 def run_validate(args: argparse.Namespace) -> int:
     repo_root = _repo_root_from_args(args)
     target_filter = None if args.target == "all" else {args.target}
-    skill_dirs = [Path(args.skill)] if args.skill else iter_skill_dirs(repo_root)
+    skill_dirs = [resolve_skill_dir(repo_root, args.skill)] if args.skill else iter_skill_dirs(repo_root)
     if not skill_dirs:
         print("No canonical skills found.", file=sys.stderr)
         return 1
 
     exit_code = 0
     for skill_dir in skill_dirs:
-        if not skill_dir.is_absolute() and not skill_dir.exists():
-            skill_dir = repo_root / "canonical-skills" / str(skill_dir)
         result = validate_skill_dir(skill_dir, target_filter=target_filter)
         if result.valid:
             print(f"VALID {result.skill} {result.package_sha256}")
