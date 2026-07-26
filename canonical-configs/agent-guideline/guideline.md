@@ -121,6 +121,8 @@ CI 在大量業務邏輯進入前建立，且是**合併條件**，不只是報�
 
 報告必須同時揭露：**完成了什麼、沒完成什麼、沒驗證什麼、偏離了什麼、最不確定的是什麼。**
 
+文件長度原則：報告與規格文件的長度對齊實際需要，涵蓋實質內容與上述**必須揭露**的項目即可，不要用填充章節、重複摘要或樣板文字灌水。完整且如實揭露優先於篇幅；但已充分揭露後，不需要為了「看起來完整」而加長。
+
 ### 10. 獨立 Review
 
 Reviewer（獨立 agent 或人）以唯讀方式嘗試**推翻完成聲明**：規格是否完整實作、測試是否真的對應需求（而非只測 mock）、錯誤路徑、相容性、安全、過度抽象、Out of Scope 修改、未證明的宣稱。Reviewer 不直接修改程式。
@@ -207,6 +209,8 @@ skill-forge 的 `agent-hooks` guideline item 可為 Claude Code 與 Codex 安裝
 ### Subagents / Reviewer
 
 用於角色與 context 隔離，並限制可用工具。建議角色：Explorer（唯讀搜尋）、Planner（只產生計畫）、Implementer（只執行指定 Task）、Code Reviewer / Security Reviewer / Test Reviewer（唯讀）。每個角色要有清楚的觸發條件、輸入輸出、工具限制與完成條件；不要建立過多角色。
+
+Subagent 只用於大型、彼此獨立且可並行的工作，或需要明確角色隔離的審查；不要為少量 tool calls、短任務或驗證自己的工作啟動 subagent。成本敏感時應限制可啟動數量，並要求每個 subagent 回傳可核對的 evidence。
 
 ### Permission / Sandbox
 

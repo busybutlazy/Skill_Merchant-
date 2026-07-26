@@ -59,6 +59,7 @@ Do not use this skill when:
 
 ### 6. Parallelize with Subagents (Long Books)
 
+- Delegate only when chapters are large, independent, and the user has approved parallel agent work. Do not spawn subagents for short documents or to verify your own work.
 - Assign each worker agent exactly one chapter with a disjoint write path.
 - Tell workers they share the workspace and must not modify other files.
 - Require each worker to read `translated/TERMS.md` before translating.

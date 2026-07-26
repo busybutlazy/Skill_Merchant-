@@ -2,9 +2,9 @@
   "schema_version": 1,
   "identity": {
     "name": "code-review",
-    "version": "1.3.0",
+    "version": "1.3.1",
     "description": "Review code for security vulnerabilities, logic correctness, performance, and maintainability, then generate a structured report with interactive fix tracking",
-    "updated_at": "2026-06-15",
+    "updated_at": "2026-07-26",
     "tags": [
       "security",
       "review",
@@ -31,6 +31,6 @@
   },
   "integrity": {
     "manifest_file": "manifest.json",
-    "package_sha256": "d33f6b7d609f8ce0cae6061fd0c0ecce9aa11977cd90cc1f59d3bf2432440bf6"
+    "package_sha256": "738de35785d9942cc410c9c2ac22d3a77a541717f5f32eabbef20abe9478eecc"
   }
 }

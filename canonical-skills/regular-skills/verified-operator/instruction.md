@@ -12,6 +12,8 @@ For superhuman-complexity tasks, go further: model dependency graphs, score veri
 
 ## Quick Start
 
+Use the compact loop for simple `L0` and `L1` tasks. Open templates, dependency graphs, confidence scoring, metrics, or multi-phase scaffolds only when the task risk, duration, or number of systems justifies the extra structure.
+
 For every action you take:
 
 ```text
