@@ -69,16 +69,24 @@ Map the user's stated intent to the `intent_hints` map returned by `plan` (its k
 - its name appears in an `intent_hints` bucket that matches the user's stated intent, **or**
 - its `tags` clearly match the user's stated goal.
 
-Present a numbered list using each skill's `badge` verbatim. Put ★推薦 items first. Example:
+Treat `what-next` as the user-facing **Development Workflow** package. Its dependency closure installs `work-on-change`, `work-on-phase`, `review-change`, and their atomic workflow skills together. In the default list:
+
+- Show one selectable `Development Workflow (what-next)` row using the `what-next` badge and version.
+- Do not flatten its workflow dependencies such as `plan-change`, `implement-task`, `verify-change`, or `report-change` into ordinary choices.
+- Keep unrelated standalone skills as separate choices.
+- Only show an `Advanced workflow internals` subsection when the user explicitly asks to install or repair an atomic workflow skill by name.
+
+Present a numbered list using each visible skill's `badge` verbatim. Put ★推薦 items first. Example:
 
 ```
 依你的目標，建議安裝（★ 為推薦，輸入編號可複選，逗號分隔；不想裝的直接略過）：
 
- 1. ★ commit        1.3.0  ⬆ 有更新（1.1.0 → 1.3.0）
- 2. ★ create-pr     1.3.0  ○ 未安裝
- 3. ★ plan-change   0.2.2  ○ 未安裝
- 4.   dto-organizer 1.3.0  ○ 未安裝
- 5.   translate-pdf-book 1.3.0  ○ 未安裝
+ 1. ★ Development Workflow (what-next)  0.1.1  ○ 未安裝
+      包含 what-next / work-on-change / work-on-phase / review-change 與相關 atomic skills
+ 2. ★ commit                           1.3.0  ⬆ 有更新（1.1.0 → 1.3.0）
+ 3. ★ create-pr                        1.3.0  ○ 未安裝
+ 4.   dto-organizer                    1.3.0  ○ 未安裝
+ 5.   translate-pdf-book               1.3.0  ○ 未安裝
 ```
 
 Everything is opt-in: only install what the user selects. Wait for the selection. If nothing is chosen, exit.
@@ -104,7 +112,7 @@ Handle each selection based on its `status`:
 ~/skill-forge/skill-manager --no-interactive install <name> --target <target> --project /workspace/project --yes
 ```
 
-Install skills one at a time. Report each result before moving to the next.
+Install selected rows one at a time. For `Development Workflow`, install its root skill `what-next`; the manager resolves and installs the complete dependency closure. Report each result before moving to the next.
 
 ### Step 5 — Summary and reload reminder
 

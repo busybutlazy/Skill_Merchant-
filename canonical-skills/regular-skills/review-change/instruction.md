@@ -8,18 +8,25 @@ Try to disprove the completion claim. The only permitted write is the owned revi
 
 ## Do Not Use This For
 
+- Reviewing work from the same agent/session/context that planned or implemented the change.
 - Implementing fixes, authoring the plan under review, running a self-approval gate, merging, releasing, or replacing human review.
+
+## Independence Gate
+
+Formal review requires a fresh agent context that did not inherit the implementation conversation. A subagent qualifies only when the platform guarantees that its context does not inherit that conversation. If independence cannot be established, stop and ask the user to open a fresh agent/session; do not write or update the formal `REVIEW_REPORT.md`.
+
+Self-checks and same-context review notes may help implementation, but they cannot satisfy the independent review gate and must not be represented as formal review evidence.
 
 ## Required Inputs
 
 - Change ID, request/acceptance criteria, approved plan and approval evidence.
 - Full attributable diff, tests, task handoffs, verification report, change report, and relevant CI/contract history.
 
-If core artifacts are missing, report the evidence gap as a finding. If the reviewer shares the implementation session/context, disclose reduced independence and recommend a separate reviewer or human.
+If core artifacts are missing after the independence gate is satisfied, report the evidence gap as a finding.
 
 ## Workflow
 
-1. Establish scope, comparison base, review independence, and claimed outcome.
+1. Establish scope, comparison base, and claimed outcome. Prove fresh-context independence before reviewing or writing the report.
 2. Trace every acceptance criterion through implementation and tests; challenge unsupported or mock-only claims.
 3. Inspect normal and failure paths for correctness, error handling, authorization/security, data consistency, backward compatibility, and hidden contract/dependency/migration effects.
 4. Look for out-of-scope edits, over-abstraction, missing rollback, skipped tests, misleading reports, and untracked/generated artifacts.

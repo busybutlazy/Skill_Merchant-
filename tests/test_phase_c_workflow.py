@@ -13,7 +13,7 @@ VERSIONS = {
     "run-approved-change": "0.1.0",
     "verify-change": "0.1.1",
     "report-change": "0.1.0",
-    "review-change": "0.1.0",
+    "review-change": "0.2.0",
 }
 UPDATED_AT = {
     "plan-change": "2026-07-23",
@@ -21,7 +21,7 @@ UPDATED_AT = {
     "run-approved-change": "2026-07-21",
     "verify-change": "2026-07-20",
     "report-change": "2026-07-20",
-    "review-change": "2026-07-20",
+    "review-change": "2026-08-13",
 }
 REFERENCES = {
     "plan-change": "IMPLEMENTATION_PLAN_TEMPLATE.md",
@@ -73,6 +73,14 @@ class PhaseCWorkflowContractTests(unittest.TestCase):
         self.assertIn("已提供的 Workflow skills", guideline)
         for name in SKILLS:
             self.assertIn(f"`{name}`", guideline)
+
+    def test_formal_review_requires_fresh_non_inherited_context(self) -> None:
+        instruction = (
+            REPO_ROOT / "canonical-skills" / "regular-skills" / "review-change" / "instruction.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("did not inherit the implementation conversation", instruction)
+        self.assertIn("cannot satisfy the independent review gate", instruction)
+        self.assertIn("do not write or update the formal `REVIEW_REPORT.md`", instruction)
 
     def test_delivered_bootstrap_is_not_described_as_future_roadmap(self) -> None:
         stale_phrases = ("bootstrap-project` roadmap", "Phase D `bootstrap-project`", "future `bootstrap-project`")

@@ -1,10 +1,12 @@
-# Agent-Driven Skill Install Flow
+# Archived Design: Agent-Driven Skill Install Flow
 
-Enables installing and updating skills entirely from within a Claude or Codex session, without leaving the AI environment.
+> Historical implementation design. The catalog, plan, non-interactive wrapper, and `install-my-skill` capabilities described here have been delivered. For current operations, use the [Terminal Operations Guide](../../docs/guides/terminal-operations-guide.md).
+
+This design enabled installing and updating skills entirely from within a Claude or Codex session, without leaving the AI environment.
 
 ## Problem
 
-The current path requires leaving the AI session to run the interactive TTY menu:
+At the time this design was written, the path required leaving the AI session to run the interactive TTY menu:
 
 1. Three root causes block agent-driven installs:
    - No non-interactive CLI exit for the "available catalog" (only inside the TTY menu)

@@ -1,150 +1,101 @@
 # Project Lifecycle Guide
 
-This guide explains how an end user should select and invoke the project-lifecycle skills. The managed [agent guideline](../../canonical-configs/agent-guideline/guideline.md) remains the governance source of truth.
+This guide explains the human-facing workflow entrypoints. The managed [agent guideline](../../canonical-configs/agent-guideline/guideline.md) remains the governance source of truth.
 
-## Recommended Skill Set
+## Install the Workflow
 
-In the catalog, find the `Project Lifecycle` group and install the entrypoints appropriate to the project:
+In **Install / Update skills**, install **Development Workflow** and reload the Claude or Codex session. The package installs these entrypoints and their atomic dependencies together:
 
-- `grill-with-docs`
-- `define-project`
-- `bootstrap-project`
-- `deliver-roadmap-phase`
+- `what-next`: inspect repository evidence and identify the appropriate next workflow;
+- `work-on-change`: move one bounded Change forward;
+- `work-on-phase`: move one exact Roadmap Phase forward;
+- `review-change`: adversarially review completed work in a fresh agent context.
 
-The installer automatically includes method and workflow dependencies. Users should invoke the four entrypoints above, not internal methods such as `grilling` or `domain-modeling`.
-
-Reload the Claude or Codex session after installation so the new skills are available.
+Atomic skills such as `grill-with-docs`, `plan-change`, `implement-task`, `verify-change`, and `report-change` remain independently governed. They are primarily selected by the entrypoints, but advanced users may invoke one directly for a precise rerun.
 
 ## Choose the Entry Point
 
-| Current state | Entry point | Expected result |
-|---------------|-------------|-----------------|
-| Project idea or major change has unresolved choices, including product, domain, contract, security, data, architecture, failure-behavior, operations, or acceptance decisions | `grill-with-docs` | Decision Readiness Summary |
-| Decisions are ready but have not been synthesized into an approval-ready project definition | `define-project` | SPEC, conditional CONTRACTS, Roadmap, and Project Approval Packet |
-| An approved greenfield Project Definition exists, but development, container, canonical-command, or CI baselines do not | `bootstrap-project` | Approved engineering baseline |
-| One exact approved Roadmap Phase has satisfied its Decision Gates | `deliver-roadmap-phase` | Governed delivery evidence for that Phase |
-| An existing project needs one clear bounded change | `plan-change` | Change plan and approval request |
+| Intent | Human entrypoint | Expected result |
+|--------|------------------|-----------------|
+| You do not know the current workflow state or next action | `what-next` | Evidence-based routing without crossing an authority gate |
+| An existing project needs one bounded change | `work-on-change` | Planning, approved implementation, verification, and review handoff |
+| One exact Roadmap Phase is the delivery target | `work-on-phase` | Governed delivery evidence for that Phase |
+| Implementation, verification, and reporting are complete | `review-change` in a fresh agent | Independent adversarial review evidence |
 
-Do not start downstream merely because an upstream document exists. Use the relevant approval and readiness evidence: `Status: Ready` with no Blocking Open Decisions for project definition, explicit Human Project Approval for greenfield bootstrap, and satisfied Phase-start Decision Gates for Phase delivery.
+For a new or ambiguous project, start with `what-next`. It can route to decision discovery, project definition, or bootstrap workflows based on repository evidence.
 
 ## Typical Greenfield Sequence
 
 ```text
-ambiguous project idea
-→ grill-with-docs
-→ Decision Readiness Summary
-→ define-project
+what-next
+→ decision discovery and project definition
 → Human Project Approval
-→ bootstrap-project
-→ approved Roadmap Phase
-→ deliver-roadmap-phase
+→ engineering baseline when needed
+→ work-on-phase
+→ verification and review handoff
+→ review-change in a fresh agent
 → Human Phase Acceptance
 → commit
 → create-pr
 ```
 
-`commit` and `create-pr` are separate, explicitly invoked workflows. Project or Phase approval does not authorize Git or release actions.
+Each workflow stops at its own authority boundary. Project approval does not authorize implementation, and Phase acceptance does not authorize commit, push, merge, release, or deployment. `commit` and `create-pr` remain separately invoked skills.
 
 ## Example Prompts
 
-### 1. Resolve project decisions
+### Find the next action
 
 ```text
-Use grill-with-docs for this project idea.
-
-Goal: <what the project should achieve>
-Users: <known users or actors>
-Existing evidence: <documents, repository paths, or constraints>
-
-Inventory unresolved choices, investigate facts from the repository, ask me
-one user-owned decision at a time, and finish with a Decision Readiness Summary.
+Use what-next. Inspect the repository evidence, tell me the current workflow
+state, and route to the next appropriate skill without crossing an approval gate.
 ```
 
-The workflow always preserves a required Decision Inventory and reports one status:
-
-- `Ready`: readiness assessment is complete with `Blocking Open Decisions: None`; route to `define-project` or `plan-change`.
-- `Stopped With Blocking Decisions`: assessment is complete and named blockers remain.
-- `Incomplete — Session Stopped Before Readiness Assessment`: the user stopped or inventory coverage is incomplete.
-
-A deferred decision is valid only when the next artifact and all work authorized before its trigger can proceed without assuming the answer, and its rationale, owner, affected scope, and blocking trigger are recorded.
-
-### 2. Create the Project Definition
+### Work on one Change
 
 ```text
-Use define-project.
-
-Decision readiness: <summary path>
-Context and ADRs: <paths>
-
-Create the approval-ready Project Definition and stop for Human Project Approval.
-Do not implement or infer unresolved decisions.
+Use work-on-change for <change goal>.
+Mode: one-task-at-a-time.
+Use existing specifications and approval evidence; stop at the next authority gate.
 ```
 
-Expected artifacts:
-
-- `docs/SPEC.md`
-- `docs/CONTRACTS.md` when externally observable contracts exist
-- `docs/ROADMAP.md`, including Walking Skeleton and per-Phase Decision Gates
-- Project Approval Packet
-
-### 3. Establish the engineering baseline
+### Work on one Roadmap Phase
 
 ```text
-Use bootstrap-project.
-
-Approved Project Definition: <path>
-Approval evidence: <reference>
-
-Discover the repository, propose the Docker-first development and CI baseline,
-and stop for the required bootstrap approval before writing it.
-```
-
-For an existing repository that only lacks an engineering baseline, `bootstrap-project` may be used independently. It must not invent product, domain, Roadmap, runtime, or toolchain decisions.
-
-### 4. Deliver one Roadmap Phase
-
-```text
-Use deliver-roadmap-phase.
-
+Use work-on-phase.
 Roadmap: docs/ROADMAP.md
 Phase: <exact phase ID or heading>
 Mode: one-task-at-a-time
 ```
 
-The Phase must have an approved observable outcome, scope, acceptance criteria, and satisfied Decision Gates required before Phase start. Later gates become explicit human checkpoints: they block the named child Change, dependent work, or Phase completion until resolved. The workflow delivers only that Phase and stops for independent review and Human Phase Acceptance.
+The Phase must have an approved observable outcome, scope, acceptance criteria, and satisfied Phase-start Decision Gates. An ambiguous or multi-Phase request must stop for clarification.
 
-## When to Skip Steps
+### Review in a fresh agent
 
-- Skip `grill-with-docs` when repository evidence already establishes all decisions needed by the current definition or change.
-- Skip `define-project` for a clear bounded change in an existing approved project; use `plan-change`.
-- Use `bootstrap-project` independently when an existing project only needs a governed engineering baseline.
-- Do not invoke `deliver-roadmap-phase` for an ambiguous Phase, multiple phases, or a Phase whose start gates remain unresolved.
+```text
+Use review-change to adversarially review <change path or review handoff>.
+Rely on repository evidence rather than the implementer's claims.
+```
+
+Formal review must run in a fresh agent context. The implementation agent may self-check its work, but that does not satisfy the independent review gate.
+
+## Advanced Atomic Reruns
+
+Invoke an atomic skill directly only when the required step is already known, for example:
+
+- `plan-change` to revise only the plan;
+- `implement-task` to run one approved task;
+- `verify-change` to rerun canonical verification;
+- `report-change` to regenerate current delivery evidence.
+
+Direct invocation does not bypass admission criteria or approval boundaries.
 
 ## 繁體中文摘要
 
-全新專案通常依下列順序進行：
+在 **Install / Update skills** 安裝 **Development Workflow** 後，使用者平常只需記住：
 
-```text
-模糊專案想法
-→ grill-with-docs
-→ Decision Readiness Summary
-→ define-project
-→ 人類批准 Project Definition
-→ bootstrap-project
-→ deliver-roadmap-phase
-→ 人類驗收 Phase
-→ commit
-→ create-pr
-```
+- 不知道目前在哪或下一步：`what-next`
+- 處理一個明確且有邊界的 Change：`work-on-change`
+- 處理唯一指定的 Roadmap Phase：`work-on-phase`
+- 實作、驗證與報告完成後，另開新 agent 對抗式審查：`review-change`
 
-入口依目前狀態選擇，不必無條件從頭執行：
-
-- 有未決策事項：使用 `grill-with-docs`。
-- 決策已收斂但缺正式專案文件：使用 `define-project`。
-- Project Definition 已批准但缺工程基線：使用 `bootstrap-project`。
-- 一個明確 Phase 已批准且 Decision Gates 已滿足：使用 `deliver-roadmap-phase`。
-- 既有專案只有明確且有限的 Change：使用 `plan-change`。
-
-`grill-with-docs` 必須保存 Decision Inventory。只有 `Status: Ready` 可以進入 `define-project` 或 `plan-change`；已知 blockers 使用 `Stopped With Blocking Decisions`，尚未完成 inventory 或使用者中途停止則使用 `Incomplete — Session Stopped Before Readiness Assessment`。
-
-每個 workflow 的批准權限彼此獨立。Project Approval 不等於 bootstrap、implementation、Git 或 release 授權；Phase Acceptance 也不會自動觸發 commit 或 create-pr。
+`plan-change`、`implement-task`、`verify-change` 等 atomic skills 仍保持獨立，主要由人類入口根據 repository evidence 選用；進階使用者仍可在已知精確步驟時單獨重跑。安裝整包不代表獲得跨過批准、審查或 Git 權限邊界的授權。

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity": {
     "name": "what-next",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Inspect project workflow evidence, explain the current state, and route to the safest next human entrypoint",
     "updated_at": "2026-08-13",
     "tags": [
@@ -38,6 +38,6 @@
   },
   "integrity": {
     "manifest_file": "manifest.json",
-    "package_sha256": "3435b49c4e158734866c3a03784a09e630f923a9f8f8974d42b770d424c03834"
+    "package_sha256": "a413293f12696a2386f8355777113933f2033be6f3d69dcc471b101efe12fa80"
   }
 }

@@ -75,6 +75,8 @@ Main actions:
 - `Switch target`: switch between `codex` and `claude`
 - `Open expert terminal`: drop into the runtime shell, then return to the menu after exit
 
+The install screen presents the **Development Workflow** as one human-friendly package. Selecting it installs `what-next` and its full dependency closure, including `work-on-change`, `work-on-phase`, `review-change`, and the atomic workflow skills they route to. The target still receives separate skill directories; the bundle only keeps the consumer menu concise. Advanced users can continue to install an atomic skill directly through the CLI.
+
 ### Status Model
 
 - `up_to_date`: installed artifact matches the canonical package
@@ -88,9 +90,9 @@ Safety rules:
 - `install` and `update` refuse to overwrite `unmanaged`
 - `install` and `update` require `--force` before overwriting `drift`
 - `install` and `update` ask for confirmation before repairing `broken`
+- `remove` refuses to delete `unmanaged`
 
 The `agent-hooks` guideline item requires `python3` 3.11+ and additively configures native Claude/Codex `PreToolUse` hooks. Codex may require trust review for the exact definition; hooks explicitly disabled in project config are reported `inactive`. Use hooks as defense in depth, not as a replacement for sandboxing or CI.
-- `remove` refuses to delete `unmanaged`
 
 ### Core CLI Commands
 
@@ -104,6 +106,8 @@ Commands:
 
 - `validate`: validate canonical packages under both `canonical-skills/regular-skills/` and `canonical-skills/manager-skills/`
 - `render`: render one canonical package to a target output tree
+- `catalog`: list canonical skills available for a target and scope
+- `plan`: merge the public catalog with project install status, badges, recommendations, and bundle presentation
 - `install`: install one public canonical skill into a target project
 - `list`: inspect installed state for a target project
 - `list --scope all`: inspect installed state including maintainer-only canonical packages
@@ -113,6 +117,9 @@ Commands:
 - `refresh-metadata`: rebuild `manifest.json` and integrity hash for one canonical skill
 - `sync-maintainer`: render and install maintainer-only skills into a project, usually this repo itself
 - `sync-manager-catalog`: render and install manager-skills plus `shared` regular-skills into local agent targets
+- `check-security`: inspect, and optionally initialize, project security settings
+- `memory status` / `memory install`: compatibility commands for the managed `agent-memory` item
+- `guideline status` / `guideline install`: inspect or install managed memory, guideline, and safety-hook items
 
 Recommended manager-skill-first flow:
 
@@ -206,7 +213,7 @@ PYTHONPATH=src python -m skill_forge --repo-root . sync-manager-catalog create-s
 4. Run `validate` again.
 5. Run `finalize-skill` after source edits; if you skip the skill flow, use `refresh-metadata` plus `validate` directly.
 6. If the skill is manager-only, run `sync-maintainer --project . --target codex`; if it is a shared manager catalog flow, run `install-manager-skill` or `sync-manager-catalog`.
-6. Run tests and smoke checks.
+7. Run tests and smoke checks.
 
 ## 繁體中文
 
@@ -283,6 +290,8 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 - `Switch target`：切換 `codex` 與 `claude`
 - `Open expert terminal`：進入 runtime shell，離開後回到 menu
 
+安裝畫面會把 **Development Workflow** 顯示成一個容易理解的套件。選取後會安裝 `what-next` 及其完整 dependency closure，包括 `work-on-change`、`work-on-phase`、`review-change`，以及它們會路由到的 atomic workflow skills。Target 內仍是各自獨立的 skill 目錄；bundle 只負責讓 consumer menu 保持簡潔。進階使用者仍可從 CLI 直接安裝單一 atomic skill。
+
 ### 狀態模型
 
 - `up_to_date`：已安裝內容與 canonical package 一致
@@ -295,10 +304,10 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 
 - `install` 與 `update` 不會覆蓋 `unmanaged`
 - `install` 與 `update` 覆蓋 `drift` 前必須 `--force`
-
-`agent-hooks` guideline item 需要 `python3` 3.11+，並以 additive merge 設定 Claude/Codex 原生 `PreToolUse` hooks。Codex 可能需要信任精確的 hook definition；project config 明確停用 hooks 時會回報 `inactive`。Hooks 是縱深防禦，不能取代 sandbox 或 CI。
 - `install` 與 `update` 修復 `broken` 前會要求確認
 - `remove` 不會刪除 `unmanaged`
+
+`agent-hooks` guideline item 需要 `python3` 3.11+，並以 additive merge 設定 Claude/Codex 原生 `PreToolUse` hooks。Codex 可能需要信任精確的 hook definition；project config 明確停用 hooks 時會回報 `inactive`。Hooks 是縱深防禦，不能取代 sandbox 或 CI。
 
 ### Core CLI Commands
 
@@ -312,6 +321,8 @@ PYTHONPATH=src python -m skill_forge --repo-root .
 
 - `validate`：驗證 `canonical-skills/regular-skills/` 與 `canonical-skills/manager-skills/` 底下的 canonical package
 - `render`：把單一 canonical skill render 到指定 target output tree
+- `catalog`：依 target 與 scope 列出可用的 canonical skills
+- `plan`：合併 public catalog 與 project 安裝狀態，提供 badges、recommendations 與 bundle presentation
 - `install`：把單一 public canonical skill 安裝到 target project
 - `list`：查看 target project 的安裝狀態
 - `list --scope all`：查看 target project 狀態時一併納入 maintainer-only canonical packages
@@ -321,6 +332,9 @@ PYTHONPATH=src python -m skill_forge --repo-root .
 - `refresh-metadata`：重建單一 canonical skill 的 `manifest.json` 與 integrity hash
 - `sync-maintainer`：把 maintainer-only skills render/install 到指定專案，通常就是這個 repo 自己
 - `sync-manager-catalog`：把 manager-skills 加上帶 `shared` tag 的 regular-skills 一起同步到本地 agent targets
+- `check-security`：檢查 project security settings，並可選擇初始化
+- `memory status` / `memory install`：管理 `agent-memory` item 的相容命令
+- `guideline status` / `guideline install`：檢查或安裝 managed memory、guideline 與 safety-hook items
 
 推薦的 manager-skill-first 流程：
 
@@ -415,4 +429,4 @@ PYTHONPATH=src python -m skill_forge --repo-root . sync-manager-catalog create-s
 4. 再跑一次 `validate`。
 5. source 改完後先跑 `finalize-skill`；若跳過 skill flow，才直接用 `refresh-metadata` 與 `validate`。
 6. 若是 manager-only skill，就跑 `sync-maintainer --project . --target codex`；若屬於 manager catalog，改跑 `install-manager-skill` 或 `sync-manager-catalog`。
-6. 補測試與 smoke check。
+7. 補測試與 smoke check。

@@ -67,9 +67,13 @@ PowerShell:
 
 Pick `codex` or `claude` in the menu.
 
-5. Install an approved skill.
+5. Install the recommended workflow package.
 
-Select `Install / Update skills` and choose a managed skill such as `commit` or `create-pr`.
+Select `Install / Update skills` and choose **Development Workflow**. This installs `what-next`, `work-on-change`, `work-on-phase`, `review-change`, and their atomic dependencies together. Install standalone skills such as `commit` or `create-pr` separately when needed.
+
+After reloading the agent session, start with `what-next` when the correct workflow is unclear. Atomic workflow skills remain available for advanced, precise reruns but are not presented as equal top-level choices in the interactive installer.
+
+Existing users can select **Development Workflow** again after updating skill-forge; the installer adds missing dependencies and updates managed older versions while preserving the normal drift safeguards.
 
 6. Check status.
 
@@ -219,9 +223,13 @@ PowerShell:
 
 在 menu 中選 `codex` 或 `claude`。
 
-5. 安裝 approved skill。
+5. 安裝建議的 workflow package。
 
-選 `Install / Update skills`，再安裝像 `commit` 或 `create-pr` 這樣的 managed skill。
+選 `Install / Update skills`，再安裝 **Development Workflow**。它會一併安裝 `what-next`、`work-on-change`、`work-on-phase`、`review-change` 與相關 atomic dependencies；`commit` 或 `create-pr` 等 standalone skills 再依需要單獨安裝。
+
+reload agent session 後，不確定流程時從 `what-next` 開始。Atomic workflow skills 仍可供進階使用者精確重跑，但不會在互動式安裝器中當成同等的主入口平鋪。
+
+舊版使用者更新 skill-forge 後，可再次選擇 **Development Workflow**；安裝器會補齊缺少的 dependencies 並更新受管理的舊版本，同時保留既有 drift 保護。
 
 6. 檢查狀態。
 

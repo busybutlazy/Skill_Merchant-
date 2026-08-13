@@ -2,20 +2,20 @@
   "files": [
     {
       "path": "instruction.md",
-      "sha256": "b2888676d93281ef19ecd7add48b9ec69ff42dd81ccbda7deef69e1e989240cc"
+      "sha256": "95ba090ff45172ba899520d597316e2a4062ef001fa55c4bacef86049e7aadfd"
     },
     {
       "path": "targets/claude.frontmatter.json",
-      "sha256": "d31807ee2af9004013f3a0494e3c481890b740caeb8e63d2ac4b56a6b0315b5f"
+      "sha256": "cf42fa6fa11c476fde37a5e3cbac6760b25fa25f732b92fb29fa2ac2ddd2f3fc"
     },
     {
       "path": "targets/codex.frontmatter.json",
-      "sha256": "908a82a848622c51b659e8a949beac056452e6c41acce85c34c981910922495b"
+      "sha256": "e887cd9aa6f6d4574ff903c1896e02f1528bbbccadd5f99919da5a48a52267dc"
     },
     {
       "path": "references/REVIEW_REPORT_TEMPLATE.md",
       "sha256": "3efa7f4d6bf5fd7209961b1681d89225cbbe64ed568e52b5cec3fa68896e7839"
     }
   ],
-  "package_sha256": "b97928d16d0e05058bc66aa0cbec38cef43c63540a449ec624b7a724f01ba33a"
+  "package_sha256": "cdaf3c6bff9db8695b6333eb35de530972413f8bdf43a75c9410c50eddf37d35"
 }

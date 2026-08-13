@@ -65,6 +65,11 @@ class ValidationTests(unittest.TestCase):
         self.assertEqual(skill.scope, "public")
         self.assertIn("shared", skill.tags)
 
+        instruction = skill.instruction
+        self.assertIn("Development Workflow (what-next)", instruction)
+        self.assertIn("Do not flatten its workflow dependencies", instruction)
+        self.assertIn("install its root skill `what-next`", instruction)
+
     def test_dto_skill_has_examples_asset_projection(self) -> None:
         skill = load_skill(REPO_ROOT, "dto-organizer")
         self.assertIn("examples", skill.asset_dirs)

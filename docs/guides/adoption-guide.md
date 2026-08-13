@@ -31,9 +31,9 @@ This repo is less useful when:
 
 ### Recommended Rollout Path
 
-1. Start with one approved skill set.
+1. Start with the approved Development Workflow.
 
-Pick a small initial set of skills your team already trusts.
+Install **Development Workflow** as the common baseline. It gives users four memorable entrypoints—`what-next`, `work-on-change`, `work-on-phase`, and `review-change`—while installing their independently governed atomic dependencies together. Add only the standalone skills the team needs.
 
 2. Define maintainer ownership.
 
@@ -64,7 +64,8 @@ If you are socializing this internally, a useful message is:
 
 ### Practical Adoption Checklist
 
-- choose 1 to 3 initial skills
+- adopt Development Workflow as the initial baseline
+- choose any additional standalone skills
 - assign maintainers
 - standardize one target-project entry path
 - teach the team to use `skill-manager`
@@ -101,9 +102,9 @@ skill-forge 很適合想要標準化 AI coding skill 分發與更新方式的團
 
 ### 建議的導入路徑
 
-1. 先從一組 approved skills 開始。
+1. 先從 approved Development Workflow 開始。
 
-挑選一小組團隊已經信任的 skills。
+將 **Development Workflow** 作為共用基線。使用者只需記住 `what-next`、`work-on-change`、`work-on-phase` 與 `review-change` 四個入口，安裝器會一併安裝其獨立治理的 atomic dependencies；再依團隊需求加入 standalone skills。
 
 2. 定義 maintainer ownership。
 
@@ -134,7 +135,8 @@ skill-forge 很適合想要標準化 AI coding skill 分發與更新方式的團
 
 ### 實際導入清單
 
-- 選定 1 到 3 個初始 skills
+- 將 Development Workflow 設為初始基線
+- 選定團隊需要的額外 standalone skills
 - 指派 maintainers
 - 標準化 target-project 入口
 - 教團隊使用 `skill-manager`

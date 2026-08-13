@@ -1,1 +1,1 @@
-{"name":"review-change","description":"Read-only adversarial change reviewer. Use to challenge completion claims against the request, approved plan, diff, tests, verification, and change reports.","tools":"Read, Grep, Glob, Bash, Write"}
+{"name":"review-change","description":"Fresh-context, read-only adversarial change reviewer. Use only in an agent/session that did not inherit the implementation conversation; challenge completion claims against the request, approved plan, diff, tests, verification, and change reports.","tools":"Read, Grep, Glob, Bash, Write"}

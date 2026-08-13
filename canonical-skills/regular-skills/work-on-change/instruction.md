@@ -31,7 +31,9 @@ Do not use for a complete Roadmap Phase; use `work-on-phase`. Do not perform ind
    - Approved implementation is complete but canonical verification evidence is missing or stale: use `verify-change`.
    - Verification is complete but the Change Report is missing or stale: use `report-change`.
    - Implementation, Verification Report, and Change Report are complete: stop and provide a Review Handoff for a fresh `review-change` agent.
-4. Re-evaluate repository evidence after each atomic workflow returns. Do not infer approval from the user's original request, an older Plan revision, or completion of a previous stage.
+4. By default, execute one atomic workflow, report the resulting state and next action, then return control to the user. This is a recommended interaction boundary, not an unconditional ban on chaining.
+5. Multiple atomic workflows may be chained only when no new Human Approval, decision, checkpoint, independent-review, Git, release, or deployment authority gate lies between them, and the entry request explicitly authorizes the continuous scope. Re-evaluate repository evidence between workflows and stop immediately if the next workflow's admission criteria are not proven.
+6. Do not infer approval from the user's original request, an older Plan revision, or completion of a previous stage.
 
 ## Review Handoff
 

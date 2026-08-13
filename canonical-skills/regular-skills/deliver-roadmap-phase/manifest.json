@@ -2,20 +2,20 @@
   "files": [
     {
       "path": "instruction.md",
-      "sha256": "9b0634151bc48d5a6403ee127e00567f3417c3850003f56643f97d7bd638271f"
+      "sha256": "03b48acb8b51ea3dff2333254f07f46ea751725f11b4849348a699c7153eaa41"
     },
     {
       "path": "targets/claude.frontmatter.json",
-      "sha256": "b1aae26ebdcf75a962b42c77c1ff77858a93e2b3322c21799566e7226e34c9de"
+      "sha256": "8d82c5a756decad3e2c56323d6ec3f14d93dbd4f5adbf56ae417f7d6ffc3820b"
     },
     {
       "path": "targets/codex.frontmatter.json",
-      "sha256": "eab3ff7dfa3dc836ea4909015030c8ca304f9395185909e11bfc518174838045"
+      "sha256": "36092893f2cae47fcc0ec20c23dc770bccedc61712d31fbc0fb1fd31e206cff1"
     },
     {
       "path": "references/PHASE_DELIVERY_PACKET_TEMPLATE.md",
       "sha256": "83a77cd46fee2eb097b37eab69385346c974380f85b2d39d29531a7205957cfc"
     }
   ],
-  "package_sha256": "d842d5627deb3ef96f57735a79585bca694d14eba78ec53e17711f1068629cce"
+  "package_sha256": "83a924705485e80b83fb65307c490e452ca5657d9c1ac81b52d74a6835e9097b"
 }

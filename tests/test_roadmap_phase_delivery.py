@@ -24,7 +24,7 @@ class RoadmapPhaseDeliveryTests(unittest.TestCase):
         for required in (
             "one approved Roadmap Phase", "PHASE_EXECUTION_PLAN.md",
             "one Phase Delivery Packet approval gate", "dependency order",
-            "genuinely separate `review-change`", "Human Phase Acceptance",
+            "fresh `review-change` agent/session", "Human Phase Acceptance",
             "Never commit, push, merge, release, or deploy implicitly",
         ):
             self.assertIn(required, instruction)
@@ -33,7 +33,7 @@ class RoadmapPhaseDeliveryTests(unittest.TestCase):
 
     def test_package_declares_complete_atomic_workflow_bundle(self) -> None:
         skill = load_skill(REPO_ROOT, "deliver-roadmap-phase")
-        self.assertEqual(skill.version, "0.3.0")
+        self.assertEqual(skill.version, "0.3.1")
         self.assertEqual(skill.skill_dependencies, DEPENDENCIES)
         resolved = resolve_skill_install_set(
             REPO_ROOT, [skill.name], "codex", allowed_scopes={"public"}

@@ -50,7 +50,7 @@ If a gate or phase scope still contains an undecided external contract, data own
    - a failed or blocked child prevents dependent children from starting.
 7. Do not silently repair a failed evidence-only verification. Record the result and stop for a new approved remediation plan.
 8. After all children complete their verification and Change Reports, confirm every Decision Gate required before Phase completion is resolved, then run phase-level container verification against the Roadmap outcomes. The Phase cannot complete while such a gate remains unresolved. Write `PHASE_VERIFICATION_REPORT.md` and `PHASE_CHANGE_REPORT.md`, including incomplete, unverified, deferred, and blocked outcomes.
-9. Hand the phase packet and child artifacts to a genuinely separate `review-change` session/subagent or a human reviewer. Never review or approve the implementation in the same execution context.
+9. Hand the phase packet and child artifacts to a fresh `review-change` agent/session that did not inherit the implementation conversation, or to a human reviewer. A subagent qualifies for formal review only when the platform guarantees that isolation. Never write a formal review or approve the implementation in the same execution context.
 10. Stop for final human acceptance. Only after explicit acceptance may a separately authorized action update Roadmap completion state. Never commit, push, merge, release, or deploy implicitly.
 
 ## Mandatory Stop Conditions
