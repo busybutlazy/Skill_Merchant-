@@ -5,7 +5,7 @@ import re
 import subprocess
 from pathlib import Path
 
-from .catalog import group_skill_names, load_catalog
+from .catalog import CatalogBundle, group_skill_names, load_catalog
 from .guideline import (
     GuidelineItem,
     GuidelineItemStatus,
@@ -40,6 +40,7 @@ CLEAR_SCREEN = "\033[2J\033[H"
 
 BASELINE_SKILL = "install-my-skill"
 RECOMMENDED_LABEL = "★ Recommended"
+WORKFLOW_PACKAGE_LABEL = "Workflow Packages"
 GUIDELINE_LABEL = "Guideline"
 
 _ANSI_RE = re.compile(r"\x1b\[[0-9;]*m")
@@ -231,6 +232,39 @@ class InteractiveMenu:
             f"  {description} {target_note}"
         )
 
+    def _bundle_install_set(self, bundle: CatalogBundle) -> list[CanonicalSkill]:
+        return resolve_skill_install_set(
+            self.repo_root,
+            [bundle.entry_skill],
+            self.target,
+            allowed_scopes={"public"},
+        )
+
+    def _render_bundle_line(
+        self,
+        bundle: CatalogBundle,
+        statuses: dict[str, InstalledStatus],
+    ) -> str:
+        members = self._bundle_install_set(bundle)
+        states = [statuses.get(skill.name) for skill in members]
+        if all(state is not None and state.status == "up_to_date" for state in states):
+            badge = self._render_status_badge("up_to_date")
+        elif all(state is None for state in states):
+            badge = _color("not installed", DIM)
+        else:
+            unhealthy = [
+                state.status if state is not None else "missing"
+                for state in states
+                if state is None or state.status != "up_to_date"
+            ]
+            badge = _color(f"repair/update needed ({len(unhealthy)})", YELLOW, BOLD)
+        entrypoints = "what-next / work-on-change / work-on-phase / review-change"
+        return (
+            f"{_color(bundle.name, CYAN, BOLD)}  {badge}\n"
+            f"  {self._highlight(bundle.description)}\n"
+            f"  {_color(entrypoints, DIM)} · {_color(f'{len(members)} skills installed together', DIM)}"
+        )
+
     def _grouped_skill_sections(
         self, skills: list[CanonicalSkill]
     ) -> list[tuple[str | None, list[CanonicalSkill]]]:
@@ -348,13 +382,26 @@ class InteractiveMenu:
             return
         statuses = {item.name: item for item in self._statuses()}
 
-        items: list[CanonicalSkill] = []
+        requested_roots: list[str] = []
         render_sections: list[tuple[str | None, list[str]]] = []
-        for header, section_skills in self._grouped_skill_sections(skills):
+        bundled_names: set[str] = set()
+        bundle_labels: list[str] = []
+        for bundle in self._catalog.bundles:
+            if bundle.entry_skill not in {skill.name for skill in skills}:
+                continue
+            members = self._bundle_install_set(bundle)
+            bundled_names.update(skill.name for skill in members)
+            bundle_labels.append(self._render_bundle_line(bundle, statuses))
+            requested_roots.append(bundle.entry_skill)
+        if bundle_labels:
+            render_sections.append((WORKFLOW_PACKAGE_LABEL, bundle_labels))
+
+        standalone_skills = [skill for skill in skills if skill.name not in bundled_names]
+        for header, section_skills in self._grouped_skill_sections(standalone_skills):
             labels = []
             for skill in section_skills:
                 labels.append(self._render_skill_line(skill, installed=statuses.get(skill.name)))
-                items.append(skill)
+                requested_roots.append(skill.name)
             render_sections.append((header, labels))
 
         selections = self._prompt_multi_choice(
@@ -366,14 +413,14 @@ class InteractiveMenu:
             print(_color("Install cancelled.", DIM))
             return
 
-        requested = [items[index] for index in selections]
+        requested_names_list = [requested_roots[index] for index in selections]
         selected = resolve_skill_install_set(
             self.repo_root,
-            [skill.name for skill in requested],
+            requested_names_list,
             self.target,
             allowed_scopes={"public"},
         )
-        requested_names = {skill.name for skill in requested}
+        requested_names = set(requested_names_list)
         self._clear_screen()
         self._print_header()
         print()

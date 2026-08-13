@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "identity": {
+    "name": "work-on-phase",
+    "version": "0.1.0",
+    "description": "Move one exact approved Roadmap phase forward through the governed phase-delivery workflow",
+    "updated_at": "2026-08-13",
+    "tags": [
+      "workflow-entrypoint",
+      "roadmap",
+      "orchestration",
+      "governance"
+    ]
+  },
+  "content": {
+    "instruction_file": "instruction.md"
+  },
+  "distribution": {
+    "scope": "public"
+  },
+  "dependencies": {
+    "skills": [
+      "deliver-roadmap-phase"
+    ]
+  },
+  "targets": {
+    "codex": {
+      "frontmatter_file": "targets/codex.frontmatter.json",
+      "install_path": ".agents/skills/{name}/"
+    },
+    "claude": {
+      "frontmatter_file": "targets/claude.frontmatter.json",
+      "install_path": ".claude/skills/{name}/"
+    }
+  },
+  "integrity": {
+    "manifest_file": "manifest.json",
+    "package_sha256": "d88c22b6966b08c1650e2c6c72ea21ab4730f3152744e84bb9ed7c2519943ae0"
+  }
+}

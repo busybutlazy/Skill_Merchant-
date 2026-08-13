@@ -14,7 +14,16 @@ class CatalogGroup:
 
 
 @dataclass(frozen=True)
+class CatalogBundle:
+    id: str
+    name: str
+    description: str
+    entry_skill: str
+
+
+@dataclass(frozen=True)
 class CatalogConfig:
+    bundles: list[CatalogBundle] = field(default_factory=list)
     groups: list[CatalogGroup] = field(default_factory=list)
     recommended: list[str] = field(default_factory=list)
     highlight_keywords: list[str] = field(default_factory=list)
@@ -34,6 +43,17 @@ def load_catalog(repo_root: Path) -> CatalogConfig:
     if not isinstance(data, dict):
         return CatalogConfig()
 
+    bundles: list[CatalogBundle] = []
+    for entry in data.get("bundles") or []:
+        if not isinstance(entry, dict):
+            continue
+        bundle_id = entry.get("id")
+        name = entry.get("name")
+        description = entry.get("description")
+        entry_skill = entry.get("entry_skill")
+        if all(isinstance(item, str) and item for item in (bundle_id, name, description, entry_skill)):
+            bundles.append(CatalogBundle(bundle_id, name, description, entry_skill))
+
     groups: list[CatalogGroup] = []
     for entry in data.get("groups") or []:
         if not isinstance(entry, dict):
@@ -46,7 +66,12 @@ def load_catalog(repo_root: Path) -> CatalogConfig:
 
     recommended = [item for item in (data.get("recommended") or []) if isinstance(item, str)]
     keywords = [item for item in (data.get("highlight_keywords") or []) if isinstance(item, str)]
-    return CatalogConfig(groups=groups, recommended=recommended, highlight_keywords=keywords)
+    return CatalogConfig(
+        bundles=bundles,
+        groups=groups,
+        recommended=recommended,
+        highlight_keywords=keywords,
+    )
 
 
 def group_skill_names(

@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "identity": {
+    "name": "what-next",
+    "version": "0.1.0",
+    "description": "Inspect project workflow evidence, explain the current state, and route to the safest next human entrypoint",
+    "updated_at": "2026-08-13",
+    "tags": [
+      "workflow-bundle",
+      "navigation",
+      "orchestration",
+      "governance"
+    ]
+  },
+  "content": {
+    "instruction_file": "instruction.md"
+  },
+  "distribution": {
+    "scope": "public"
+  },
+  "dependencies": {
+    "skills": [
+      "define-project",
+      "bootstrap-project",
+      "work-on-change",
+      "work-on-phase"
+    ]
+  },
+  "targets": {
+    "codex": {
+      "frontmatter_file": "targets/codex.frontmatter.json",
+      "install_path": ".agents/skills/{name}/"
+    },
+    "claude": {
+      "frontmatter_file": "targets/claude.frontmatter.json",
+      "install_path": ".claude/skills/{name}/"
+    }
+  },
+  "integrity": {
+    "manifest_file": "manifest.json",
+    "package_sha256": "3435b49c4e158734866c3a03784a09e630f923a9f8f8974d42b770d424c03834"
+  }
+}

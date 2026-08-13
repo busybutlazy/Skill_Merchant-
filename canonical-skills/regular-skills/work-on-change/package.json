@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "identity": {
+    "name": "work-on-change",
+    "version": "0.1.0",
+    "description": "Move one bounded change through governed planning, approved implementation, verification, and review handoff",
+    "updated_at": "2026-08-13",
+    "tags": [
+      "workflow-entrypoint",
+      "change-workflow",
+      "orchestration",
+      "governance"
+    ]
+  },
+  "content": {
+    "instruction_file": "instruction.md"
+  },
+  "distribution": {
+    "scope": "public"
+  },
+  "dependencies": {
+    "skills": [
+      "grill-with-docs",
+      "plan-change",
+      "implement-task",
+      "run-approved-change",
+      "verify-change",
+      "report-change",
+      "review-change"
+    ]
+  },
+  "targets": {
+    "codex": {
+      "frontmatter_file": "targets/codex.frontmatter.json",
+      "install_path": ".agents/skills/{name}/"
+    },
+    "claude": {
+      "frontmatter_file": "targets/claude.frontmatter.json",
+      "install_path": ".claude/skills/{name}/"
+    }
+  },
+  "integrity": {
+    "manifest_file": "manifest.json",
+    "package_sha256": "c16a6f0004a764ae9d26520ac10daf0ca38ee0cece90738e13183ab285f89236"
+  }
+}

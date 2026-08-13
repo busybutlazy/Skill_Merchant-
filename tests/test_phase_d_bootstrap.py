@@ -93,7 +93,7 @@ class PhaseDBootstrapContractTests(unittest.TestCase):
         bootstrap = next(group for group in catalog["groups"] if group["name"] == "Project Lifecycle")
         self.assertEqual(
             bootstrap["skills"],
-            ["grill-with-docs", "define-project", "bootstrap-project", "deliver-roadmap-phase"],
+            ["what-next", "work-on-change", "work-on-phase", "grill-with-docs", "define-project", "bootstrap-project", "deliver-roadmap-phase"],
         )
         self.assertNotIn("bootstrap-project", catalog["recommended"])
 

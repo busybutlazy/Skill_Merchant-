@@ -32,16 +32,24 @@ Contract：docs/CONTRACTS.md
 6. 產生變更報告，揭露完成、未完成與偏差。
 7. 接受獨立審查。
 
-依目前 readiness 選擇 lifecycle 入口：
+平常使用 `what-next` 判斷目前狀態與下一個入口；要直接推進一個 bounded Change 或一個明確 Roadmap Phase 時，分別使用 `work-on-change` 或 `work-on-phase`。底層 atomic skills 保持獨立，供入口 skill 路由與精準重跑。
+
+依目前 readiness 選擇底層 lifecycle workflow：
 
 - 有未決選擇的新專案或重大 Change：使用 `grill-with-docs`，不得在 planning 中自行猜測。
 - 決策已具備 readiness evidence，但缺正式 Project Definition：使用 `define-project`。
 - Greenfield Project Definition 已獲人類批准，但缺工程基線：使用 `bootstrap-project`。
-- 已批准一個明確 Roadmap Phase，且 Phase-start Decision Gates 已滿足：使用 `deliver-roadmap-phase`，並指定 Roadmap 路徑與唯一 Phase ID／標題。
+- 已批准一個明確 Roadmap Phase，且 Phase-start Decision Gates 已滿足：從 `work-on-phase` 進入，並指定 Roadmap 路徑與唯一 Phase ID／標題；它會使用底層 `deliver-roadmap-phase`。
 
 不得用「繼續 Roadmap」推定下一階段，也不得一次涵蓋多個 Phase。Project Approval、bootstrap approval、Phase Acceptance 與 Git／release authority 彼此獨立。
 
 完整流程、風險分級與報告格式見 `docs/agent-guideline.md`。
+
+### Subagent 委派
+
+- 中等或複雜任務若存在邊界清楚、可獨立驗證的探索、實作、測試或審查工作，應優先委派給 subagent，讓主 context 保留需求、決策與整合結果。
+- 只有範圍局部、風險低、無需廣泛探索的簡單修改，才由主 agent 直接完成；修改行數少不代表風險低。
+- 主 agent 必須界定每個 subagent 的範圍與輸出、驗證回傳結果並負責最終整合。避免多個 subagent 同時修改重疊檔案；環境不支援 subagent 時，才由主 agent 執行並控制載入的 context。
 
 ### Stop Conditions（遇到即停止並回報，不得自行決定）
 

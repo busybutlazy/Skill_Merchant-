@@ -15,7 +15,7 @@ class ProjectLifecycleRoutingTests(unittest.TestCase):
             REPO_ROOT / "canonical-configs" / "agent-guideline" / "guideline.md"
         ).read_text(encoding="utf-8")
         self.assertIn(
-            "New or ambiguous project | `grill-with-docs` → `define-project`",
+            "New or ambiguous project | `what-next` → `grill-with-docs` → `define-project`",
             guideline,
         )
         self.assertIn("模糊或有重大未決策：`grill-with-docs`", guideline)
@@ -37,7 +37,7 @@ class ProjectLifecycleRoutingTests(unittest.TestCase):
             guideline,
         )
         self.assertIn(
-            "已批准 Roadmap 且準備交付一個明確 Phase：`deliver-roadmap-phase`",
+            "已批准 Roadmap 且準備交付一個明確 Phase：使用 `work-on-phase`，由它路由至 `deliver-roadmap-phase`",
             guideline,
         )
 
@@ -87,6 +87,9 @@ class ProjectLifecycleRoutingTests(unittest.TestCase):
         self.assertEqual(
             group["skills"],
             [
+                "what-next",
+                "work-on-change",
+                "work-on-phase",
                 "grill-with-docs",
                 "define-project",
                 "bootstrap-project",

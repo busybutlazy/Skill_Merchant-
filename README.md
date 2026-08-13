@@ -90,7 +90,7 @@ Then:
 
 1. choose `codex` or `claude`;
 2. open **Install / Update skills**;
-3. install a skill such as `commit`, or select the lifecycle entrypoints you need under **Project Lifecycle**;
+3. install **Development Workflow** once for project navigation, Change delivery, Roadmap Phase delivery, and independent review; install standalone skills such as `commit` separately when needed;
 4. reload the agent session.
 
 Windows PowerShell:
@@ -165,7 +165,7 @@ local-custom-skill   unmanaged
 
 ### Dependencies remain visible
 
-Installing `grill-with-docs` also installs its internal decision methods. Installing `deliver-roadmap-phase` installs its required Change Workflow skills. The installer discloses the bundle instead of silently flattening multiple responsibilities into one skill.
+The manager presents **Development Workflow** as one installable package. It installs `what-next`, `work-on-change`, `work-on-phase`, `review-change`, and their atomic workflow dependencies while keeping every skill independent in the target directory. Advanced users can still install an individual atomic skill directly through the CLI.
 
 ### Workflow outputs are reviewable
 
@@ -289,7 +289,7 @@ cd /path/to/your-project
 
 1. 選擇 `codex` 或 `claude`；
 2. 進入 **Install / Update skills**；
-3. 安裝 `commit` 等單一 skill，或從 **Project Lifecycle** 選擇目前需要的入口；
+3. 安裝一次 **Development Workflow**，取得流程導航、Change、Roadmap Phase 與獨立審查入口；`commit` 等 standalone skills 再依需要個別安裝；
 4. 重新載入 agent session。
 
 Windows PowerShell：
@@ -364,7 +364,7 @@ local-custom-skill   unmanaged
 
 ### Dependencies 仍然看得見
 
-安裝 `grill-with-docs` 會帶入其內部 decision methods；安裝 `deliver-roadmap-phase` 會帶入所需 Change Workflow skills。Installer 會揭露 bundle，不會把多個責任偷偷壓平成單一 skill。
+Manager 會把 **Development Workflow** 顯示成單一安裝套件。它會安裝 `what-next`、`work-on-change`、`work-on-phase`、`review-change` 與相關 atomic workflow dependencies，但 target 目錄中的每個 skill 仍維持獨立。進階使用者仍可透過 CLI 直接安裝單一 atomic skill。
 
 ### Workflow 產物可以被審查
 
