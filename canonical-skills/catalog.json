@@ -1,9 +1,17 @@
 {
   "schema_version": 1,
+  "bundles": [
+    {
+      "id": "development-workflow",
+      "name": "Development Workflow",
+      "description": "Install project navigation, bounded Change, Roadmap Phase, and independent review workflows as one managed package.",
+      "entry_skill": "what-next"
+    }
+  ],
   "groups": [
     {
       "name": "Project Lifecycle",
-      "skills": ["grill-with-docs", "define-project", "bootstrap-project", "deliver-roadmap-phase"]
+      "skills": ["what-next", "work-on-change", "work-on-phase", "grill-with-docs", "define-project", "bootstrap-project", "deliver-roadmap-phase"]
     },
     {
       "name": "Git & Review",

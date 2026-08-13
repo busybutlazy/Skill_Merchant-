@@ -46,7 +46,7 @@ class RoadmapPhaseDeliveryTests(unittest.TestCase):
         workflow = next(group for group in catalog["groups"] if group["name"] == "Change Workflow")
         self.assertEqual(
             roadmap["skills"],
-            ["grill-with-docs", "define-project", "bootstrap-project", "deliver-roadmap-phase"],
+            ["what-next", "work-on-change", "work-on-phase", "grill-with-docs", "define-project", "bootstrap-project", "deliver-roadmap-phase"],
         )
         self.assertEqual(workflow["skills"], DEPENDENCIES)
         self.assertNotIn("deliver-roadmap-phase", catalog["recommended"])

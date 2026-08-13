@@ -18,7 +18,7 @@ from skill_forge.agent_memory import (
     load_config_item,
     memory_file_path,
 )
-from skill_forge.catalog import CatalogConfig, CatalogGroup, group_skill_names, load_catalog
+from skill_forge.catalog import CatalogBundle, CatalogConfig, CatalogGroup, group_skill_names, load_catalog
 from skill_forge.install import list_installed
 from skill_forge.menu import _pad, _visible_len
 from skill_forge.package_ops import refresh_skill_metadata
@@ -795,7 +795,7 @@ class WorkflowTests(CliTestCase):
                 "menu",
                 "--project",
                 str(project_root),
-                input_text="1\n\n2\n2\n\n8\n",
+                input_text="1\n\n2\n3\n\n8\n",
             )
             self.assertEqual(result.returncode, 0, result.stderr)
             clean_output = self.strip_ansi(result.stdout)
@@ -826,6 +826,27 @@ class WorkflowTests(CliTestCase):
             ]
             self.assertEqual(installed_names, expected_names)
 
+    def test_menu_collapses_development_workflow_dependencies_into_bundle(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skill-forge-test-") as tmp_dir:
+            project_root = Path(tmp_dir) / "project"
+            project_root.mkdir()
+
+            result = self.run_cli(
+                "menu",
+                "--project",
+                str(project_root),
+                input_text="1\n\n2\nq\n\n8\n",
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            clean_output = self.strip_ansi(result.stdout)
+            install_screen = clean_output.split("Select skills to install or refresh:", 1)[1]
+            install_screen = install_screen.split("Install cancelled.", 1)[0]
+            self.assertIn("Workflow Packages", install_screen)
+            self.assertIn("Development Workflow", install_screen)
+            self.assertIn("what-next / work-on-change / work-on-phase / review-change", install_screen)
+            self.assertNotIn("plan-change", install_screen)
+            self.assertNotIn("deliver-roadmap-phase", install_screen)
+
     def test_menu_prefers_host_project_path_in_header_when_present(self) -> None:
         with tempfile.TemporaryDirectory(prefix="skill-forge-test-") as tmp_dir:
             project_root = Path(tmp_dir) / "project"
@@ -849,6 +870,7 @@ class WorkflowTests(CliTestCase):
 class CatalogTests(unittest.TestCase):
     def test_load_catalog_from_repo(self) -> None:
         catalog = load_catalog(REPO_ROOT)
+        self.assertEqual(catalog.bundles[0].entry_skill, "what-next")
         self.assertTrue(catalog.groups)
         self.assertIn("install-my-skill", catalog.recommended)
         self.assertTrue(catalog.highlight_keywords)
@@ -856,6 +878,7 @@ class CatalogTests(unittest.TestCase):
     def test_load_catalog_missing_file_returns_empty_config(self) -> None:
         with tempfile.TemporaryDirectory(prefix="skill-forge-test-") as tmp_dir:
             catalog = load_catalog(Path(tmp_dir))
+            self.assertEqual(catalog.bundles, [])
             self.assertEqual(catalog.groups, [])
             self.assertEqual(catalog.recommended, [])
             self.assertEqual(catalog.highlight_keywords, [])
@@ -870,6 +893,7 @@ class CatalogTests(unittest.TestCase):
 
     def test_group_skill_names_orders_and_dedupes(self) -> None:
         catalog = CatalogConfig(
+            bundles=[CatalogBundle("demo", "Demo", "Demo bundle", "commit")],
             groups=[
                 CatalogGroup(name="Git", skills=["commit", "create-pr", "missing-skill"]),
                 CatalogGroup(name="Docs", skills=["dto-organizer"]),

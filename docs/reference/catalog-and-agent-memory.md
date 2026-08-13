@@ -12,9 +12,9 @@ This reference covers three features that live outside the canonical skill packa
 
 Controls how the interactive menu groups, orders, and highlights skills. The file lives next to the canonical buckets but is **not** part of any skill package, so editing it never changes a `package_sha256`.
 
-Catalog groups are presentation only, not presets or bulk-install contracts. The `Project Lifecycle` group helps users choose among `grill-with-docs`, `define-project`, `bootstrap-project`, and `deliver-roadmap-phase`; users install the entries appropriate to their project state.
+Catalog groups are presentation only. `catalog.json.bundles` defines human-friendly manager presentation: each bundle points to one canonical `entry_skill`, while the dependency resolver remains the source of truth for what is installed. The default Development Workflow bundle points to `what-next`; the interactive manager shows it as one package instead of flattening all workflow internals into the install menu.
 
-Installable bundles use `package.json.dependencies.skills`; the CLI and interactive menu disclose and install those dependencies before the requested facade skill. `grill-with-docs` uses this mechanism to install the internal `grilling` and `domain-modeling` methods. `deliver-roadmap-phase` installs the complete Change Workflow toolset without merging the atomic skills into one source package. `define-project` and `bootstrap-project` remain independent entrypoints.
+Installable bundles use `package.json.dependencies.skills`; the CLI and interactive menu disclose and install those dependencies before the requested facade skill. `what-next` installs the complete Development Workflow closure, including the human entrypoints and atomic workflows, without merging them into one source package. Direct CLI installation of any atomic skill remains available for advanced use.
 
 ```json
 {
