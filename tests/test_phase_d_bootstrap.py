@@ -22,8 +22,8 @@ REFERENCES = {
 class PhaseDBootstrapContractTests(unittest.TestCase):
     def test_package_validates_and_manifest_includes_every_reference(self) -> None:
         skill = load_skill(REPO_ROOT, "bootstrap-project")
-        self.assertEqual(skill.version, "0.1.3")
-        self.assertEqual(skill.updated_at, "2026-07-23")
+        self.assertEqual(skill.version, "0.1.4")
+        self.assertEqual(skill.updated_at, "2026-08-13")
         manifest = json.loads((SKILL_DIR / "manifest.json").read_text(encoding="utf-8"))
         paths = {entry["path"] for entry in manifest["files"]}
         self.assertTrue(REFERENCES.issubset(paths))

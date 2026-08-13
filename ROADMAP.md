@@ -100,21 +100,23 @@ phase 7 起，優先處理的不是視覺 UI，而是 adoption 與治理能力�
 - [ ] 規劃 skill provenance、signing 或等價 trust model
 - [ ] 規劃 policy enforcement，例如 allowlist / denylist
 - [ ] 規劃 audit log 與 skill lifecycle 記錄
-- [ ] 規劃 maintainer workflow 與 consumer workflow 的權限分離
+- [x] 建立 maintainer/public skill 分層，並將 workflow approval、review 與 Git authority 分離
+- [ ] 將更多權限邊界下沉為可機械式驗證的 policy / receipt
 
 ### CLI Enhancements
 
-- [ ] 支援非互動模式，例如 `skill-forge install commit --yes`
+- [x] 支援非互動安裝與 `--yes`
 - [ ] 支援依 tag 或 target 篩選 skill
 - [ ] 支援以關鍵字搜尋名稱、描述與 tags
-- [ ] 加入 preset 機制，一次安裝一組常用 skills
+- [x] 以 Development Workflow bundle 提供一次安裝完整 workflow dependency closure
+- [ ] 若出現第二種實際套餐需求，再擴充為通用 preset 機制
 - [ ] 為大量 skill 清單加入分頁或更好的排版
 - [x] 支援維護者快速同步 repo 內 maintainer canonical skills 到本地環境
 
 ### Metadata and Validation
 
 - [ ] 定義更完整的 canonical metadata schema 驗證
-- [ ] 支援 skill 相依性欄位
+- [x] 支援 skill 相依性欄位與 transitive installation
 - [ ] 對 major version 升級顯示更醒目的提示
 - [ ] 規劃自動檢查 frontmatter 與 identity / rendered metadata 一致性
 - [x] 定義 maintainer/public skill scope 並避免來源混淆

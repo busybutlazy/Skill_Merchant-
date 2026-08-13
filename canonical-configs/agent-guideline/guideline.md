@@ -162,6 +162,8 @@ Reviewer（獨立 agent 或人）以唯讀方式嘗試**推翻完成聲明**：�
 
 安裝時，`what-next` 是 Development Workflow bundle 的根節點，會一併安裝上述入口與相關 atomic skills。安裝完整 dependency closure 只代表 workflow 可用，不代表入口取得跨越 Human Approval、review、Git 或 release boundary 的權限。
 
+正式 `review-change` 必須由未繼承 implementation conversation 的全新 agent／session 執行。同 context 的自我檢查不能產生滿足正式 gate 的 Review Report；subagent 只有在平台保證不繼承該 conversation 時才具備正式 reviewer 的獨立性。
+
 #### Project Lifecycle Routing
 
 這張表只選擇入口，不取代各 skill 的 admission、approval 或 authority 規則。並非所有專案都必須先執行 `grill-with-docs`；決策已完整時直接進入相應下游入口。
@@ -186,8 +188,8 @@ skill-forge 已提供的 Workflow skills：
 
 | Skill | 用途 | 禁止事項 |
 |-------|------|----------|
-| `what-next` | 唯讀判斷目前狀態、下一個人類入口與下一道 gate | 猜測批准、連續跨越多個入口或把完整安裝誤當執行授權 |
-| `work-on-change` | 推進一個 bounded Change，依 artifacts 選擇適合的 atomic workflow | 自我批准、同 context 自我 review、隱含 Git／release 動作 |
+| `what-next` | 唯讀判斷目前狀態、下一個人類入口與下一道 gate；只有 current Verification Report 與 current Change Report 都能追溯至同一批准 Plan revision/diff 時才交接 review | 猜測批准、只憑 implementation 完成就導向 review、連續跨越多個入口或把完整安裝誤當執行授權 |
+| `work-on-change` | 推進一個 bounded Change，依 artifacts 選擇適合的 atomic workflow；預設一次一個 workflow | 自我批准、同 context 自我 review、隱含 Git／release 動作 |
 | `work-on-phase` | 人類入口：指定一個 Roadmap Phase，轉交底層 phase delivery workflow | 推定下一 Phase、跨 Phase、降低底層 admission 或 authority gate |
 | `grill-with-docs` | 盤點所有未決選擇、分類決策 ownership，並優先收斂 load-bearing decisions | 遺漏影響 observable behavior／failure handling／data semantics／operations／acceptance 的小型選擇；production implementation；自行批准決策 |
 | `define-project` | 將具備 readiness evidence 的決策整理為可批准的 SPEC、必要 CONTRACTS 與含 Decision Gates 的 outcome-based ROADMAP | 猜測未決策答案、把不安全的延後事項視為 ready、自行批准或啟動 bootstrap |
@@ -201,6 +203,8 @@ skill-forge 已提供的 Workflow skills：
 | `bootstrap-project` | 唯讀探索並在人工批准後建立 Docker-first 骨架、CI、canonical scripts | 未批准前不得寫入；不得使用 host fallback |
 
 一般使用者通常只需從 manager 安裝 Development Workflow，並呼叫 `what-next`、`work-on-change`、`work-on-phase` 或在新 agent 中呼叫 `review-change`。底層 skills 仍保持獨立，以便入口路由與精準重跑單一 Task、驗證、報告或 review。入口 skill 不得降低任何底層 approval、risk、verification 或 authority gate。
+
+`work-on-change` 的建議互動邊界是每次只執行一個 atomic workflow，回報新的 state 與 next action 後交還控制權。這不是硬性禁止串接：只有入口要求明確授權連續範圍，且相鄰 workflows 之間不存在新的 Human Approval、decision、checkpoint、independent review、Git、release 或 deployment authority gate 時，才可在每次重新驗證 admission criteria 後繼續。
 
 `bootstrap-project` 是新專案缺少容器入口時唯一受規範允許的架設路徑：先唯讀探索並產生完整 bootstrap plan，取得人類對該計畫的明確批准後才能建立基線。在 Docker 基線完成前，不得在 host 安裝 dependency 或執行專案命令。
 
@@ -222,7 +226,7 @@ skill-forge 的 `agent-hooks` guideline item 可為 Claude Code 與 Codex 安裝
 
 ### Subagents / Reviewer
 
-用於角色與 context 隔離，並限制可用工具。建議角色：Explorer（唯讀搜尋）、Planner（只產生計畫）、Implementer（只執行指定 Task）、Code Reviewer / Security Reviewer / Test Reviewer（唯讀）。每個角色要有清楚的觸發條件、輸入輸出、工具限制與完成條件；不要建立過多角色。
+用於角色與 context 隔離，並限制可用工具。建議角色：Explorer（唯讀搜尋）、Planner（只產生計畫）、Implementer（只執行指定 Task）、Code Reviewer / Security Reviewer / Test Reviewer（唯讀）。每個角色要有清楚的觸發條件、輸入輸出、工具限制與完成條件；不要建立過多角色。一般 reviewer subagent 可提供自我檢查證據，但若平台不能保證它未繼承 implementation conversation，就不能滿足正式獨立 review gate。
 
 #### 委派政策
 
@@ -304,14 +308,14 @@ repository/
 ```text
 1. CLAUDE.md / AGENTS.md（agent memory）
 2. 本文件（docs/agent-guideline.md）
-3. plan-change / verify-change / report-change skills
+3. Development Workflow bundle（以 `what-next` 安裝完整 dependency closure）
 4. make verify（或等價 canonical command）
 5. CI
 6. changes/<change-id>/
 7. Git checkpoint（分支 + 可回退 commit）
 ```
 
-再逐步增加：implement-task / run-approved-change skills、reviewer subagent、security review。若目標環境具備 Python 3.11+，可透過 guideline 安裝 protected-file / dangerous-command hooks。
+再逐步增加：更細緻的 project-specific hooks、專門 security review、外部 approval receipt 與 CI policy enforcement。若目標環境具備 Python 3.11+，可透過 guideline 安裝 protected-file / dangerous-command hooks。
 
 ---
 

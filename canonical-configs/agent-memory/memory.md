@@ -30,9 +30,11 @@ Contract：docs/CONTRACTS.md
 4. 依 Plan 明確批准的 Execution Policy 執行：預設一次一個 Task；只有低／中風險且人類明確批准 `supervised-auto` 時，才能連續執行列出的 auto-approved Tasks。
 5. 執行驗證並如實記錄命令與結果。
 6. 產生變更報告，揭露完成、未完成與偏差。
-7. 接受獨立審查。
+7. 由未繼承 implementation conversation 的全新 agent／session 接受正式獨立審查；同 context 自我檢查不能滿足 review gate。subagent 只有在平台保證不繼承該 conversation 時才合格。
 
 平常使用 `what-next` 判斷目前狀態與下一個入口；要直接推進一個 bounded Change 或一個明確 Roadmap Phase 時，分別使用 `work-on-change` 或 `work-on-phase`。底層 atomic skills 保持獨立，供入口 skill 路由與精準重跑。
+
+`work-on-change` 預設一次執行一個 atomic workflow，完成後回報狀態與下一步。只有使用者入口明確授權連續範圍，且中間沒有新的 Human Approval、decision、checkpoint、independent review、Git 或 release authority gate 時，才可串接相鄰 workflows。
 
 依目前 readiness 選擇底層 lifecycle workflow：
 

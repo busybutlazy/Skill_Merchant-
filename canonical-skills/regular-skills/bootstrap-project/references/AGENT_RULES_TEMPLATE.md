@@ -31,7 +31,9 @@ Project dependencies and project commands must run through the approved Docker/C
 
 ## Change Workflow and Approval Gates
 
-Non-trivial work follows request → read-only plan → human approval → one task → container verification → reports → independent review → human acceptance. Material deviations stop for approval.
+Non-trivial work follows request → read-only plan → human approval → approved execution → container verification → reports → independent review → human acceptance. One atomic workflow at a time is the recommended default; adjacent workflows may be chained only when the request explicitly authorizes that scope and no new authority gate intervenes. Material deviations stop for approval.
+
+Formal independent review must run in a fresh agent/session that did not inherit the implementation conversation. A subagent qualifies only when the platform guarantees that isolation; same-context self-review cannot satisfy the formal review gate.
 
 ## Stop Conditions
 

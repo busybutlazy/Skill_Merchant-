@@ -78,6 +78,10 @@
 - 維護者工作流與一般使用者路徑必須分離
 - package integrity 與 validation 是核心治理能力
 
+## Historical Designs
+
+- [`designs/agent-install-flow.md`](designs/agent-install-flow.md)：agent-driven skill installation 的已交付設計，保留 `catalog`、`plan`、non-interactive wrapper 與 `install-my-skill` 的原始分階段脈絡；現行操作請參考 `docs/guides/terminal-operations-guide.md`。
+
 ## If You Remove Detailed Phase Files Later
 
 至少建議保留這份摘要與根目錄 `ROADMAP.md`，因為：

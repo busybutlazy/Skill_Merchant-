@@ -38,10 +38,12 @@ git checkout -b dev_jett
 **`pyproject.toml`**
 ```toml
 [project]
-version = "1.6.1"   # ← 改這裡
+version = "<version>"   # ← 改這裡
 ```
 
 `README.md` 的 release badge 與 Docker image 的 tags/labels 會由 GitHub release tag 自動產生，不需手動同步。發佈 workflow 也會拒絕與 `pyproject.toml` 版本不一致的 tag。
+
+請以 `pyproject.toml` 的實際值取代本文的 `<version>`；不要從文件範例推定目前版本。
 
 版本號規則（[Semantic Versioning](https://semver.org/)）：
 
@@ -79,15 +81,15 @@ git pull origin main
 ### 7. Push tag 觸發自動發布
 
 ```bash
-git tag v1.6.1
-git push origin v1.6.1
+git tag v<version>
+git push origin v<version>
 ```
 
 tag push 後約 5-10 分鐘，GitHub Actions 會自動：
 - Build 多平台 Docker image（`linux/amd64` + `linux/arm64`，arm64 走 QEMU 模擬所以較慢）
-- 驗證 tag `v1.6.1` 與 `pyproject.toml` 的 `1.6.1` 一致
-- Push 到 `ghcr.io/busybutlazy/skill-forge:1.6.1`
-- Push 到 `ghcr.io/busybutlazy/skill-forge:1.6`
+- 驗證 tag `v<version>` 與 `pyproject.toml` 的 `<version>` 一致
+- Push 到 `ghcr.io/busybutlazy/skill-forge:<version>`
+- Push 到對應的 major/minor floating tag
 - Push 到 `ghcr.io/busybutlazy/skill-forge:latest`
 
 ### 8. 確認發布成功

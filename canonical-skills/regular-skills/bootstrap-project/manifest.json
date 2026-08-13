@@ -14,7 +14,7 @@
     },
     {
       "path": "references/AGENT_RULES_TEMPLATE.md",
-      "sha256": "d059b85b1a49c89a5b37a569f6fd54b518fd3691ea96fd96aa1d4c85e8492463"
+      "sha256": "6a82b3de0463e66ddc8afbd6b92d642d893da869965053205e604b189c07d5f7"
     },
     {
       "path": "references/BOOTSTRAP_PLAN_TEMPLATE.md",
@@ -37,5 +37,5 @@
       "sha256": "72f4d124e8e7699ddbde3286a3286d182b46bea57c5e9da65dc4516195aa03be"
     }
   ],
-  "package_sha256": "752c7542de88d4f2480e9fbebd5d0ce6fc29824e9196daba8044d49bf7d14be0"
+  "package_sha256": "76ffd4e3dba5a2ec1c6e45d9fe24d1f61340abd216e27fab3a5a1c0513559481"
 }

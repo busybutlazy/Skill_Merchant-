@@ -26,7 +26,6 @@ Required outputs:
 
 - `SKILL.md`
 - `metadata.json`
-- `metadata.json`
 
 Optional outputs:
 
@@ -141,7 +140,6 @@ Using the `commit` skill as a validation example, the system should confirm:
 必要輸出：
 
 - `SKILL.md`
-- `metadata.json`
 - `metadata.json`
 
 可選輸出：

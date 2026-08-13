@@ -141,14 +141,14 @@ To install from an existing Codex or Claude session, bootstrap `install-my-skill
 Help me install or update a skill.
 ```
 
-For an ambiguous new project, a typical workflow is:
+For an ambiguous new project, start with the human-facing workflow entrypoints:
 
 ```text
-grill-with-docs
-→ define-project
-→ Human Project Approval
-→ bootstrap-project
-→ deliver-roadmap-phase
+what-next
+→ project decisions, definition, and Human Project Approval
+→ engineering baseline when needed
+→ work-on-phase
+→ review-change in a fresh agent
 → Human Phase Acceptance
 → commit
 → create-pr
@@ -375,14 +375,14 @@ Set-Location C:\path\to\your-project
 幫我安裝或更新 skill。
 ```
 
-模糊的新專案通常依下列路徑進行：
+模糊的新專案可從面向人類的 workflow 入口開始：
 
 ```text
-grill-with-docs
-→ define-project
-→ Human Project Approval
-→ bootstrap-project
-→ deliver-roadmap-phase
+what-next
+→ 專案決策、定義與 Human Project Approval
+→ 必要時建立工程基線
+→ work-on-phase
+→ 在新 agent 中執行 review-change
 → Human Phase Acceptance
 → commit
 → create-pr

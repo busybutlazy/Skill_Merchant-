@@ -20,9 +20,11 @@ Tell the user where the repository is in the governed development lifecycle and 
    - Consequential choices remain unresolved: `grill-with-docs` through the applicable project or Change workflow.
    - Decisions are ready but a new project lacks approval-ready definition: `define-project`.
    - A greenfield Project Definition is approved but lacks its engineering baseline: `bootstrap-project`.
-   - One bounded Change should move forward: `work-on-change`.
+   - Approved implementation is complete but the current Plan revision lacks a current successful Verification Report: route to `work-on-change` for `verify-change`.
+   - Current verification exists but the current Plan revision lacks a current Change Report: route to `work-on-change` for `report-change`.
+   - Approved implementation, a successful current Verification Report, and a current Change Report are all present: ask the user to open a fresh agent and invoke `review-change` directly.
+   - One bounded Change with no more specific later-state evidence above should move forward: `work-on-change`.
    - One exact approved Roadmap Phase should move forward: `work-on-phase`.
-   - Completed implementation needs adversarial review: ask the user to open a fresh agent and invoke `review-change` directly.
    - Git or PR work is requested: require a separate explicit `commit` or `create-pr` invocation and authority.
 4. If evidence is ambiguous, report the smallest missing fact instead of guessing a route.
 
@@ -32,3 +34,4 @@ Tell the user where the repository is in the governed development lifecycle and 
 - Do not automatically cross a Human Approval, Decision Gate, independent review, Phase Acceptance, Git, release, or deployment boundary.
 - Do not execute multiple human entrypoints merely because they are installed as dependencies.
 - Keep `review-change` independently invocable so it can run in a clean adversarial context.
+- Never route to formal review from implementation completion alone. Verification and Change Report evidence must be current for the same approved Plan revision and attributable diff.

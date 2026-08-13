@@ -2,9 +2,9 @@
   "schema_version": 1,
   "identity": {
     "name": "bootstrap-project",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "description": "Plan and create an explicitly approved Docker-first development and CI baseline without host dependency execution",
-    "updated_at": "2026-07-23",
+    "updated_at": "2026-08-13",
     "tags": [
       "project-bootstrap",
       "docker",
@@ -30,6 +30,6 @@
   },
   "integrity": {
     "manifest_file": "manifest.json",
-    "package_sha256": "752c7542de88d4f2480e9fbebd5d0ce6fc29824e9196daba8044d49bf7d14be0"
+    "package_sha256": "76ffd4e3dba5a2ec1c6e45d9fe24d1f61340abd216e27fab3a5a1c0513559481"
   }
 }

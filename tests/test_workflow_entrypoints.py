@@ -20,6 +20,17 @@ class WorkflowEntrypointTests(unittest.TestCase):
         self.assertIn("review-change", change.skill_dependencies)
         self.assertIn("fresh agent", change.instruction)
         self.assertIn("does not weaken", change.instruction)
+        self.assertIn("By default, execute one atomic workflow", change.instruction)
+        self.assertIn("not an unconditional ban on chaining", change.instruction)
+
+        navigator = load_skill(REPO_ROOT, "what-next")
+        self.assertIn("successful current Verification Report", navigator.instruction)
+        self.assertIn("current Change Report", navigator.instruction)
+        self.assertIn("Never route to formal review from implementation completion alone", navigator.instruction)
+        self.assertLess(
+            navigator.instruction.index("successful current Verification Report"),
+            navigator.instruction.index("no more specific later-state evidence"),
+        )
 
     def test_what_next_resolves_complete_development_workflow(self) -> None:
         resolved = resolve_skill_install_set(

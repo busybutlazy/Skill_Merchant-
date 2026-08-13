@@ -19,6 +19,14 @@ Installable bundles use `package.json.dependencies.skills`; the CLI and interact
 ```json
 {
   "schema_version": 1,
+  "bundles": [
+    {
+      "id": "development-workflow",
+      "name": "Development Workflow",
+      "description": "Human-friendly entrypoints backed by independent workflow skills",
+      "entry_skill": "what-next"
+    }
+  ],
   "groups": [
     { "name": "Git & Review", "skills": ["commit", "create-pr", "code-review"] }
   ],
@@ -29,6 +37,7 @@ Installable bundles use `package.json.dependencies.skills`; the CLI and interact
 
 | Key | Meaning |
 |-----|---------|
+| `bundles` | Human-friendly install choices. Each bundle names one canonical `entry_skill`; its transitive skill dependencies remain the installation source of truth. |
 | `groups` | Ordered display sections. Each entry has a `name` and an ordered `skills` list. |
 | `recommended` | Skills pulled into the top `★ Recommended` section (each skill appears only once, even if it also belongs to a group). |
 | `highlight_keywords` | Case-insensitive, word-boundary keywords colored inside skill descriptions. |
@@ -86,8 +95,8 @@ An item whose canonical source directory is missing is simply unavailable and sk
 Instead of a sidecar metadata file, each rendered file ends with one marker line naming its item:
 
 ```html
-<!-- skill-forge:agent-memory version=0.6.0 sha256=<hash-of-body> -->
-<!-- skill-forge:agent-guideline version=0.7.0 sha256=<hash-of-body> -->
+<!-- skill-forge:agent-memory version=<version> sha256=<hash-of-body> -->
+<!-- skill-forge:agent-guideline version=<version> sha256=<hash-of-body> -->
 ```
 
 The hash covers the canonical body (trailing newlines normalized), so the file is self-describing and drift detection needs no extra state. The `skill-forge:agent-memory` marker format is unchanged from the pre-guideline releases, so already-installed files stay recognized.

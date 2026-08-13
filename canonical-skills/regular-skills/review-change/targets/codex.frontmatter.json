@@ -1,1 +1,1 @@
-{"name":"review-change","description":"Use this skill for a read-only adversarial review of a change claim, its scope, implementation, tests, compatibility, security, and evidence."}
+{"name":"review-change","description":"Use only in a fresh agent context that did not inherit the implementation conversation, for a read-only adversarial review of a change claim, scope, implementation, tests, compatibility, security, and evidence."}
