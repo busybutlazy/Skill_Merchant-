@@ -32,6 +32,40 @@ End users install and update skills through `skill-manager`. Maintainers review 
 
 This repository is not a public skill marketplace. It is for teams that want to decide which workflows they trust, distribute them consistently, and detect unmanaged or modified installs.
 
+## How workflow control works
+
+Users interact through a small set of human-friendly entrypoints. Those entrypoints route to independent atomic skills based on repository evidence, but cannot bypass human approval, independent review, or Git authority boundaries.
+
+```mermaid
+flowchart TD
+    START([Human request])
+    START --> WHAT["👤 what-next<br/>Unsure what comes next"]
+    START --> CHANGE["👤 work-on-change<br/>Move one Change forward"]
+    START --> PHASE["👤 work-on-phase<br/>Move one Phase forward"]
+    WHAT --> ROUTE{Route from repository evidence}
+    ROUTE --> DISCOVERY[Clarify decisions or define the project]
+    ROUTE --> CHANGE
+    ROUTE --> PHASE
+    DISCOVERY --> PROJECT_GATE{Human Project Approval}
+    PROJECT_GATE --> CHANGE
+    CHANGE --> PLAN[Analyze and plan]
+    PLAN --> PLAN_GATE{Human Plan Approval}
+    PLAN_GATE --> IMPLEMENT[Controlled implementation]
+    IMPLEMENT --> VERIFY[Verification and Change Report]
+    PHASE --> PHASE_FLOW[Decompose into bounded Changes]
+    PHASE_FLOW --> PLAN_GATE
+    VERIFY --> REVIEW["👤 review-change<br/>Fresh adversarial agent"]
+    REVIEW --> ACCEPT{Human Acceptance}
+    ACCEPT -->|Revise| CHANGE
+    ACCEPT -->|Accepted| GIT{Separate Git authority}
+    GIT --> COMMIT["👤 commit"]
+    COMMIT --> PR["👤 create-pr"]
+    classDef human fill:#f59e0b,stroke:#92400e,color:#111827,stroke-width:3px;
+    class WHAT,CHANGE,PHASE,REVIEW,COMMIT,PR human;
+```
+
+See the [Workflow Control Model](docs/concepts/workflow-control.md) for the complete routing model, context-isolation strategy, and authority boundaries.
+
 ## What problem does it solve?
 
 Without a governed source, AI workflows tend to drift:
@@ -199,6 +233,7 @@ Each workflow stops at its own authority boundary. Project approval does not imp
 
 - [Adoption Guide](docs/guides/adoption-guide.md)
 - [Governance Model](docs/concepts/governance.md)
+- [Workflow Control Model](docs/concepts/workflow-control.md)
 
 ### Maintainers
 
@@ -230,6 +265,40 @@ canonical-skills/
 一般使用者透過 `skill-manager` 安裝與更新；maintainer 只需審查和版本化 canonical packages，不必為每個 AI 工具手動維護平行版本。
 
 這不是 public skill marketplace。它適合希望自行決定可信 workflow、穩定分發，並能辨識未受管理或被修改安裝內容的團隊。
+
+## Workflow 如何受到控制
+
+使用者只需記住少數人類入口。入口會根據 repository evidence 選擇獨立的 atomic skills，但不能跨越人工批准、獨立審查或 Git 權限邊界。
+
+```mermaid
+flowchart TD
+    START([人類提出需求])
+    START --> WHAT["👤 what-next<br/>不知道下一步"]
+    START --> CHANGE["👤 work-on-change<br/>推進一項 Change"]
+    START --> PHASE["👤 work-on-phase<br/>推進一個 Phase"]
+    WHAT --> ROUTE{根據 repository evidence 路由}
+    ROUTE --> DISCOVERY[釐清決策或定義專案]
+    ROUTE --> CHANGE
+    ROUTE --> PHASE
+    DISCOVERY --> PROJECT_GATE{Human Project Approval}
+    PROJECT_GATE --> CHANGE
+    CHANGE --> PLAN[分析與規劃]
+    PLAN --> PLAN_GATE{Human Plan Approval}
+    PLAN_GATE --> IMPLEMENT[受控實作]
+    IMPLEMENT --> VERIFY[驗證與 Change Report]
+    PHASE --> PHASE_FLOW[拆分 bounded Changes]
+    PHASE_FLOW --> PLAN_GATE
+    VERIFY --> REVIEW["👤 review-change<br/>另開對抗式 Agent"]
+    REVIEW --> ACCEPT{Human Acceptance}
+    ACCEPT -->|要求修正| CHANGE
+    ACCEPT -->|接受| GIT{另行授權 Git}
+    GIT --> COMMIT["👤 commit"]
+    COMMIT --> PR["👤 create-pr"]
+    classDef human fill:#f59e0b,stroke:#92400e,color:#111827,stroke-width:3px;
+    class WHAT,CHANGE,PHASE,REVIEW,COMMIT,PR human;
+```
+
+完整路由模型、context isolation 策略與權限邊界請參考 [Workflow Control Model](docs/concepts/workflow-control.md)。
 
 ## 解決什麼問題？
 
@@ -398,6 +467,7 @@ changes/<change-id>/
 
 - [Adoption Guide](docs/guides/adoption-guide.md)
 - [Governance Model](docs/concepts/governance.md)
+- [Workflow Control Model](docs/concepts/workflow-control.md)
 
 ### Maintainers
 
