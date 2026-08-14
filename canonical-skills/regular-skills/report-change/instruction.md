@@ -1,36 +1,25 @@
-# Report Change
+# Prepare Change Review Handoff
 
-Describe what the change actually did, did not do, and did not prove. The only permitted write is the owned report.
+## Objective
 
-## Use This For
+Prepare or refresh the concise completion claim and Review Handoff inside `changes/<change-id>/CHANGE_WORKING.md`. This compatibility workflow no longer creates a separate pre-review `CHANGE_REPORT.md`; final durable reporting belongs to `close-change` after review and human disposition.
 
-- Implementation and verification evidence exist and need comparison with the request and approved plan.
+## Use When
 
-## Do Not Use This For
+- Implementation and current verification exist, but the working record is not ready for independent review.
+- A legacy workflow explicitly invokes `report-change`.
 
-- Planning, implementation, verification execution, code fixes, independent review, approval, release, or speculative release notes.
-
-## Required Inputs
-
-- Change ID, request, approved plan and approval evidence.
-- Current Git status/diff and task handoffs.
-- Verification report and available CI evidence.
-
-If the plan, diff, or verification evidence is unavailable, mark the report incomplete and stop rather than inventing facts.
+Do not use for implementation, verification execution, review, closure, ADR acceptance, or release notes.
 
 ## Workflow
 
-1. Establish the comparison base and inspect the full attributable diff, including tracked, staged, and relevant untracked files.
-2. Compare each planned task and acceptance criterion with observed implementation and verification evidence.
-3. Identify files added/modified/deleted; observable behavior; contract/schema, migration, dependency, configuration, and documentation effects.
-4. Disclose completed, not completed, not verified, planned deviations, unplanned changes, breaking changes, remaining work, limitations, risks, uncertainty, and rollback.
-5. Write `changes/<change-id>/CHANGE_REPORT.md` using [the template](./references/CHANGE_REPORT_TEMPLATE.md).
-6. Stop and hand the report to an independent reviewer/human. Do not modify implementation or invoke review automatically.
+1. Establish the attributable diff base and inspect the full diff, working record, approval, verification and CI evidence.
+2. Compare consequential acceptance and planned outcomes with the implementation.
+3. Update only the Review Handoff with: completion claim, observable behavior, material contract/schema/migration/dependency/configuration effect, deviations, limitations, rollback, diff base, Pending candidates, and ADR candidates.
+4. Keep evidence by reference; do not duplicate command tables, file inventories, volatile counts, SHA lists, or task history.
+5. Mark the lifecycle `ready-for-review` only when verification is current and no known blocker is hidden.
+6. Stop for a fresh `review-change` session. Do not write `CHANGE.md`, delete working artifacts, or claim acceptance.
 
-## Stop Conditions and Boundaries
+## Boundaries
 
-Do not run project commands, install dependencies, edit production code/tests/specifications, approve deviations, or hide unrelated work. Stop for an ambiguous diff base, unexplained worktree edits, missing approval evidence, or a material scope/contract discrepancy that requires a human decision. Docker-only container constraints still apply if any repository command is needed, with no host fallback; normally this workflow only performs read-only Git inspection.
-
-## Evidence Standard
-
-Tie statements to diff paths, commits, task handoffs, verification rows, or CI evidence. Clearly label inference. A report does not prove correctness and cannot replace verification, review, or human acceptance.
+The only permitted write is the owned working record. Missing or conflicting evidence must be marked incomplete. Report preparation cannot repair code or turn an inference into proof.

@@ -2,9 +2,9 @@
   "schema_version": 1,
   "identity": {
     "name": "define-project",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "description": "Synthesize decision-ready project evidence into an approval-ready specification, contracts, and roadmap",
-    "updated_at": "2026-07-23",
+    "updated_at": "2026-08-14",
     "tags": [
       "project-definition",
       "specification",
@@ -30,6 +30,6 @@
   },
   "integrity": {
     "manifest_file": "manifest.json",
-    "package_sha256": "f8bf0ed4dd78ae8d4da166dde2f8f7dc1b082ebc14042754ed79f4eab621584d"
+    "package_sha256": "09aab4e678e231fcfe933eeb65a03857aa8724fa7d25e0b38c44bc7d12347a86"
   }
 }

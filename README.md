@@ -51,13 +51,15 @@ flowchart TD
     CHANGE --> PLAN[Analyze and plan]
     PLAN --> PLAN_GATE{Human Plan Approval}
     PLAN_GATE --> IMPLEMENT[Controlled implementation]
-    IMPLEMENT --> VERIFY[Verification and Change Report]
+    IMPLEMENT --> VERIFY[Verification in working record]
     PHASE --> PHASE_FLOW[Decompose into bounded Changes]
     PHASE_FLOW --> PLAN_GATE
     VERIFY --> REVIEW["👤 review-change<br/>Fresh adversarial agent"]
-    REVIEW --> ACCEPT{Human Acceptance}
-    ACCEPT -->|Revise| CHANGE
-    ACCEPT -->|Accepted| GIT{Separate Git authority}
+    REVIEW --> DISPOSE{Human finding disposition}
+    DISPOSE -->|Remediate| CHANGE
+    DISPOSE --> CLOSE["close-change<br/>absorption + ADR retention gate"]
+    CLOSE --> ACCEPT{Human Acceptance}
+    ACCEPT --> GIT{Separate Git authority}
     GIT --> COMMIT["👤 commit"]
     COMMIT --> PR["👤 create-pr"]
     classDef human fill:#f59e0b,stroke:#92400e,color:#111827,stroke-width:3px;
@@ -211,12 +213,13 @@ docs/
 ├── CONTRACTS.md
 └── ROADMAP.md
 
+docs/
+└── PENDING.md
+
 changes/<change-id>/
-├── REQUEST.md
-├── IMPLEMENTATION_PLAN.md
-├── VERIFICATION_REPORT.md
-├── CHANGE_REPORT.md
-└── REVIEW_REPORT.md
+├── CHANGE_WORKING.md   # temporary during delivery
+├── REVIEW.md           # stable finding IDs
+└── CHANGE.md           # durable after closure
 ```
 
 Each workflow stops at its own authority boundary. Project approval does not imply implementation authority; Phase acceptance does not imply commit, push, merge, release, or deployment.
@@ -443,14 +446,13 @@ Manager 會把 **Development Workflow** 顯示成單一安裝套件。它會安�
 docs/
 ├── SPEC.md
 ├── CONTRACTS.md
-└── ROADMAP.md
+├── ROADMAP.md
+└── PENDING.md
 
 changes/<change-id>/
-├── REQUEST.md
-├── IMPLEMENTATION_PLAN.md
-├── VERIFICATION_REPORT.md
-├── CHANGE_REPORT.md
-└── REVIEW_REPORT.md
+├── CHANGE_WORKING.md   # 交付期間的暫存文件
+├── REVIEW.md           # 穩定的 finding ID
+└── CHANGE.md           # 收尾後的持久記錄
 ```
 
 每個 workflow 都停在自己的 authority boundary。Project Approval 不代表 implementation authority；Phase Acceptance 也不代表 commit、push、merge、release 或 deployment。

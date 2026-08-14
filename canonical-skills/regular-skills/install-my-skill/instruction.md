@@ -72,7 +72,7 @@ Map the user's stated intent to the `intent_hints` map returned by `plan` (its k
 Treat `what-next` as the user-facing **Development Workflow** package. Its dependency closure installs `work-on-change`, `work-on-phase`, `review-change`, and their atomic workflow skills together. In the default list:
 
 - Show one selectable `Development Workflow (what-next)` row using the `what-next` badge and version.
-- Do not flatten its workflow dependencies such as `plan-change`, `implement-task`, `verify-change`, or `report-change` into ordinary choices.
+- Do not flatten its workflow dependencies such as `plan-change`, `implement-task`, `verify-change`, `triage-pending`, or `close-change` into ordinary choices.
 - Keep unrelated standalone skills as separate choices.
 - Only show an `Advanced workflow internals` subsection when the user explicitly asks to install or repair an atomic workflow skill by name.
 
@@ -82,7 +82,7 @@ Present a numbered list using each visible skill's `badge` verbatim. Put ★推�
 依你的目標，建議安裝（★ 為推薦，輸入編號可複選，逗號分隔；不想裝的直接略過）：
 
  1. ★ Development Workflow (what-next)  0.1.1  ○ 未安裝
-      包含 what-next / work-on-change / work-on-phase / review-change 與相關 atomic skills
+      包含 what-next / work-on-change / work-on-phase / review-change / triage-pending / close-change 與相關 atomic skills
  2. ★ commit                           1.3.0  ⬆ 有更新（1.1.0 → 1.3.0）
  3. ★ create-pr                        1.3.0  ○ 未安裝
  4.   dto-organizer                    1.3.0  ○ 未安裝

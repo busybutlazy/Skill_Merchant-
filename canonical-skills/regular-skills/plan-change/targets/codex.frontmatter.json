@@ -1,1 +1,1 @@
-{"name":"plan-change","description":"Use this skill to perform read-only analysis and prepare an implementation plan for a non-trivial change before implementation begins."}
+{"name":"plan-change","description":"Use to create a risk-adaptive temporary CHANGE_WORKING.md with relevant Pending items, acceptance, verification, and remediation boundaries."}

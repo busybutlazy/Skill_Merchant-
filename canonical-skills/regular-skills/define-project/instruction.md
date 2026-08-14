@@ -43,8 +43,9 @@ Admission fails when readiness evidence is missing or any Blocking Decision rema
    An enabling Phase is allowed only when it produces an independently verifiable capability, is required by later outcome slices, and cannot be safely folded into the first dependent slice.
 7. Map every deferred decision to the Roadmap Phase or condition where it becomes blocking. Each Decision Gate names the owner, required timing, and current status.
 8. Cross-reference `CONTEXT.md`, ADRs, and readiness evidence instead of copying them wholesale.
-9. Write project-definition artifacts using [PROJECT_DEFINITION_FORMAT.md](./references/PROJECT_DEFINITION_FORMAT.md), then assemble the Project Approval Packet using [PROJECT_APPROVAL_PACKET_TEMPLATE.md](./references/PROJECT_APPROVAL_PACKET_TEMPLATE.md).
+9. Write project-definition artifacts using [PROJECT_DEFINITION_FORMAT.md](./references/PROJECT_DEFINITION_FORMAT.md), then assemble the temporary Project Approval Packet using [PROJECT_APPROVAL_PACKET_TEMPLATE.md](./references/PROJECT_APPROVAL_PACKET_TEMPLATE.md).
 10. Stop and wait for explicit human project approval.
+11. After approval, absorb the approval record and resolved working decisions into the durable definition, contracts, Roadmap, domain source, or an explicitly human-approved ADR. Propose removal/archive of temporary readiness inventories and the approval packet only after absorption is complete.
 
 ## Outputs
 
@@ -53,7 +54,7 @@ Admission fails when readiness evidence is missing or any Blocking Decision rema
 - `docs/ROADMAP.md`, including per-phase Decision Gates
 - Project Approval Packet
 
-The formats and conditional creation rules are defined in the referenced templates. Silence or approval of earlier decisions is not Project Approval.
+The formats and conditional creation rules are defined in the referenced templates. Silence or approval of earlier decisions is not Project Approval. Identifying an ADR candidate is not permission to create or accept it; ask whether it is worth an ADR before drafting one.
 
 ## Authority Boundary
 

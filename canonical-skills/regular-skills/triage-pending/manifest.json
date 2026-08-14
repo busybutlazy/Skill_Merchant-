@@ -1,0 +1,21 @@
+{
+  "files": [
+    {
+      "path": "instruction.md",
+      "sha256": "eb765da832af260bd07833ac8347c87371e85cc3bab32eacb2e3a761a93d2017"
+    },
+    {
+      "path": "targets/claude.frontmatter.json",
+      "sha256": "c6c284da1fdcf4388468e5c36b38506274e270ee7ea383966306679e88811056"
+    },
+    {
+      "path": "targets/codex.frontmatter.json",
+      "sha256": "8f2c37e56006faff3f57b03839ac3b98c4f9418f37536c73e3aa8ffb23dcaafe"
+    },
+    {
+      "path": "references/PENDING_FORMAT.md",
+      "sha256": "621dc32777f3dfc5950c0e78bf996311ef26d5ba52d96a2fa2765c3692f6c5fe"
+    }
+  ],
+  "package_sha256": "13d22ba9d498b01038bc45eb87698662a35d165bdf81178b060fa907d6fa5f30"
+}

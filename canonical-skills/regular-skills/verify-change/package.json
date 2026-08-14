@@ -2,9 +2,9 @@
   "schema_version": 1,
   "identity": {
     "name": "verify-change",
-    "version": "0.1.1",
-    "description": "Verify an implemented change through canonical container commands and produce traceable evidence",
-    "updated_at": "2026-07-20",
+    "version": "1.0.0",
+    "description": "Append risk-focused reproducible verification evidence to a temporary Change working record",
+    "updated_at": "2026-08-14",
     "tags": [
       "change-workflow",
       "verification",
@@ -29,6 +29,6 @@
   },
   "integrity": {
     "manifest_file": "manifest.json",
-    "package_sha256": "3cf4e6179b377597429dcc3c02e9f6dc540e9f1631c5282942971b08b66c9d5e"
+    "package_sha256": "6c9c63be94954322cfefce6560009960bb7d72fc631458a204a9bbf23743cc8e"
   }
 }

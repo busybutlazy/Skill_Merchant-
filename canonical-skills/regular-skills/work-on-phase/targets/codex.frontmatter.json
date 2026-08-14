@@ -1,1 +1,1 @@
-{"name":"work-on-phase","description":"Use this human-friendly entrypoint when the user names one exact Roadmap phase and wants it moved through the governed phase-delivery workflow."}
+{"name":"work-on-phase","description":"Use to move one exact Roadmap Phase through Pending-aware child Change delivery, absorption, and acceptance."}

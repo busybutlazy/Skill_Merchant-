@@ -1,1 +1,1 @@
-{"name":"work-on-phase","description":"Human-friendly Roadmap phase entrypoint that routes one exact approved phase through the installed governed delivery workflow."}
+{"name":"work-on-phase","description":"Roadmap Phase facade coordinating Pending-aware delivery and closed child Changes without adding authority."}

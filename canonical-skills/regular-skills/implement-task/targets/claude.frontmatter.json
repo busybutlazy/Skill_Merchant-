@@ -1,1 +1,1 @@
-{"name":"implement-task","description":"Bounded implementation specialist. Use only for one named task from an explicitly approved plan; make minimal edits, run task-local container checks, report, and stop.","tools":"Read, Grep, Glob, Bash, Write, Edit"}
+{"name":"implement-task","description":"Implement one bounded checkpointed outcome, update its working record, capture Pending discoveries, and stop.","tools":"Read, Grep, Glob, Bash, Edit, Write"}

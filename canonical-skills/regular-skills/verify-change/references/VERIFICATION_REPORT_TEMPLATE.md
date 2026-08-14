@@ -1,31 +1,18 @@
-# Verification Report: <change-id>
-
-## Result
+## Verification Evidence
 
 - Overall: Pass / Fail / Incomplete
 - Environment and container entrypoint:
+- Paid, persistent, secret, or production effects authorized:
 
-## Requirement Traceability
-
-| Requirement | Implementation | Test or observation | Result |
+| Consequential requirement | Implementation | Test/observation | Result |
 |---|---|---|---|
 
-## Commands Executed
-
-| Command | Exit code | Counts / relevant result |
+| Command | Exit | Relevant result |
 |---|---:|---|
 
-## Tests Added or Modified
+- Tests/checks not run and consequence:
+- Manual observations and mock boundaries:
+- Known risks and review hotspots:
+- Unsupported claims:
 
-## Tests Not Run
-
-| Test/check | Reason | Consequence |
-|---|---|---|
-
-## Manual Verification and Mock Boundaries
-
-## Known Risks, Blockers, and Human Review Hotspots
-
-## Unsupported Claims
-
-List any completion claim that the available evidence does not prove.
+Append this section to `CHANGE_WORKING.md`. Create a standalone report only for explicit audit requirements.

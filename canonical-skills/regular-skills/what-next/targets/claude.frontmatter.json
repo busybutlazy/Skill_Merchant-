@@ -1,1 +1,1 @@
-{"name":"what-next","description":"Workflow navigator that inspects repository evidence, explains the current state, and selects the safest installed human-facing entrypoint; formal review requires current verification and Change Report evidence."}
+{"name":"what-next","description":"Lifecycle navigator that considers durable truth, Pending blockers, active working records, review, human retention, and closure."}

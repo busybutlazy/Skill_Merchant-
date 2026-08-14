@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "identity": {
+    "name": "triage-pending",
+    "version": "1.0.0",
+    "description": "Triage deferred project discoveries into durable documents, decisions, Roadmap work, future Changes, or dismissal without expanding current scope",
+    "updated_at": "2026-08-14",
+    "tags": [
+      "pending",
+      "triage",
+      "workflow",
+      "governance"
+    ]
+  },
+  "content": {
+    "instruction_file": "instruction.md"
+  },
+  "distribution": {
+    "scope": "public"
+  },
+  "dependencies": {
+    "skills": [
+      "grill-with-docs"
+    ]
+  },
+  "targets": {
+    "codex": {
+      "frontmatter_file": "targets/codex.frontmatter.json",
+      "install_path": ".agents/skills/{name}/"
+    },
+    "claude": {
+      "frontmatter_file": "targets/claude.frontmatter.json",
+      "install_path": ".claude/skills/{name}/"
+    }
+  },
+  "integrity": {
+    "manifest_file": "manifest.json",
+    "package_sha256": "13d22ba9d498b01038bc45eb87698662a35d165bdf81178b060fa907d6fa5f30"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "identity": {
+    "name": "close-change",
+    "version": "1.0.0",
+    "description": "Converge reviewed Change evidence into durable project truth and one final record through Pending capture and a mandatory human ADR-retention gate",
+    "updated_at": "2026-08-14",
+    "tags": [
+      "change-workflow",
+      "closure",
+      "adr",
+      "governance"
+    ]
+  },
+  "content": {
+    "instruction_file": "instruction.md"
+  },
+  "distribution": {
+    "scope": "public"
+  },
+  "dependencies": {
+    "skills": [
+      "triage-pending",
+      "domain-modeling"
+    ]
+  },
+  "targets": {
+    "codex": {
+      "frontmatter_file": "targets/codex.frontmatter.json",
+      "install_path": ".agents/skills/{name}/"
+    },
+    "claude": {
+      "frontmatter_file": "targets/claude.frontmatter.json",
+      "install_path": ".claude/skills/{name}/"
+    }
+  },
+  "integrity": {
+    "manifest_file": "manifest.json",
+    "package_sha256": "bf7c5fc3669eb40faebfd8d57345fe787348044764bfb0b3d8ef60884edb7370"
+  }
+}

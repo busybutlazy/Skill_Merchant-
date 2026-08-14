@@ -78,7 +78,7 @@ Only after explicit approval, create only missing files listed in the approved p
 - `Makefile` or the repository's approved task-runner equivalent.
 - `docs/agent-rules.md` using [the template](./references/AGENT_RULES_TEMPLATE.md).
 - `.github/workflows/ci.yml` using the same canonical entrypoint as local work.
-- `changes/<change-id>/` artifacts using [the templates](./references/CHANGE_ARTIFACT_TEMPLATES.md).
+- one temporary `changes/<change-id>/CHANGE_WORKING.md` using [the templates](./references/CHANGE_ARTIFACT_TEMPLATES.md).
 
 If the approved plan includes Git initialization, run `git init -b <approved-working-branch>` before creating the baseline. Create a checkpoint commit only when that exact commit and file set were separately approved and Git author identity is already valid; otherwise leave the reviewed diff for the human handoff.
 
@@ -91,9 +91,9 @@ Use references as decision guidance, not universal files to copy blindly. Preser
 1. Validate Compose configuration through Docker.
 2. Build the approved image and run the smallest approved smoke path.
 3. Run supported canonical checks only through Docker/Compose/Make container entrypoints.
-4. Record exact commands, exit codes, counts, environment, mocks, skipped/unavailable checks and reasons, ownership, and Git diff.
-5. Complete `VERIFICATION_REPORT.md` and `CHANGE_REPORT.md`; identify rollback and review hotspots.
-6. Stop for independent review and human acceptance. Do not implement application features, merge, deploy, or invoke the next workflow automatically.
+4. Record exact commands, exits, relevant results, environment, mocks, skipped/unavailable checks and reasons, ownership, and diff once in `CHANGE_WORKING.md`.
+5. Complete its Review Handoff and identify rollback, Pending candidates, durable-decision gaps, and review hotspots.
+6. Stop for independent review, `close-change` absorption, and human acceptance. Do not implement application features, merge, deploy, or invoke the next workflow automatically.
 
 ## Stop Conditions
 

@@ -1,33 +1,33 @@
-# Review Report: <change-id>
+# Review: <change-id>
 
 ## Review Context
 
 - Diff base and scope:
-- Artifacts reviewed:
+- Working record and durable sources reviewed:
 - Independence disclosure:
+- Review mode: full / targeted confirmation
 
 ## Completion Claim Assessment
 
 ## Findings
 
-### Blocking
+| ID | Severity | Status | Evidence | Impact | Bounded direction | Human disposition |
+|---|---|---|---|---|---|---|
 
-### High
-
-### Medium
-
-### Low
-
-### Suggestion
-
-For each finding include: evidence/location, violated requirement or risk, impact, and bounded remediation direction.
+Statuses: Open / Accepted / Rejected / Deferred / Resolved / Verified.
 
 ## Requirement and Test Coverage Gaps
 
-## Compatibility, Security, and Scope Assessment
+## Compatibility, Security, Data, and Scope Assessment
+
+## Pending Candidates
+
+## Durable Decision Gaps / ADR Candidates
+
+Candidates require a later explicit Human Retention decision. The reviewer must not create or accept an ADR.
 
 ## Unreviewed Areas and Residual Risk
 
 ## Human Disposition Required
 
-The reviewer does not approve, fix, merge, or release this change.
+Default budget: one full review plus one targeted confirmation of accepted findings.

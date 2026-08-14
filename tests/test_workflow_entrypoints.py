@@ -18,19 +18,15 @@ class WorkflowEntrypointTests(unittest.TestCase):
 
         change = load_skill(REPO_ROOT, "work-on-change")
         self.assertIn("review-change", change.skill_dependencies)
-        self.assertIn("fresh agent", change.instruction)
+        self.assertIn("fresh `review-change` session", change.instruction)
         self.assertIn("does not weaken", change.instruction)
-        self.assertIn("By default, execute one atomic workflow", change.instruction)
-        self.assertIn("not an unconditional ban on chaining", change.instruction)
+        self.assertIn("Execute one atomic workflow by default", change.instruction)
+        self.assertIn("Risk-Adaptive Ceremony", change.instruction)
 
         navigator = load_skill(REPO_ROOT, "what-next")
-        self.assertIn("successful current Verification Report", navigator.instruction)
-        self.assertIn("current Change Report", navigator.instruction)
-        self.assertIn("Never route to formal review from implementation completion alone", navigator.instruction)
-        self.assertLess(
-            navigator.instruction.index("successful current Verification Report"),
-            navigator.instruction.index("no more specific later-state evidence"),
-        )
+        self.assertIn("Pending item whose recorded trigger is due", navigator.instruction)
+        self.assertIn("close-change", navigator.instruction)
+        self.assertIn("current verification and a concise Review Handoff", navigator.instruction)
 
     def test_what_next_resolves_complete_development_workflow(self) -> None:
         resolved = resolve_skill_install_set(
@@ -47,6 +43,8 @@ class WorkflowEntrypointTests(unittest.TestCase):
             "verify-change",
             "report-change",
             "review-change",
+            "triage-pending",
+            "close-change",
             "deliver-roadmap-phase",
             "work-on-change",
             "work-on-phase",
@@ -65,7 +63,7 @@ class WorkflowEntrypointTests(unittest.TestCase):
             [{
                 "id": "development-workflow",
                 "name": "Development Workflow",
-                "description": "Install project navigation, bounded Change, Roadmap Phase, and independent review workflows as one managed package.",
+                "description": "Install Pending-aware project navigation, risk-adaptive Change and Phase delivery, independent review, and durable closure as one managed package.",
                 "entry_skill": "what-next",
             }],
         )

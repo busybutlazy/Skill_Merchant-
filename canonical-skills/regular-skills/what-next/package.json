@@ -2,9 +2,9 @@
   "schema_version": 1,
   "identity": {
     "name": "what-next",
-    "version": "0.1.1",
-    "description": "Inspect project workflow evidence, explain the current state, and route to the safest next human entrypoint",
-    "updated_at": "2026-08-13",
+    "version": "1.0.0",
+    "description": "Route project work from durable lifecycle evidence, Pending risk state, review, retention, and closure gates",
+    "updated_at": "2026-08-14",
     "tags": [
       "workflow-bundle",
       "navigation",
@@ -22,6 +22,8 @@
     "skills": [
       "define-project",
       "bootstrap-project",
+      "triage-pending",
+      "close-change",
       "work-on-change",
       "work-on-phase"
     ]
@@ -38,6 +40,6 @@
   },
   "integrity": {
     "manifest_file": "manifest.json",
-    "package_sha256": "a413293f12696a2386f8355777113933f2033be6f3d69dcc471b101efe12fa80"
+    "package_sha256": "ce5538dab3532132b9e25d9fe668870dd43a50d5cacdb56ae30fa89dcc19a3ce"
   }
 }

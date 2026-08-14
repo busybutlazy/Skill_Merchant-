@@ -1,31 +1,13 @@
-# Change Report: <change-id>
+## Review Handoff
 
-## Outcome
+- Attributable diff base:
+- Completion claim:
+- Observable behavior:
+- Material contract/schema/migration/dependency/configuration effects:
+- Deviations and unplanned changes:
+- Not completed or not verified:
+- Known limitations and rollback:
+- Pending candidates discovered:
+- ADR candidates for the later Human Retention Gate:
 
-## Completed
-
-## Not Completed
-
-## Not Verified
-
-## File Changes
-
-- Added:
-- Modified:
-- Deleted:
-
-## Observable Behavior
-
-## Contract, Schema, Migration, Dependency, and Configuration Impact
-
-## Plan Deviations and Unplanned Changes
-
-## Breaking Changes and Compatibility
-
-## Remaining Work and Known Limitations
-
-## Risks, Uncertainty, and Review Hotspots
-
-## Rollback
-
-## Evidence Consulted
+Reference existing verification evidence; do not reproduce its command table.

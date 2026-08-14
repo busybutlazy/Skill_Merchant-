@@ -2,20 +2,20 @@
   "files": [
     {
       "path": "instruction.md",
-      "sha256": "91697bab48f3e6cc9390bac12f33ef2425e4a2adf4e184086708fb346a5b1369"
+      "sha256": "18c5e6172cfd02b0f8926a22f70861257745947d0381df7d68ea76149a265775"
     },
     {
       "path": "targets/claude.frontmatter.json",
-      "sha256": "b78949927108211e7a3cc47a586ce2393da04ef25b5e734e3a7f503025d89c6c"
+      "sha256": "ece53715308177e835bd1e03bf6f7fe84112b188b95cc4a6908dcab00b0b9351"
     },
     {
       "path": "targets/codex.frontmatter.json",
-      "sha256": "0b41b2eaed83cb366cceecdf26a32088da294f0df447439813ebd925a7e47300"
+      "sha256": "2e287fb88187975e1f870c697d51f3172b2bd282cd2e56b05ee1bb41dfd93b81"
     },
     {
       "path": "references/TASK_HANDOFF_CHECKLIST.md",
-      "sha256": "419d704bb22e45c77ced1c3c3e74a5018b2106a5724697e0f558906e7f6490cc"
+      "sha256": "3971f9538bea88d04cb1ec0c9a0c5198ce9872b066be9bec5e4d675e972c5b81"
     }
   ],
-  "package_sha256": "01a62420c1e7db276e883862d1403bbe63eb90ca59b9b7b695b3cd057c2a7142"
+  "package_sha256": "6ae647539b6fd2ad9bfd576470d03108d166a74dc6f975c614350dfb5f0b631f"
 }

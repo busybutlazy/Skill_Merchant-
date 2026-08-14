@@ -1,36 +1,26 @@
 # Verify Change
 
-Produce reproducible evidence for an implemented change. Do not fix implementation while verifying; the only permitted write is the owned report.
+## Objective
 
-## Use This For
-
-- Implementation is ready to be checked against acceptance criteria and an approved plan.
-
-## Do Not Use This For
-
-- Planning, implementation, debugging by editing code, change summarization without tests, or approving completion.
+Produce reproducible evidence for an implemented Change. Verification is evidence-only; its default destination is the Verification Evidence section of `CHANGE_WORKING.md`, not another permanent report.
 
 ## Required Inputs
 
-- Change ID, request/acceptance criteria, approved implementation plan, current diff, and task handoffs.
-- Existing canonical format, lint, type, unit, integration, contract, E2E, build, and security commands where applicable.
-
-Missing acceptance criteria or an attributable diff is a blocker. If no existing containerized verification entrypoint exists, stop and point to `bootstrap-project`; never run project commands on the host.
+Require Change ID, request/acceptance, current working record or approved legacy plan, attributable diff, and existing canonical format/lint/type/unit/integration/contract/E2E/build/security commands. Missing acceptance or an attributable diff is a blocker. Missing container support routes to `bootstrap-project`; never run project tools on the host.
 
 ## Workflow
 
-1. Inspect repository state and map each requirement to implementation locations and candidate tests.
-2. Record environment, relevant versions, services, mocks, and baseline failures.
-3. Run applicable existing canonical commands through Docker/Compose/Make/container wrappers in the repository-defined order.
-4. Capture the exact command, exit code, passed/failed/skipped counts when available, and relevant output. Do not convert failures into success or silently omit checks.
-5. Perform permitted read-only/manual observations and distinguish them from automated tests.
-6. Write `changes/<change-id>/VERIFICATION_REPORT.md` using [the template](./references/VERIFICATION_REPORT_TEMPLATE.md).
-7. Stop with a clear pass/fail/incomplete summary and blockers. Do not repair findings or invoke reporting/review automatically.
+1. Map consequential requirements to implementation and candidate tests.
+2. Record environment, services, mocks, baseline failures, and whether any command can spend money, mutate persistent data, use secrets, or reach production. Such commands require prior explicit authority.
+3. Run risk-applicable canonical commands through Docker/Compose/Make/container wrappers.
+4. Record each exact command once with exit, relevant counts/result, skips, and uncertainty. Do not copy volatile totals into multiple summaries.
+5. Distinguish automated evidence, manual observation, inference, and unsupported claim.
+6. Append results to `CHANGE_WORKING.md` using [the template](./references/VERIFICATION_REPORT_TEMPLATE.md). Produce a standalone `VERIFICATION_REPORT.md` only when audit policy or the user explicitly requires it.
+7. Capture valid out-of-scope discoveries in `docs/PENDING.md` without implementing them.
+8. Stop with Pass/Fail/Incomplete. Do not edit implementation while in verification mode.
 
-## Stop Conditions
-
-Stop for destructive/production commands, secrets, migrations, dependency installation, unexplained worktree changes, missing container support, unsafe environment assumptions, or verification that would mutate persistent data without approval. Contract or scope mismatch is evidence, not permission to rewrite the plan.
+After a failure, a separate implementation step may use an already approved remediation envelope; all affected and required checks must then be rerun. Verification itself never silently repairs a failure.
 
 ## Evidence Standard
 
-Every pass claim must link requirement, implementation, test, and observed result. List tests not run and why, mock boundaries, uncertainty, known risks, and human review hotspots.
+Prioritize executable evidence. Trace only consequential acceptance criteria; do not manufacture rows for trivial statements. List unrun tests, mock boundaries, known risk, review hotspots, and claims not proved.

@@ -2,43 +2,42 @@
 
 ## Objective
 
-Act as the human-friendly entrypoint for moving one bounded Change forward. Inspect repository evidence, select the applicable installed atomic workflow skill, preserve every approval and authority boundary, and stop at the next human gate.
-
-## Use When
-
-- The user wants to plan, implement, resume, verify, or report one bounded Change.
-- The user does not want to remember which atomic Change Workflow skill matches the current state.
-
-Do not use for a complete Roadmap Phase; use `work-on-phase`. Do not perform independent adversarial review in the implementation context; the user should open a fresh agent and invoke `review-change`.
+Move one bounded Change forward with ceremony proportional to risk. Route among planning, implementation, verification, review handoff, remediation, Pending capture, and closure while preserving human gates.
 
 ## Routing Workflow
 
-1. Identify exactly one Change and inspect `changes/<change-id>/`, applicable specifications, contracts, ADRs, project rules, Git state, and available container commands.
-2. Report a compact header before acting:
+1. Identify one Change and inspect its `CHANGE_WORKING.md` or legacy artifacts, final `CHANGE.md`, related specifications/contracts/ADRs, relevant Pending items, Git state, and container commands.
+2. Report:
 
    ```text
-   Change: <change-id>
-   Current state: <observed state>
+   Change: <id>
+   Current state/risk: <observed>
+   Relevant Pending: <IDs or none>
    Next action: <atomic skill or human gate>
    Allowed now: <bounded actions>
    ```
 
-3. Select the first matching route:
-   - Requirements contain consequential unresolved choices: use `grill-with-docs`, then stop at its decision boundary.
-   - No approved current Implementation Plan: use `plan-change`, then stop for Human Plan Approval.
-   - An approved Plan authorizes one named Task: use `implement-task` and stop after that Task's local verification.
-   - An approved low/medium-risk Plan explicitly authorizes `supervised-auto`: use `run-approved-change` only for the approved Task IDs and paths.
-   - Approved implementation is complete but canonical verification evidence is missing or stale: use `verify-change`.
-   - Verification is complete but the Change Report is missing or stale: use `report-change`.
-   - Implementation, Verification Report, and Change Report are complete: stop and provide a Review Handoff for a fresh `review-change` agent.
-4. By default, execute one atomic workflow, report the resulting state and next action, then return control to the user. This is a recommended interaction boundary, not an unconditional ban on chaining.
-5. Multiple atomic workflows may be chained only when no new Human Approval, decision, checkpoint, independent-review, Git, release, or deployment authority gate lies between them, and the entry request explicitly authorizes the continuous scope. Re-evaluate repository evidence between workflows and stop immediately if the next workflow's admission criteria are not proven.
-6. Do not infer approval from the user's original request, an older Plan revision, or completion of a previous stage.
+3. Choose the first applicable route:
+   - due Pending blocker or unresolved consequential choice: `triage-pending` / `grill-with-docs`;
+   - no adequate plan: `plan-change`, using lightweight planning for eligible low risk;
+   - one checkpointed task: `implement-task`;
+   - approved continuous low/medium scope: `run-approved-change`;
+   - implementation complete but verification missing/stale: `verify-change`;
+   - verification current but Review Handoff incomplete: `report-change` compatibility workflow;
+   - ready for independent review: hand off to a fresh `review-change` session;
+   - accepted findings need bounded remediation: use the approved mode/envelope, then targeted reviewer confirmation;
+   - review/disposition complete: `close-change`;
+   - final `CHANGE.md` complete: stop for Human Change Acceptance.
+4. Execute one atomic workflow by default. Chain only within explicitly authorized continuous scope and when no new decision, approval, checkpoint, independent-review, retention, acceptance, Git, release, or deployment gate intervenes.
+5. Re-evaluate evidence after each workflow. Necessary tests, documentation synchronization, ordinary in-scope corrections, and accepted findings within a pre-approved remediation envelope do not automatically invalidate the plan.
 
-## Review Handoff
+## Risk-Adaptive Ceremony
 
-The final handoff must identify the Change directory, approved Plan revision, Verification Report, Change Report, relevant specification/contract paths, and diff base. Ask the user to open a fresh agent and invoke `review-change` against those artifacts.
+- trivial: direct bounded edit, targeted verification and concise handoff when repository policy permits;
+- low: lightweight working record, implementation, verification, closure; independent review when risk or policy warrants it;
+- medium: approved plan, implementation, verification, one full review plus one targeted confirmation, closure;
+- high/extreme: full traceability, one-task checkpoints, explicit approvals, independent review and human acceptance.
 
 ## Authority Boundary
 
-This skill routes and coordinates installed skills; it does not weaken their admission criteria or gain their combined authority. Never self-approve, review the implementation in the same context, expand scope, modify an unapproved contract, install production dependencies, run migrations, access production/secrets, commit, push, merge, release, or deploy unless a separate applicable workflow and explicit authority allow that action.
+This router does not weaken atomic admission criteria. It cannot self-approve, accept/supersede ADRs, disposition retention, review in implementation context, expand scope, or implicitly commit/push/merge/release/deploy.

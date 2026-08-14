@@ -1,52 +1,65 @@
-# Implementation Plan: <change-id>
+# Change Working Record: <change-id>
 
-## Objective
+> Temporary working artifact. `close-change` absorbs durable knowledge into project truth and `CHANGE.md`, then proposes removal or archival of this file.
 
-## In Scope
+## Status
 
-## Out of Scope
+- Lifecycle: planning / approved / implementing / verifying / ready-for-review / remediation / ready-to-close / blocked
+- Working revision:
+- Risk: low / medium / high / extreme
+- Mode: lightweight / one-task-at-a-time / supervised-auto
+- Approval required: yes / no, with reason
+- Approval evidence:
 
-## Current-State Evidence
+## Request and Scope
 
-- Repository state:
-- Relevant files and symbols:
-- Existing behavior and baseline tests:
+- Objective:
+- In scope:
+- Out of scope:
+- Observable acceptance criteria:
 
-## Acceptance Criteria
+## Sources and Related Pending Items
 
-## Contract, Schema, Dependency, and Migration Impact
+- Specifications, contracts, ADRs:
+- Pending IDs and disposition for this Change:
 
 ## Execution Policy
 
-- Plan revision:
 - Risk level: low / medium / high / extreme
-- Automation mode: one-task-at-a-time / supervised-auto
-- Auto-approved task IDs (`supervised-auto` only):
-- Approved file/path scope:
+- Automation mode: lightweight / one-task-at-a-time / supervised-auto
+- Affected paths/symbols:
+- Bounded tasks or outcomes:
 - Human checkpoints:
+- Verification strategy and container entrypoint:
+- Rollback:
 - Mandatory stop conditions:
-- Commit/push permission: **No unless separately approved after review.**
+- Durable-decision hotspots:
+- Pre-approved remediation envelope:
 
-## Tasks
+Material plan changes invalidate approval; necessary in-scope tests, documentation synchronization, ordinary corrections, and accepted remediation inside the envelope do not.
 
-### Task 1 — <bounded outcome>
+## Execution Evidence
 
-- Files/symbols:
-- Implementation:
-- Tests and container command:
-- Stop/handoff:
+Append concise task entries: outcome, files, commands/results, omissions, and deviations. Do not repeat unchanged scope or acceptance criteria.
 
-## Verification Strategy
+## Verification Evidence
 
-## Risks and Unknowns
+Record requirement-to-test results, exact commands and exits, environment/mocks, skipped checks, unsupported claims, and review hotspots.
 
-## Rollback
+## Review Handoff
 
-## Human Decisions and Approval
+- Attributable diff base:
+- Completion claim:
+- Known limitations:
+- Pending candidates discovered:
+- ADR candidates for later Human Retention Gate:
 
-- Decisions required:
-- Status: Draft / Approved / Superseded
-- Approved plan revision:
-- Approved risk level and automation mode:
-- Approved by/date:
-- Approval evidence: **Not approved until a human explicitly records it here. Material plan changes invalidate approval.**
+## Review Findings and Human Disposition
+
+Use stable finding IDs and statuses; do not create numbered review-report copies.
+
+## Closure State
+
+- Final verification current:
+- Accepted findings resolved or explicitly deferred:
+- Ready for `close-change`: yes / no

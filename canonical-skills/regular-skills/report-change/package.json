@@ -2,9 +2,9 @@
   "schema_version": 1,
   "identity": {
     "name": "report-change",
-    "version": "0.1.0",
-    "description": "Compare an approved plan with the actual diff and disclose change outcomes and deviations",
-    "updated_at": "2026-07-20",
+    "version": "1.0.0",
+    "description": "Prepare a concise pre-review completion claim in the Change working record without duplicating final reporting",
+    "updated_at": "2026-08-14",
     "tags": [
       "change-workflow",
       "reporting",
@@ -29,6 +29,6 @@
   },
   "integrity": {
     "manifest_file": "manifest.json",
-    "package_sha256": "a4385c471d5de42b8b1ffdfce1c13d17759fc1c4446a20a847fe76208917de52"
+    "package_sha256": "2f0f38ef55b9edcbeaa25583d892230603afe2e6d2de4d21b0937ef3ca399a0f"
   }
 }

@@ -2,20 +2,20 @@
   "files": [
     {
       "path": "instruction.md",
-      "sha256": "e167bb58d885484ea338cde58c6fe78c2d9bec8e515f54d495dc0a5fd9b7feda"
+      "sha256": "f5ca000c1b7c1b91ad33b567537effcccc8cc5fa8af4aa6749da0c22aa4975a9"
     },
     {
       "path": "targets/claude.frontmatter.json",
-      "sha256": "c32df365b8ff75dbc00820e76c63855c0e99cda1b7eed39df02157f6541f8b9e"
+      "sha256": "ea3cf8b37c2a4c4585f756946e3857a35b3b4a612011229209d55f1a56267741"
     },
     {
       "path": "targets/codex.frontmatter.json",
-      "sha256": "c9dbf926322379c8769cec2b144adc0389f76287a4d39c3b91f4c25f9cb33aa9"
+      "sha256": "4f6ea515033e59373277423478e1d5b309dd028d569d514ab96c2a47222a5e9a"
     },
     {
       "path": "references/IMPLEMENTATION_PLAN_TEMPLATE.md",
-      "sha256": "806431c73bb63a56bcbd236299ccd5ec8c205a1477bbb08e49e5dccf95d7c57a"
+      "sha256": "66ba3652059d1fb2489bee46c91ddeec0ac9b87ed77824d8683a8d6fd73aa304"
     }
   ],
-  "package_sha256": "75978ea5a749f2835ab6bd001f1c8cdd32a2bbc03f95bf583a4459f8cbceb087"
+  "package_sha256": "4c3b7909b281b9d57e8e5007e931b3ef47ddd07c97400dda1891ca551bdf7312"
 }

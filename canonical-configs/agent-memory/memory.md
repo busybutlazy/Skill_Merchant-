@@ -17,20 +17,21 @@
 需求與驗收：docs/SPEC.md
 Contract：docs/CONTRACTS.md
 技術決策：docs/ADR/
+延後發現：docs/PENDING.md
 變更紀錄：changes/<change-id>/
 ```
 
 ## 開發流程
 
-非 trivial 的修改必須依序：
+非 trivial 的修改依風險採用以下流程：
 
 1. 唯讀分析現況（不改 code、不裝 dependency）。
-2. 產生 implementation plan（含 scope、測試案例、rollback）。
-3. 取得人類批准後才實作。
+2. 在 `CHANGE_WORKING.md` 建立 lightweight 或完整 plan（含 scope、測試、rollback、relevant Pending）。
+3. Contract、schema/migration、security/data、dependency/architecture、高風險或 consequential alternatives 必須取得人類批准；低風險依 repository policy。
 4. 依 Plan 明確批准的 Execution Policy 執行：預設一次一個 Task；只有低／中風險且人類明確批准 `supervised-auto` 時，才能連續執行列出的 auto-approved Tasks。
-5. 執行驗證並如實記錄命令與結果。
-6. 產生變更報告，揭露完成、未完成與偏差。
-7. 由未繼承 implementation conversation 的全新 agent／session 接受正式獨立審查；同 context 自我檢查不能滿足 review gate。subagent 只有在平台保證不繼承該 conversation 時才合格。
+5. 將驗證與 concise Review Handoff 寫入同一 working record；發現 out-of-scope 問題寫入 `docs/PENDING.md`，不得順手實作。
+6. 由未繼承 implementation conversation 的全新 agent／session 做一次風險優先的正式 review；finding 使用單一 `REVIEW.md` 與 stable IDs，預設只再做一次 targeted confirmation。
+7. 人類 disposition 後由 fresh `close-change` 執行 absorption；所有 ADR candidates 必須詢問人類是否值得建立，另行確認後才能 Accepted。最後產生 durable `CHANGE.md` 並停在人類接受。
 
 平常使用 `what-next` 判斷目前狀態與下一個入口；要直接推進一個 bounded Change 或一個明確 Roadmap Phase 時，分別使用 `work-on-change` 或 `work-on-phase`。底層 atomic skills 保持獨立，供入口 skill 路由與精準重跑。
 
@@ -61,14 +62,14 @@ Contract：docs/CONTRACTS.md
 - 可能造成資料遺失或擴大權限。
 - 需要新增 production dependency。
 - Git 工作區已有無法辨識的修改。
-- `supervised-auto` 需要新增 Task／路徑、偏離批准 Plan、觸發人工 checkpoint，或完整驗證失敗。
+- `supervised-auto` 發生 material scope/acceptance/contract/schema/security/data/dependency/architecture 變更、超出批准核心路徑、觸發 checkpoint，或驗證失敗且不在 remediation envelope。
 
 ### Definition of Done（同時符合才能宣稱完成）
 
 - 已批准範圍全部實作，測試已實際執行且通過。
 - CI 通過（或如實回報未執行的項目與原因）。
-- 變更報告已產生，無未揭露偏差。
-- 相關文件已同步，無 blocking review finding。
+- Review disposition 已記錄，無未處置 Blocking/High finding。
+- Absorption、Pending capture 與 Human ADR Retention Gate 已完成，durable `CHANGE.md` 誠實反映限制。
 
 ## 環境與執行（Docker based）
 

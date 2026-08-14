@@ -8,20 +8,20 @@ from skill_forge.repository import load_skill
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ["plan-change", "implement-task", "run-approved-change", "verify-change", "report-change", "review-change"]
 VERSIONS = {
-    "plan-change": "0.2.2",
-    "implement-task": "0.1.1",
-    "run-approved-change": "0.1.0",
-    "verify-change": "0.1.1",
-    "report-change": "0.1.0",
-    "review-change": "0.2.0",
+    "plan-change": "1.0.0",
+    "implement-task": "1.0.0",
+    "run-approved-change": "1.0.0",
+    "verify-change": "1.0.0",
+    "report-change": "1.0.0",
+    "review-change": "1.0.0",
 }
 UPDATED_AT = {
-    "plan-change": "2026-07-23",
-    "implement-task": "2026-07-20",
-    "run-approved-change": "2026-07-21",
-    "verify-change": "2026-07-20",
-    "report-change": "2026-07-20",
-    "review-change": "2026-08-13",
+    "plan-change": "2026-08-14",
+    "implement-task": "2026-08-14",
+    "run-approved-change": "2026-08-14",
+    "verify-change": "2026-08-14",
+    "report-change": "2026-08-14",
+    "review-change": "2026-08-14",
 }
 REFERENCES = {
     "plan-change": "IMPLEMENTATION_PLAN_TEMPLATE.md",
@@ -47,23 +47,26 @@ class PhaseCWorkflowContractTests(unittest.TestCase):
                 paths = {entry["path"] for entry in manifest["files"]}
                 self.assertIn(f"references/{REFERENCES[name]}", paths)
 
-    def test_instructions_pin_docker_only_and_stopping_handoff(self) -> None:
+    def test_instructions_use_one_working_record_and_stopping_handoff(self) -> None:
         for name in SKILLS:
             with self.subTest(skill=name):
                 instruction = (
                     REPO_ROOT / "canonical-skills" / "regular-skills" / name / "instruction.md"
                 ).read_text(encoding="utf-8")
-                self.assertIn("host", instruction.lower())
-                self.assertIn("container", instruction.lower())
                 self.assertIn("stop", instruction.lower())
-                self.assertIn("handoff", instruction.lower())
+        for name in ("implement-task", "run-approved-change", "report-change"):
+            instruction = (REPO_ROOT / "canonical-skills" / "regular-skills" / name / "instruction.md").read_text(encoding="utf-8")
+            self.assertIn("handoff", instruction.lower())
+        for name in ("plan-change", "implement-task", "run-approved-change", "verify-change", "report-change"):
+            instruction = (REPO_ROOT / "canonical-skills" / "regular-skills" / name / "instruction.md").read_text(encoding="utf-8")
+            self.assertIn("CHANGE_WORKING.md", instruction)
 
     def test_catalog_group_is_ordered_and_not_recommended(self) -> None:
         catalog = json.loads(
             (REPO_ROOT / "canonical-skills" / "catalog.json").read_text(encoding="utf-8")
         )
         group = next(group for group in catalog["groups"] if group["name"] == "Change Workflow")
-        self.assertEqual(group["skills"], SKILLS)
+        self.assertEqual(group["skills"], [*SKILLS, "close-change", "triage-pending"])
         self.assertTrue(set(SKILLS).isdisjoint(catalog["recommended"]))
 
     def test_guideline_marks_phase_c_skills_available(self) -> None:
@@ -79,8 +82,8 @@ class PhaseCWorkflowContractTests(unittest.TestCase):
             REPO_ROOT / "canonical-skills" / "regular-skills" / "review-change" / "instruction.md"
         ).read_text(encoding="utf-8")
         self.assertIn("did not inherit the implementation conversation", instruction)
-        self.assertIn("cannot satisfy the independent review gate", instruction)
-        self.assertIn("do not write or update the formal `REVIEW_REPORT.md`", instruction)
+        self.assertIn("Same-context self-checks are not formal review", instruction)
+        self.assertIn("one `changes/<change-id>/REVIEW.md`", instruction)
 
     def test_delivered_bootstrap_is_not_described_as_future_roadmap(self) -> None:
         stale_phrases = ("bootstrap-project` roadmap", "Phase D `bootstrap-project`", "future `bootstrap-project`")

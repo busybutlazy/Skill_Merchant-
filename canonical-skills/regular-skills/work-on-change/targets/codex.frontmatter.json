@@ -1,1 +1,1 @@
-{"name":"work-on-change","description":"Use this human-friendly entrypoint to move one bounded change through the correct installed atomic workflow, defaulting to one workflow per interaction while preserving approval gates."}
+{"name":"work-on-change","description":"Use to move one bounded Change through risk-adaptive planning, implementation, verification, review, Pending capture, and closure."}

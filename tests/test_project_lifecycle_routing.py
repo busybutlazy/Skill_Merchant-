@@ -48,7 +48,7 @@ class ProjectLifecycleRoutingTests(unittest.TestCase):
         for marker in (
             "## Decision Readiness Gate",
             "load-bearing product",
-            "stop and route to `grill-with-docs`",
+            "route to `grill-with-docs`",
             "Do not resolve them by assumption",
         ):
             self.assertIn(marker, instruction)
@@ -72,10 +72,10 @@ class ProjectLifecycleRoutingTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
         for marker in (
             "## Phase Readiness Gate",
-            "approved observable outcome, scope, acceptance criteria",
-            "undecided external",
-            "stop and route to `grill-with-docs`",
-            "Do not conduct a full",
+            "approved observable outcome/scope/acceptance",
+            "Unresolved consequential choices",
+            "route to `grill-with-docs`",
+            "unrelated Pending items do not",
         ):
             self.assertIn(marker, instruction)
 
@@ -94,6 +94,8 @@ class ProjectLifecycleRoutingTests(unittest.TestCase):
                 "define-project",
                 "bootstrap-project",
                 "deliver-roadmap-phase",
+                "triage-pending",
+                "close-change",
             ],
         )
         self.assertNotIn("grilling", group["skills"])

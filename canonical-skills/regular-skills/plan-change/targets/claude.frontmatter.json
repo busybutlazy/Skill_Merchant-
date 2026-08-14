@@ -1,1 +1,1 @@
-{"name":"plan-change","description":"Read-only change planner. Use when a non-trivial change needs repository analysis, task breakdown, test strategy, and an approval-ready plan before implementation.","tools":"Read, Grep, Glob, Bash, Write"}
+{"name":"plan-change","description":"Change planner for one temporary working record, proportional ceremony, Pending awareness, and explicit material-change rules.","tools":"Read, Grep, Glob, Bash, Write"}

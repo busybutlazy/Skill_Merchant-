@@ -1,0 +1,1 @@
+{"name":"triage-pending","description":"Pending-inbox triage specialist. Validate deferred discoveries and route them without inventing decisions or expanding active scope.","tools":"Read, Grep, Glob, Bash, Edit, Write"}

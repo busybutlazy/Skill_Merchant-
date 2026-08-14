@@ -22,8 +22,8 @@ REFERENCES = {
 class PhaseDBootstrapContractTests(unittest.TestCase):
     def test_package_validates_and_manifest_includes_every_reference(self) -> None:
         skill = load_skill(REPO_ROOT, "bootstrap-project")
-        self.assertEqual(skill.version, "0.1.4")
-        self.assertEqual(skill.updated_at, "2026-08-13")
+        self.assertEqual(skill.version, "1.0.0")
+        self.assertEqual(skill.updated_at, "2026-08-14")
         manifest = json.loads((SKILL_DIR / "manifest.json").read_text(encoding="utf-8"))
         paths = {entry["path"] for entry in manifest["files"]}
         self.assertTrue(REFERENCES.issubset(paths))
@@ -93,7 +93,7 @@ class PhaseDBootstrapContractTests(unittest.TestCase):
         bootstrap = next(group for group in catalog["groups"] if group["name"] == "Project Lifecycle")
         self.assertEqual(
             bootstrap["skills"],
-            ["what-next", "work-on-change", "work-on-phase", "grill-with-docs", "define-project", "bootstrap-project", "deliver-roadmap-phase"],
+            ["what-next", "work-on-change", "work-on-phase", "grill-with-docs", "define-project", "bootstrap-project", "deliver-roadmap-phase", "triage-pending", "close-change"],
         )
         self.assertNotIn("bootstrap-project", catalog["recommended"])
 

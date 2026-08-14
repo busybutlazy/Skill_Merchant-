@@ -24,7 +24,7 @@ Reject admission for a clear bounded change, approved task execution, verificati
 3. Investigate facts from repository evidence. Resolve user-owned decisions through explicit confirmation. Record implementation-owned defaults without presenting them as product decisions.
 4. Apply `domain-modeling` whenever confirmed answers change terminology, entities, relationships, boundaries, ownership, or invariants. Record only qualifying ADRs.
 5. Apply the Safe Deferral Gate to every proposed deferred decision.
-6. Maintain the required Decision Inventory artifact and finish with the Decision Readiness Summary. If the session stops before inventory and readiness assessment are complete, mark both outputs as partial and use the incomplete status.
+6. Maintain the required Decision Inventory as a temporary working artifact and finish with the Decision Readiness Summary. Mark where each resolved decision will be absorbed: specification, contract, domain source, Roadmap, a human-approved ADR candidate, or another durable source. If the session stops early, mark both outputs partial.
 
 ## Safe Deferral Gate
 
@@ -42,7 +42,9 @@ Otherwise classify it as `blocking unresolved`.
 | Capability | Authority |
 |---|---|
 | Read repository, documents, code, context, and ADRs | Allowed |
-| Write confirmed glossary terms and qualifying ADRs | Allowed by repository policy |
+| Write confirmed glossary terms | Allowed by repository policy |
+| Identify an ADR candidate | Allowed; explain the durable gap |
+| Create, accept, modify, or supersede an ADR | Denied until explicit human retention and decision approval |
 | Write dedicated decision notes or session summary | Allowed by repository policy |
 | Write production code, dependencies, migrations, runtime, deployment, or implementation tasks | Denied |
 | Approve a decision | Denied |
@@ -60,4 +62,4 @@ For `Ready`, the complete inventory covers the current scope, every choice has a
 
 ## Handoff
 
-Return the Decision Inventory and Decision Readiness Summary, then stop. The named next workflow requires its own Admission Criteria and authority.
+Return the Decision Inventory, readiness summary, and proposed durable destinations, then stop. Resolved entries may be removed only after a later absorption check proves their durable destination. The named next workflow requires its own Admission Criteria and authority.
