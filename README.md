@@ -42,16 +42,24 @@ flowchart TD
     START --> WHAT["👤 what-next<br/>Unsure what comes next"]
     START --> CHANGE["👤 work-on-change<br/>Move one Change forward"]
     START --> PHASE["👤 work-on-phase<br/>Move one Phase forward"]
+    START --> TRIAGE["👤 triage-pending<br/>Classify deferred discoveries"]
     WHAT --> ROUTE{Route from repository evidence}
     ROUTE --> DISCOVERY[Clarify decisions or define the project]
     ROUTE --> CHANGE
     ROUTE --> PHASE
+    ROUTE --> TRIAGE
     DISCOVERY --> PROJECT_GATE{Human Project Approval}
     PROJECT_GATE --> CHANGE
     CHANGE --> PLAN[Analyze and plan]
     PLAN --> PLAN_GATE{Human Plan Approval}
     PLAN_GATE --> IMPLEMENT[Controlled implementation]
     IMPLEMENT --> VERIFY[Verification in working record]
+    PLAN -. out-of-scope discovery .-> PENDING[(docs/PENDING.md)]
+    IMPLEMENT -. out-of-scope discovery .-> PENDING
+    VERIFY -. out-of-scope discovery .-> PENDING
+    PENDING --> TRIAGE
+    TRIAGE --> PENDING_RESULT[Schedule, absorb, dismiss,<br/>or escalate a blocker]
+    PENDING_RESULT -->|Blocking current work| CHANGE
     PHASE --> PHASE_FLOW[Decompose into bounded Changes]
     PHASE_FLOW --> PLAN_GATE
     VERIFY --> REVIEW["👤 review-change<br/>Fresh adversarial agent"]
@@ -63,7 +71,7 @@ flowchart TD
     GIT --> COMMIT["👤 commit"]
     COMMIT --> PR["👤 create-pr"]
     classDef human fill:#f59e0b,stroke:#92400e,color:#111827,stroke-width:3px;
-    class WHAT,CHANGE,PHASE,REVIEW,COMMIT,PR human;
+    class WHAT,CHANGE,PHASE,TRIAGE,REVIEW,COMMIT,PR human;
 ```
 
 See the [Workflow Control Model](docs/concepts/workflow-control.md) for the complete routing model, context-isolation strategy, and authority boundaries.
@@ -279,26 +287,36 @@ flowchart TD
     START --> WHAT["👤 what-next<br/>不知道下一步"]
     START --> CHANGE["👤 work-on-change<br/>推進一項 Change"]
     START --> PHASE["👤 work-on-phase<br/>推進一個 Phase"]
+    START --> TRIAGE["👤 triage-pending<br/>分類延後發現"]
     WHAT --> ROUTE{根據 repository evidence 路由}
     ROUTE --> DISCOVERY[釐清決策或定義專案]
     ROUTE --> CHANGE
     ROUTE --> PHASE
+    ROUTE --> TRIAGE
     DISCOVERY --> PROJECT_GATE{Human Project Approval}
     PROJECT_GATE --> CHANGE
     CHANGE --> PLAN[分析與規劃]
     PLAN --> PLAN_GATE{Human Plan Approval}
     PLAN_GATE --> IMPLEMENT[受控實作]
-    IMPLEMENT --> VERIFY[驗證與 Change Report]
+    IMPLEMENT --> VERIFY[在 working record 中驗證]
+    PLAN -. 超出當前範圍的發現 .-> PENDING[(docs/PENDING.md)]
+    IMPLEMENT -. 超出當前範圍的發現 .-> PENDING
+    VERIFY -. 超出當前範圍的發現 .-> PENDING
+    PENDING --> TRIAGE
+    TRIAGE --> PENDING_RESULT[排程、吸收、駁回<br/>或升級為 blocker]
+    PENDING_RESULT -->|阻擋當前工作| CHANGE
     PHASE --> PHASE_FLOW[拆分 bounded Changes]
     PHASE_FLOW --> PLAN_GATE
     VERIFY --> REVIEW["👤 review-change<br/>另開對抗式 Agent"]
-    REVIEW --> ACCEPT{Human Acceptance}
-    ACCEPT -->|要求修正| CHANGE
-    ACCEPT -->|接受| GIT{另行授權 Git}
+    REVIEW --> DISPOSE{Human finding disposition}
+    DISPOSE -->|要求修正| CHANGE
+    DISPOSE --> CLOSE["close-change<br/>吸收證據 + ADR 人工保留關卡"]
+    CLOSE --> ACCEPT{Human Acceptance}
+    ACCEPT --> GIT{另行授權 Git}
     GIT --> COMMIT["👤 commit"]
     COMMIT --> PR["👤 create-pr"]
     classDef human fill:#f59e0b,stroke:#92400e,color:#111827,stroke-width:3px;
-    class WHAT,CHANGE,PHASE,REVIEW,COMMIT,PR human;
+    class WHAT,CHANGE,PHASE,TRIAGE,REVIEW,COMMIT,PR human;
 ```
 
 完整路由模型、context isolation 策略與權限邊界請參考 [Workflow Control Model](docs/concepts/workflow-control.md)。
