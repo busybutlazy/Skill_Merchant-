@@ -2,9 +2,9 @@
   "schema_version": 1,
   "identity": {
     "name": "review-change",
-    "version": "0.2.0",
-    "description": "Adversarially review a change completion claim without modifying implementation or approving it",
-    "updated_at": "2026-08-13",
+    "version": "1.0.0",
+    "description": "Adversarially review behavior and evidence once, then target accepted findings without cosmetic review loops",
+    "updated_at": "2026-08-14",
     "tags": [
       "change-workflow",
       "review",
@@ -29,6 +29,6 @@
   },
   "integrity": {
     "manifest_file": "manifest.json",
-    "package_sha256": "cdaf3c6bff9db8695b6333eb35de530972413f8bdf43a75c9410c50eddf37d35"
+    "package_sha256": "f259bfc6263185d2646ffee4f00e028b901a7b072321a57bfbda80af1aec85ff"
   }
 }

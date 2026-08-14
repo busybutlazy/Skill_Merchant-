@@ -2,7 +2,7 @@
   "files": [
     {
       "path": "instruction.md",
-      "sha256": "afb066583c82e998772cbf1b350cb537ddd3324c5266968b25a072bf2cac87f3"
+      "sha256": "c71738676ea744f5db1d91b6499fb86637170bcedb4933b121308d86e1fde717"
     },
     {
       "path": "targets/claude.frontmatter.json",
@@ -22,7 +22,7 @@
     },
     {
       "path": "references/CHANGE_ARTIFACT_TEMPLATES.md",
-      "sha256": "d17a2b20c935ca93ac5dcf1d103ca1388ab4e30922f3d159ee623ad597b9e1f0"
+      "sha256": "e178feff259e40f6201f407c587bc74ea1843060607be32a0ab3392749048ed8"
     },
     {
       "path": "references/DOCKER_BASELINE_CHECKLIST.md",
@@ -37,5 +37,5 @@
       "sha256": "72f4d124e8e7699ddbde3286a3286d182b46bea57c5e9da65dc4516195aa03be"
     }
   ],
-  "package_sha256": "76ffd4e3dba5a2ec1c6e45d9fe24d1f61340abd216e27fab3a5a1c0513559481"
+  "package_sha256": "582720d11adaca7d95435824e5de5da3467b26ef7c5702c0d7eb53410900d4ee"
 }

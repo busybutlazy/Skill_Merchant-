@@ -127,7 +127,7 @@ class DefineProjectTests(unittest.TestCase):
         group = next(item for item in catalog["groups"] if item["name"] == "Project Lifecycle")
         self.assertEqual(
             group["skills"],
-            ["what-next", "work-on-change", "work-on-phase", "grill-with-docs", "define-project", "bootstrap-project", "deliver-roadmap-phase"],
+            ["what-next", "work-on-change", "work-on-phase", "grill-with-docs", "define-project", "bootstrap-project", "deliver-roadmap-phase", "triage-pending", "close-change"],
         )
         self.assertNotIn("define-project", catalog["recommended"])
 

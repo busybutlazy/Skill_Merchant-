@@ -2,9 +2,9 @@
   "schema_version": 1,
   "identity": {
     "name": "run-approved-change",
-    "version": "0.1.0",
-    "description": "Execute an explicitly approved low/medium-risk change in supervised-auto mode through verification and reporting",
-    "updated_at": "2026-07-21",
+    "version": "1.0.0",
+    "description": "Execute an approved low/medium-risk Change within a remediation envelope and one temporary evidence record",
+    "updated_at": "2026-08-14",
     "tags": [
       "change-workflow",
       "automation",
@@ -16,6 +16,12 @@
   },
   "distribution": {
     "scope": "public"
+  },
+  "dependencies": {
+    "skills": [
+      "verify-change",
+      "triage-pending"
+    ]
   },
   "targets": {
     "codex": {
@@ -29,6 +35,6 @@
   },
   "integrity": {
     "manifest_file": "manifest.json",
-    "package_sha256": "b9b9be12d9660cd1d94d44a06fa6ec004abf29df265ce6dfd72e05ffc42aee4c"
+    "package_sha256": "bec53b4020eb062d09cb82210f43f16d36415bf2383a1825999ab090b5926054"
   }
 }

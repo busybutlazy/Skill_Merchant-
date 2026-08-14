@@ -32,7 +32,7 @@ class DecisionMethodTests(unittest.TestCase):
         group = next(item for item in catalog["groups"] if item["name"] == "Project Lifecycle")
         self.assertEqual(
             group["skills"],
-            ["what-next", "work-on-change", "work-on-phase", "grill-with-docs", "define-project", "bootstrap-project", "deliver-roadmap-phase"],
+            ["what-next", "work-on-change", "work-on-phase", "grill-with-docs", "define-project", "bootstrap-project", "deliver-roadmap-phase", "triage-pending", "close-change"],
         )
         grouped = {name for item in catalog["groups"] for name in item["skills"]}
         self.assertNotIn("grilling", grouped)
@@ -126,7 +126,8 @@ class DecisionMethodTests(unittest.TestCase):
             / "references"
             / "DECISION_INVENTORY_FORMAT.md"
         ).read_text(encoding="utf-8")
-        self.assertIn("required Decision Inventory artifact", instruction)
+        self.assertIn("required Decision Inventory as a temporary working artifact", instruction)
+        self.assertIn("later absorption check", instruction)
         for required in (
             "## Decision Dependency Map",
             "- Classification:",

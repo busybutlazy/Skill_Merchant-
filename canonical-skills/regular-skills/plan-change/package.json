@@ -2,9 +2,9 @@
   "schema_version": 1,
   "identity": {
     "name": "plan-change",
-    "version": "0.2.2",
-    "description": "Analyze a non-trivial change read-only and produce an approval-ready implementation plan",
-    "updated_at": "2026-07-23",
+    "version": "1.0.0",
+    "description": "Create a risk-adaptive temporary Change working record with Pending and durable-decision awareness",
+    "updated_at": "2026-08-14",
     "tags": [
       "change-workflow",
       "planning",
@@ -16,6 +16,12 @@
   },
   "distribution": {
     "scope": "public"
+  },
+  "dependencies": {
+    "skills": [
+      "grill-with-docs",
+      "triage-pending"
+    ]
   },
   "targets": {
     "codex": {
@@ -29,6 +35,6 @@
   },
   "integrity": {
     "manifest_file": "manifest.json",
-    "package_sha256": "75978ea5a749f2835ab6bd001f1c8cdd32a2bbc03f95bf583a4459f8cbceb087"
+    "package_sha256": "4c3b7909b281b9d57e8e5007e931b3ef47ddd07c97400dda1891ca551bdf7312"
   }
 }

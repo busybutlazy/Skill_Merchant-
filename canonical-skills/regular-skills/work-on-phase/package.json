@@ -2,9 +2,9 @@
   "schema_version": 1,
   "identity": {
     "name": "work-on-phase",
-    "version": "0.1.0",
-    "description": "Move one exact approved Roadmap phase forward through the governed phase-delivery workflow",
-    "updated_at": "2026-08-13",
+    "version": "1.0.0",
+    "description": "Move one exact Roadmap Phase through Pending-aware delivery, child Change closure, absorption, and acceptance",
+    "updated_at": "2026-08-14",
     "tags": [
       "workflow-entrypoint",
       "roadmap",
@@ -35,6 +35,6 @@
   },
   "integrity": {
     "manifest_file": "manifest.json",
-    "package_sha256": "d88c22b6966b08c1650e2c6c72ea21ab4730f3152744e84bb9ed7c2519943ae0"
+    "package_sha256": "d2f47a8cb9d04a197448a06cb9caf91e585cc8154df042d769c08ecf783be1c9"
   }
 }

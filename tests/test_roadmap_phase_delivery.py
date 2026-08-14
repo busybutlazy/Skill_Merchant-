@@ -13,8 +13,8 @@ from skill_forge.repository import load_skill, resolve_skill_install_set
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SKILL_DIR = REPO_ROOT / "canonical-skills" / "regular-skills" / "deliver-roadmap-phase"
 DEPENDENCIES = [
-    "plan-change", "implement-task", "run-approved-change",
-    "verify-change", "report-change", "review-change",
+    "plan-change", "triage-pending", "implement-task", "run-approved-change",
+    "verify-change", "report-change", "review-change", "close-change",
 ]
 
 
@@ -22,23 +22,26 @@ class RoadmapPhaseDeliveryTests(unittest.TestCase):
     def test_facade_contract_is_one_phase_and_preserves_authority_gates(self) -> None:
         instruction = (SKILL_DIR / "instruction.md").read_text(encoding="utf-8")
         for required in (
-            "one approved Roadmap Phase", "PHASE_EXECUTION_PLAN.md",
+            "one approved Roadmap Phase", "PHASE_WORKING.md",
             "one Phase Delivery Packet approval gate", "dependency order",
-            "fresh `review-change` agent/session", "Human Phase Acceptance",
+            "independent review", "Human Phase Acceptance",
             "Never commit, push, merge, release, or deploy implicitly",
         ):
             self.assertIn(required, instruction)
         self.assertIn("multiple phases", instruction)
-        self.assertIn("Do not advance the Roadmap state", instruction)
+        self.assertIn("Only separately authorized action may update Roadmap completion state", instruction)
 
     def test_package_declares_complete_atomic_workflow_bundle(self) -> None:
         skill = load_skill(REPO_ROOT, "deliver-roadmap-phase")
-        self.assertEqual(skill.version, "0.3.1")
+        self.assertEqual(skill.version, "1.0.0")
         self.assertEqual(skill.skill_dependencies, DEPENDENCIES)
         resolved = resolve_skill_install_set(
             REPO_ROOT, [skill.name], "codex", allowed_scopes={"public"}
         )
-        self.assertEqual([item.name for item in resolved], [*DEPENDENCIES, skill.name])
+        names = [item.name for item in resolved]
+        for dependency in DEPENDENCIES:
+            self.assertIn(dependency, names)
+        self.assertEqual(names[-1], skill.name)
 
     def test_catalog_exposes_facade_separately_from_atomic_skills(self) -> None:
         catalog = json.loads((REPO_ROOT / "canonical-skills" / "catalog.json").read_text(encoding="utf-8"))
@@ -46,22 +49,22 @@ class RoadmapPhaseDeliveryTests(unittest.TestCase):
         workflow = next(group for group in catalog["groups"] if group["name"] == "Change Workflow")
         self.assertEqual(
             roadmap["skills"],
-            ["what-next", "work-on-change", "work-on-phase", "grill-with-docs", "define-project", "bootstrap-project", "deliver-roadmap-phase"],
+            ["what-next", "work-on-change", "work-on-phase", "grill-with-docs", "define-project", "bootstrap-project", "deliver-roadmap-phase", "triage-pending", "close-change"],
         )
-        self.assertEqual(workflow["skills"], DEPENDENCIES)
+        self.assertEqual(workflow["skills"], ["plan-change", "implement-task", "run-approved-change", "verify-change", "report-change", "review-change", "close-change", "triage-pending"])
         self.assertNotIn("deliver-roadmap-phase", catalog["recommended"])
 
     def test_phase_decision_gates_block_planning_when_due(self) -> None:
         instruction = (SKILL_DIR / "instruction.md").read_text(encoding="utf-8")
         for required in (
             "Read every gate before planning",
-            "cannot enter\nplanning when any decision required before Phase start remains unresolved",
+            "A due blocker prevents planning",
             "route to `grill-with-docs`",
-            "Decision Gates in `changes/<phase-run-id>/PHASE_REQUEST.md`",
-            "Convert every non-start Decision Gate into an explicit human checkpoint",
-            "child Change cannot start while a Decision Gate",
-            "dependent work remains blocked",
-            "Phase cannot complete while such a gate remains unresolved",
+            "Pending item relevant to the Phase",
+            "temporary `changes/<phase-run-id>/PHASE_WORKING.md`",
+            "checkpoints",
+            "failed or blocked child prevents dependent children",
+            "required child must complete verification",
         ):
             self.assertIn(required, instruction)
         packet = (

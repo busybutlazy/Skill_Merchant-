@@ -2,9 +2,9 @@
   "schema_version": 1,
   "identity": {
     "name": "grill-with-docs",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "description": "Inventory unresolved project choices and resolve decision readiness through a documented workflow",
-    "updated_at": "2026-07-23",
+    "updated_at": "2026-08-14",
     "tags": [
       "project-definition",
       "decision-making",
@@ -43,6 +43,6 @@
   },
   "integrity": {
     "manifest_file": "manifest.json",
-    "package_sha256": "c9bb7f6c5b2b969406142f58c037b9b3a7304c6df1a53466b10e618c6515a498"
+    "package_sha256": "3e6ab7db5dbc968ecc41edfb6511339c527de0ca9adb425b2cc1e11cdce664b3"
   }
 }

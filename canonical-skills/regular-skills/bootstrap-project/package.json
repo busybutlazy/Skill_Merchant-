@@ -2,9 +2,9 @@
   "schema_version": 1,
   "identity": {
     "name": "bootstrap-project",
-    "version": "0.1.4",
-    "description": "Plan and create an explicitly approved Docker-first development and CI baseline without host dependency execution",
-    "updated_at": "2026-08-13",
+    "version": "1.0.0",
+    "description": "Create an approved Docker-first baseline using one temporary working record followed by review and durable closure",
+    "updated_at": "2026-08-14",
     "tags": [
       "project-bootstrap",
       "docker",
@@ -18,6 +18,11 @@
   "distribution": {
     "scope": "public"
   },
+  "dependencies": {
+    "skills": [
+      "close-change"
+    ]
+  },
   "targets": {
     "codex": {
       "frontmatter_file": "targets/codex.frontmatter.json",
@@ -30,6 +35,6 @@
   },
   "integrity": {
     "manifest_file": "manifest.json",
-    "package_sha256": "76ffd4e3dba5a2ec1c6e45d9fe24d1f61340abd216e27fab3a5a1c0513559481"
+    "package_sha256": "582720d11adaca7d95435824e5de5da3467b26ef7c5702c0d7eb53410900d4ee"
   }
 }

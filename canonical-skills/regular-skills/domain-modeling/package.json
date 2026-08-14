@@ -2,9 +2,9 @@
   "schema_version": 1,
   "identity": {
     "name": "domain-modeling",
-    "version": "0.1.2",
+    "version": "0.2.0",
     "description": "Internal method for sharpening domain language, boundaries, invariants, and sparse architectural decisions",
-    "updated_at": "2026-07-23",
+    "updated_at": "2026-08-14",
     "tags": [
       "domain-modeling",
       "method",
@@ -37,6 +37,6 @@
   },
   "integrity": {
     "manifest_file": "manifest.json",
-    "package_sha256": "04483684072c2131b6a7ce5f990adf31a78325aef73a53a6c9a3198fecdaac62"
+    "package_sha256": "a154e5ead52185ba95aef845fd86e6edc955933cf8d1dfbcb91014778a2126e5"
   }
 }

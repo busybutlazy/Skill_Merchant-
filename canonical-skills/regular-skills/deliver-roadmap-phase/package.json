@@ -2,9 +2,9 @@
   "schema_version": 1,
   "identity": {
     "name": "deliver-roadmap-phase",
-    "version": "0.3.1",
-    "description": "Deliver one exact Roadmap phase through governed planning, approved execution, verification, and review handoff",
-    "updated_at": "2026-08-13",
+    "version": "1.0.0",
+    "description": "Deliver one Roadmap Phase with temporary planning, Pending triage, closed child Changes, absorption, and human acceptance",
+    "updated_at": "2026-08-14",
     "tags": [
       "roadmap",
       "change-workflow",
@@ -21,11 +21,13 @@
   "dependencies": {
     "skills": [
       "plan-change",
+      "triage-pending",
       "implement-task",
       "run-approved-change",
       "verify-change",
       "report-change",
-      "review-change"
+      "review-change",
+      "close-change"
     ]
   },
   "targets": {
@@ -40,6 +42,6 @@
   },
   "integrity": {
     "manifest_file": "manifest.json",
-    "package_sha256": "83a924705485e80b83fb65307c490e452ca5657d9c1ac81b52d74a6835e9097b"
+    "package_sha256": "60f4f687c74b3f21a48485a522231d0f6dcb8bd5d4edb131d90eef21992670b1"
   }
 }

@@ -33,7 +33,7 @@ This repo is less useful when:
 
 1. Start with the approved Development Workflow.
 
-Install **Development Workflow** as the common baseline. It gives users four memorable entrypoints—`what-next`, `work-on-change`, `work-on-phase`, and `review-change`—while installing their independently governed atomic dependencies together. Add only the standalone skills the team needs.
+Install **Development Workflow** as the common baseline. Users can begin with `what-next`, `work-on-change`, or `work-on-phase`; the same bundle also provides the explicit lifecycle actions `review-change`, `triage-pending`, and `close-change`. Their independently governed atomic dependencies are installed together. Add only the standalone skills the team needs.
 
 2. Define maintainer ownership.
 
@@ -104,7 +104,7 @@ skill-forge 很適合想要標準化 AI coding skill 分發與更新方式的團
 
 1. 先從 approved Development Workflow 開始。
 
-將 **Development Workflow** 作為共用基線。使用者只需記住 `what-next`、`work-on-change`、`work-on-phase` 與 `review-change` 四個入口，安裝器會一併安裝其獨立治理的 atomic dependencies；再依團隊需求加入 standalone skills。
+將 **Development Workflow** 作為共用基線。使用者可從 `what-next`、`work-on-change` 或 `work-on-phase` 開始；同一套件也提供明確的 lifecycle actions：`review-change`、`triage-pending` 與 `close-change`。安裝器會一併安裝其獨立治理的 atomic dependencies；再依團隊需求加入 standalone skills。
 
 2. 定義 maintainer ownership。
 

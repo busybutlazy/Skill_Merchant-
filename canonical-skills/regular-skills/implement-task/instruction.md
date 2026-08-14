@@ -1,37 +1,32 @@
 # Implement One Task
 
-Execute exactly one named task from an explicitly approved implementation plan, then stop.
+Execute exactly one named task or bounded outcome from an approved or policy-admitted `CHANGE_WORKING.md`, then stop at its checkpoint.
 
 ## Use This For
 
-- A human has approved `changes/<change-id>/IMPLEMENTATION_PLAN.md` and named one task to execute.
+- High-risk or `one-task-at-a-time` work.
+- A cross-agent handoff or explicit checkpoint requires one bounded task.
 
-## Do Not Use This For
-
-- Unapproved plans, vague requests such as “finish the phase,” planning, whole-change verification/reporting/review, or automatic execution of later tasks.
+Do not use for vague whole-Phase work, planning, full verification, review, closure, or automatic later tasks.
 
 ## Required Inputs
 
-- Change ID and approved plan path.
-- Exact task identifier and approval evidence.
-- Repository rules, task acceptance criteria, allowed files/symbols, and existing canonical container command.
-
-If approval or task identity is ambiguous, stop. Never infer approval from a plan's existence.
+Require the Change ID, current working record, exact task, applicable approval evidence, allowed paths, acceptance, repository rules, and canonical container command. Never infer approval from file existence.
 
 ## Workflow
 
-1. Read the approved plan and restate the task boundary, prohibited areas, expected result, and local verification.
-2. Check Git state and stop on unexplained overlapping edits or baseline failures that prevent attribution.
-3. Modify only the minimum files/symbols needed by the named task. Preserve unrelated user work.
-4. Add or update tests directly required by this task.
-5. Run only task-local checks through existing Docker/Compose/Make/container wrappers. Never install dependencies or run project commands directly on the host.
-6. Compare the result with the approved task. Record changed files, commands, exit codes, tests, omissions, and deviations using [the handoff checklist](./references/TASK_HANDOFF_CHECKLIST.md).
-7. Stop. Hand the bounded result back for the next human decision; do not begin another task or claim the entire change complete.
+1. Read the working record and restate only the task boundary, prohibited areas, and expected result.
+2. Inspect Git state and stop on unexplained overlapping edits or attribution-blocking failures.
+3. Make the minimum in-scope implementation and tests.
+4. Run task-local checks through existing Docker/Compose/Make/container wrappers only.
+5. Append a concise execution entry to `CHANGE_WORKING.md`: outcome, files, commands/exits, omissions, and deviations. Use [the checklist](./references/TASK_HANDOFF_CHECKLIST.md) only for a cross-agent or checkpoint handoff.
+6. Capture a newly discovered out-of-scope concern as a bounded item in `docs/PENDING.md` when that file exists or repository policy establishes it. This capture is not scope expansion: record evidence, consequence, why deferred, trigger, owner, and source; do not implement or decide the solution.
+7. Stop. Do not begin another task unless the approved continuous scope explicitly permits it through `run-approved-change`.
 
-## Prohibited Actions and Stop Conditions
+## Stop Conditions
 
-Do not rewrite requirements, expand scope, modify an approved public contract, add/update production dependencies, run migrations, access production/secrets, discard worktree changes, or approve deviations. Stop if any is required; also stop for data-loss risk, missing container entrypoints, incompatible environment, unexplained edits, or a task that cannot be completed independently. Missing Docker support belongs to the `bootstrap-project` workflow, not a host fallback.
+Stop for material scope/acceptance change, an unapproved core path, contract/schema/dependency/security/data/architecture change, destructive or production access, missing container entrypoint, unexplained edits, or a task that cannot remain independent. Necessary tests, documentation synchronization, and ordinary corrections inside the task are not new tasks.
 
-## Evidence and Handoff
+## Evidence Boundary
 
-Report facts, not “tests passed” without commands and results. Label unrun tests and reasons. A local task check is not full change verification, independent review, or human acceptance.
+A task-local result is not full verification, independent review, closure, human acceptance, or Git authority.

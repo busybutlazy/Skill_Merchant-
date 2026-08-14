@@ -1,1 +1,1 @@
-{"name":"what-next","description":"Use when the user asks where the project stands or what to do next; select the safest workflow entrypoint from repository evidence and require current verification plus Change Report evidence before review."}
+{"name":"what-next","description":"Use when the user asks where the project stands or what comes next; route from durable lifecycle, Pending, review, retention, and closure evidence."}

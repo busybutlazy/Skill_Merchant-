@@ -27,31 +27,31 @@ class SupervisedAutoWorkflowTests(unittest.TestCase):
         self.assertIn("the human must approve the mode explicitly", instruction)
         self.assertIn("## Execution Policy", template)
         self.assertIn("Risk level: low / medium / high / extreme", template)
-        self.assertIn("Automation mode: one-task-at-a-time / supervised-auto", template)
+        self.assertIn("Automation mode: lightweight / one-task-at-a-time / supervised-auto", template)
         self.assertIn("Material plan changes invalidate approval", template)
 
     def test_auto_skill_has_narrow_admission_and_stopping_boundary(self) -> None:
         instruction = (SKILL_DIR / "instruction.md").read_text(encoding="utf-8")
         for required in (
-            "low or medium",
+            "low/medium-risk",
             "Automation mode: supervised-auto",
-            "auto-approved task IDs",
-            "TASK_LOG.md",
-            "evidence-only verification phase",
-            "Do not switch back into implementation",
-            "separate `review-change` session",
-            "commit, push, merge, release",
+            "exact outcomes/tasks and path scope",
+            "CHANGE_WORKING.md",
+            "evidence-only verification",
+            "pre-approved remediation envelope",
+            "fresh `review-change` session",
+            "commit/push/merge/release/deploy",
         ):
             self.assertIn(required, instruction)
-        self.assertIn("High/extreme risk", instruction)
-        self.assertIn("use `implement-task` instead", instruction)
+        self.assertIn("high/extreme risk", instruction)
+        self.assertIn("uses `implement-task`", instruction)
 
     def test_strict_implement_task_contract_is_preserved(self) -> None:
         instruction = (
             REPO_ROOT / "canonical-skills" / "regular-skills" / "implement-task" / "instruction.md"
         ).read_text(encoding="utf-8")
         self.assertIn("Execute exactly one named task", instruction)
-        self.assertIn("do not begin another task", instruction)
+        self.assertIn("Do not begin another task", instruction)
 
     def test_memory_guideline_and_catalog_agree_on_modes(self) -> None:
         memory = (REPO_ROOT / "canonical-configs" / "agent-memory" / "memory.md").read_text(encoding="utf-8")
@@ -61,20 +61,17 @@ class SupervisedAutoWorkflowTests(unittest.TestCase):
         catalog = json.loads((REPO_ROOT / "canonical-skills" / "catalog.json").read_text(encoding="utf-8"))
         self.assertIn("預設一次一個 Task", memory)
         self.assertIn("低／中風險", memory)
-        self.assertIn("完整驗證失敗", memory)
+        self.assertIn("驗證失敗且不在 remediation envelope", memory)
         self.assertIn("`one-task-at-a-time`", guideline)
         self.assertIn("`supervised-auto`", guideline)
-        self.assertIn("完整驗證階段不得切回實作", guideline)
+        self.assertIn("失敗後必須退出 verification", guideline)
         group = next(group for group in catalog["groups"] if group["name"] == "Change Workflow")
-        self.assertEqual(
-            group["skills"],
-            ["plan-change", "implement-task", "run-approved-change", "verify-change", "report-change", "review-change"],
-        )
+        self.assertEqual(group["skills"], ["plan-change", "implement-task", "run-approved-change", "verify-change", "report-change", "review-change", "close-change", "triage-pending"])
         self.assertNotIn("run-approved-change", catalog["recommended"])
 
     def test_both_targets_install_checklist_idempotently(self) -> None:
         source = load_skill(REPO_ROOT, "run-approved-change")
-        self.assertEqual(source.version, "0.1.0")
+        self.assertEqual(source.version, "1.0.0")
         for target, relative_root in (
             ("codex", Path(".agents/skills/run-approved-change")),
             ("claude", Path(".claude/skills/run-approved-change")),

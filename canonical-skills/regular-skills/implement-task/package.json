@@ -2,9 +2,9 @@
   "schema_version": 1,
   "identity": {
     "name": "implement-task",
-    "version": "0.1.1",
-    "description": "Implement exactly one named task from an explicitly approved change plan and stop",
-    "updated_at": "2026-07-20",
+    "version": "1.0.0",
+    "description": "Implement one checkpointed outcome and append concise evidence and out-of-scope discoveries to controlled working records",
+    "updated_at": "2026-08-14",
     "tags": [
       "change-workflow",
       "implementation",
@@ -29,6 +29,6 @@
   },
   "integrity": {
     "manifest_file": "manifest.json",
-    "package_sha256": "01a62420c1e7db276e883862d1403bbe63eb90ca59b9b7b695b3cd057c2a7142"
+    "package_sha256": "6ae647539b6fd2ad9bfd576470d03108d166a74dc6f975c614350dfb5f0b631f"
   }
 }

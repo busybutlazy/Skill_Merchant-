@@ -1,43 +1,50 @@
 # Review Change
 
-Try to disprove the completion claim. The only permitted write is the owned review report; never repair or approve the implementation.
+## Objective
 
-## Use This For
-
-- A change has implementation, verification, and change-report evidence ready for adversarial review.
-
-## Do Not Use This For
-
-- Reviewing work from the same agent/session/context that planned or implemented the change.
-- Implementing fixes, authoring the plan under review, running a self-approval gate, merging, releasing, or replacing human review.
+Try to disprove the completion claim in a fresh context. Review behavior, risk and evidence before document cosmetics; never repair, approve, retain decisions, or close the Change.
 
 ## Independence Gate
 
-Formal review requires a fresh agent context that did not inherit the implementation conversation. A subagent qualifies only when the platform guarantees that its context does not inherit that conversation. If independence cannot be established, stop and ask the user to open a fresh agent/session; do not write or update the formal `REVIEW_REPORT.md`.
-
-Self-checks and same-context review notes may help implementation, but they cannot satisfy the independent review gate and must not be represented as formal review evidence.
+Formal review requires a fresh agent/session that did not inherit the implementation conversation. A subagent qualifies only when isolation is guaranteed. Otherwise stop and ask for a fresh session. Same-context self-checks are not formal review.
 
 ## Required Inputs
 
-- Change ID, request/acceptance criteria, approved plan and approval evidence.
-- Full attributable diff, tests, task handoffs, verification report, change report, and relevant CI/contract history.
+Require Change ID, request/acceptance, approval where applicable, `CHANGE_WORKING.md`, attributable diff, current verification, relevant project truth and CI/contract history. Legacy artifacts may be read, but their quantity is not evidence of correctness.
 
-If core artifacts are missing after the independence gate is satisfied, report the evidence gap as a finding.
+## Review Priority
+
+Review in this order:
+
+1. observable behavior and core completion claim;
+2. security, authorization, data integrity and destructive effects;
+3. contract, migration and compatibility;
+4. acceptance criteria and whether tests can fail for the claimed defect;
+5. scope, dependencies, rollback and operational risk;
+6. misleading completion or verification claims;
+7. durable user/operator/project documentation.
+
+Pure working-record metadata, stale round numbers, duplicated prose, formatting, line/file counts, or historical narration are not product findings unless they could mislead an operator, conceal failed evidence, falsify approval/security/migration/rollback, or cause a later agent to take an unsafe action.
 
 ## Workflow
 
-1. Establish scope, comparison base, and claimed outcome. Prove fresh-context independence before reviewing or writing the report.
-2. Trace every acceptance criterion through implementation and tests; challenge unsupported or mock-only claims.
-3. Inspect normal and failure paths for correctness, error handling, authorization/security, data consistency, backward compatibility, and hidden contract/dependency/migration effects.
-4. Look for out-of-scope edits, over-abstraction, missing rollback, skipped tests, misleading reports, and untracked/generated artifacts.
-5. Classify findings as Blocking, High, Medium, Low, or Suggestion. Give evidence, impact, and a bounded remediation direction; do not edit code.
-6. Write `changes/<change-id>/REVIEW_REPORT.md` using [the checklist/template](./references/REVIEW_REPORT_TEMPLATE.md).
-7. Stop for human disposition. Do not approve, implement findings, merge, release, or silently call another workflow.
+1. Establish diff base, scope, claimed outcome and fresh-context independence.
+2. Trace consequential acceptance through implementation and discriminating tests; challenge mock-only or self-referential evidence.
+3. Inspect normal/failure paths and the risk areas above.
+4. Use stable finding IDs in one `changes/<change-id>/REVIEW.md`; update statuses in that file rather than creating `REVIEW_REPORT_2`, `_3`, and later copies.
+5. Classify findings as Blocking, High, Medium, Low, or Suggestion with evidence, impact and bounded direction.
+6. Identify valid out-of-scope concerns as Pending candidates. Do not make unrelated Pending items block this Change unless their trigger is due or they disprove acceptance.
+7. Flag a `Durable Decision Gap` when a consequential long-lived tradeoff exists only in temporary artifacts. This creates an ADR candidate for Human Retention review; it does not authorize an ADR.
+8. Stop for human disposition.
 
-## Stop Conditions and Boundaries
+## Review Round Budget
 
-Use read-only inspection and existing containerized checks only when necessary to challenge evidence. Never install dependencies or run project commands directly on the host. Stop before destructive commands, production/secret access, migrations, implementation edits, or scope decisions. Unexplained worktree state and missing container entrypoints must be recorded, not bypassed.
+Default to one full review and one targeted confirmation of accepted findings. A new full review is justified only when remediation changes observable behavior, introduces consequential scope/contract/schema/security/data/architecture effects, broadly repairs Blocking/High findings, or a human explicitly requests it. Documentation-only or metadata remediation does not restart full review.
 
-## Evidence Standard
+## Targeted Confirmation
 
-Distinguish verified defects, evidence gaps, and suggestions. Cite paths, symbols, commands, outputs, and report contradictions. Absence of findings is not proof of correctness; state unreviewed areas and residual risk.
+After human-authorized remediation, confirm only accepted finding IDs and affected risk surfaces. Update their statuses and note any genuinely new consequential defect. Do not reopen settled cosmetic history or rewrite the implementer's final narrative.
+
+## Authority Boundary
+
+The only permitted write is `REVIEW.md`. The reviewer does not edit implementation, decide scope, accept an ADR, disposition Pending items, write final `CHANGE.md`, delete working artifacts, approve, commit, merge, release or deploy.

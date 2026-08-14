@@ -22,13 +22,13 @@ When a term is confirmed, update the applicable `CONTEXT.md` inline using [CONTE
 
 ### Sparse ADRs
 
-Create or offer an ADR only when all three conditions hold:
+Identify an ADR candidate only when all three conditions hold:
 
 1. The decision is hard to reverse or expensive to change.
 2. A future maintainer lacking the context would find it surprising.
 3. It represents a real trade-off rather than an implementation detail.
 
-Use [ADR-FORMAT.md](./references/ADR-FORMAT.md), and create `docs/adr/` lazily. If any criterion is missing, do not create an ADR.
+If any criterion is missing, do not propose an ADR. When all hold, explain why existing durable sources are insufficient and ask the human whether the decision is worth an ADR. Only after the human selects `Create ADR` may the agent use [ADR-FORMAT.md](./references/ADR-FORMAT.md) to draft `Proposed`; a separate explicit confirmation is required for `Accepted`, modification of an Accepted ADR, or `Superseded`.
 
 ## Authority Adapter
 
@@ -36,7 +36,9 @@ Use [ADR-FORMAT.md](./references/ADR-FORMAT.md), and create `docs/adr/` lazily. 
 |---|---|
 | Read context, ADRs, documents, and code | Allowed |
 | Update confirmed glossary terms | Allowed when the caller permits |
-| Create an ADR meeting all three criteria | Allowed when the caller permits |
+| Identify and explain an ADR candidate | Allowed |
+| Draft a Proposed ADR | Only after explicit human `Create ADR` retention decision |
+| Accept, modify, or supersede an ADR | Only after separate explicit human confirmation |
 | Record an unconfirmed inference as canonical | Denied |
 | Modify production code, dependencies, migrations, runtime, or deployment | Denied |
 | Approve, commit, push, or merge | Denied |

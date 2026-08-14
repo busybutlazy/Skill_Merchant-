@@ -2,49 +2,43 @@
 
 ## Objective
 
-Produce an approval-ready Implementation Plan without implementing the Change. The Write Set is limited to the owned plan artifact.
+Create or revise the planning section of one `changes/<change-id>/CHANGE_WORKING.md` without implementing the Change. Use the least ceremony justified by risk and keep one fact in one working location.
 
 ## Admission Criteria
 
-- Planning a non-trivial feature, fix, migration, contract change, or refactor before implementation.
-- Re-planning when approved scope or repository evidence has materially changed.
+Use for a non-trivial feature, fix, migration, contract change, or refactor whose scope or verification needs planning. A trivial, reversible edit with explicit acceptance and validation may proceed without a formal plan when repository policy allows it.
 
-Reject admission for:
-
-- Implementing code, changing configuration, installing dependencies, running migrations, or approving a plan.
-- A trivial documentation or formatting edit whose scope and validation are already explicit.
-
-## Required Inputs
-
-- Change request or problem statement and a stable `<change-id>`.
-- Repository instructions, specifications, contracts, ADRs, and acceptance criteria.
-- Git status/diff, relevant code and tests, canonical container commands, and known baseline failures.
-
-If the request, acceptance criteria, or change identifier is missing, stop and request it. Treat conflicting sources of truth as a blocker.
+Required inputs are a stable Change ID, request, acceptance criteria, repository rules, relevant specifications/contracts/ADRs, related items from `docs/PENDING.md`, Git state, code/tests, and canonical container commands. Conflicting sources of truth or missing consequential requirements are blockers.
 
 ## Decision Readiness Gate
 
-If load-bearing product, domain, externally observable contract, security,
-data-model, data-ownership, or major architecture decisions remain unresolved,
-stop and route to `grill-with-docs`. Do not resolve them by assumption inside
-planning or present a recommended option as an approved decision.
+If load-bearing product, domain, externally observable contract, security, data-model, data-ownership, or major architecture decisions remain unresolved, stop and route to `grill-with-docs`. Do not resolve them by assumption or treat a recommendation as approval.
+
+## Risk and Ceremony
+
+- `low`: a lightweight plan may contain objective, scope, acceptance, affected paths, verification, and rollback only.
+- `medium`: add bounded tasks, risks, checkpoints, and explicit execution mode.
+- `high` or `extreme`: require full traceability, one-task-at-a-time checkpoints, and explicit human approval; prohibited operations remain manual.
+
+Human Plan Approval is mandatory for public contract, schema/migration, authorization/security, irreversible or bulk data operations, production/external spend, dependency/major architecture changes, high/extreme risk, or competing consequential choices. Repository policy may require it more broadly.
 
 ## Workflow
 
-1. Read repository rules and sources of truth before examining implementation details.
-2. Inspect Git state and record unexplained edits or pre-existing failures; do not alter them.
-3. Trace relevant modules, symbols, contracts, tests, data/control flow, and error boundaries.
-4. Define objective, in scope, out of scope, observable acceptance criteria, risks, unknowns, and rollback.
-5. Classify risk and propose an execution policy: `one-task-at-a-time` for any risk level, or `supervised-auto` only for low/medium risk. List the exact auto-approved tasks, allowed paths, human checkpoints, and stop conditions; the human must approve the mode explicitly.
-6. Divide work into independently verifiable tasks. Identify contract, dependency, migration, security, and data-loss approval points.
-7. Define normal, boundary, failure, compatibility, and security tests. Verification commands must use existing Docker/Compose/Make/container wrappers only.
-8. Write `changes/<change-id>/IMPLEMENTATION_PLAN.md` using [the template](./references/IMPLEMENTATION_PLAN_TEMPLATE.md).
-9. Present unresolved decisions and stop for explicit human approval. Do not invoke implementation. A plan's existence, proposed mode, or prior approval of another revision is not approval.
+1. Read sources of truth, related Pending items and accepted ADRs before implementation details.
+2. Inspect Git state and record only evidence that changes the plan; do not produce a repository tour or copy volatile counts.
+3. Define objective, scope, observable acceptance, affected paths, risk, rollback, verification, and unresolved questions.
+4. Classify risk and choose `one-task-at-a-time` or, for low/medium risk only, `supervised-auto`.
+   When `supervised-auto` requires approval, the human must approve the mode explicitly together with its outcomes/Tasks, paths, checkpoints, and remediation envelope.
+5. Divide work only as finely as independent verification or checkpoints require.
+6. Record relevant Pending IDs as absorbed, scheduled, still unrelated, or blocking. Do not silently expand scope to consume them.
+7. Identify durable-decision hotspots, but do not create or accept an ADR during planning without the applicable human decision workflow.
+8. Create or update `changes/<change-id>/CHANGE_WORKING.md` using [the template](./references/IMPLEMENTATION_PLAN_TEMPLATE.md). This is a temporary working artifact, not permanent project truth.
+9. If approval is required, present the current revision and stop for explicit approval. Otherwise record why the Change qualifies for the lighter path.
 
-## Stop Conditions
+## Material Change Rule
 
-Stop for conflicting requirements, unexplained worktree changes, missing canonical container entrypoints, required production/secret access, irreversible data operations, unapproved dependencies/migrations, or scope/contract changes. Missing Docker support points to the separate `bootstrap-project` workflow; it never permits host project execution.
+Approval is invalidated by changed observable scope or acceptance, a new contract/schema/dependency/security/data/architecture consequence, increased risk, or core implementation outside approved boundaries. Necessary tests, documentation synchronization, ordinary in-scope corrections, and accepted review remediation inside a pre-approved remediation envelope are not material changes.
 
-## Exit Criteria and Handoff
+## Authority Boundary
 
-Separate observed facts from assumptions. Cite files, symbols, baseline commands, and results precisely. The handoff is the plan path, task list, risks, and questions awaiting human approval. A written plan is not approval.
+Do not implement, install dependencies, run migrations, access production/secrets, approve the plan, or commit/push. Missing container support routes to `bootstrap-project`; it never authorizes host execution.

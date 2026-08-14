@@ -1,54 +1,44 @@
-# Phase Delivery Packet Template
+# Phase Working Record: <phase-run-id>
 
-## Phase Identity
+> Temporary. Close and absorb this record after child Changes and Phase outcomes are accepted.
 
-- Roadmap path:
-- Exact phase ID/heading:
-- Phase run ID:
-- Plan revision:
-- Requested execution mode:
+## Identity and Status
 
-## Roadmap Outcomes and Boundaries
+- Roadmap path and exact Phase:
+- Revision and lifecycle status:
+- Requested mode:
+- Approval evidence:
 
-- Outcomes to deliver:
-- In scope:
-- Out of scope:
-- Dependencies and prerequisites:
-- Source-of-truth references:
+## Outcomes, Boundaries, and Baseline
 
-## Read-Only Baseline
+- Observable outcomes:
+- In/out of scope:
+- Durable sources:
+- Git/container baseline:
 
-- Git branch/state:
-- Existing behavior and tests:
-- Containerized canonical commands:
-- Known pre-existing failures:
+## Relevant Pending Items
+
+| ID | Relevance | Trigger due? | Phase disposition |
+|---|---|---|---|
 
 ## Child Change Graph
 
-| Order | Change ID | Outcome covered | Depends on | Risk | Mode | Allowed paths | Checkpoint |
-| --- | --- | --- | --- | --- | --- | --- | --- |
+| Order | Change ID | Outcome | Depends on | Risk/mode | Allowed paths | Checkpoint | Closure state |
+|---|---|---|---|---|---|---|---|
+
+Do not generate a full child working record until that child starts.
 
 ## Decision Gate Checkpoints
 
-| Decision | Required before | Blocks | Owner | Current status | Resolution evidence |
-| --- | --- | --- | --- | --- | --- |
+| Decision | Required before | Blocks | Owner | Status | Evidence |
+|---|---|---|---|---|---|
 
-Every non-start Decision Gate must map to an explicit checkpoint. An unresolved gate blocks its named child, event, dependent work, or Phase completion.
+## Phase Verification and Absorption
 
-## Verification and Rollback
-
-- Per-change verification:
-- Phase-level verification:
-- Rollback strategy:
-- Review hotspots:
-
-## Approval Record
-
-- Human approver:
-- Approved plan revision:
-- Exact phase approved:
-- Approved child Changes/tasks/paths:
-- Approved modes and checkpoints:
-- Approval timestamp/reference:
-
-Material changes invalidate this approval and require a new revision.
+- Cross-child verification:
+- Child final Change records:
+- Roadmap/durable updates after acceptance:
+- New Pending items:
+- ADR candidates awaiting Human Retention:
+- Temporary artifacts proposed for deletion/archive:
+- Rollback and residual risk:
